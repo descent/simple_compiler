@@ -14,7 +14,7 @@ typedef unsigned int u32;
 
 typedef unsigned long long u64;
 
-enum ASTType {INVALID, ADD, MIN, NUMBER, LAST};
+enum ASTType {INVALID, SEP, ADD, MIN, MUL, DIV, NUMBER, LAST};
 
 
 #endif
