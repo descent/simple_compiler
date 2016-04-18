@@ -13,6 +13,11 @@ using namespace std;
 
 extern std::deque <Token> tokens;
 
+/*
+ *  factor: NUMBER | "(" expression ")"
+ *  term: factor { ("*" | "/") factor}
+ *  expression: term {("+" | "-") term}
+ */
 
 
 Token peek_token()
@@ -50,6 +55,15 @@ ASTNode* factor()
   Token token = peek_token(); 
   if (token.str_ == "(")
   {
+    Token t = pop_token();
+    ASTNode *e = expression();
+    t = pop_token();
+    if (t.str_ != ")")
+    {
+      cout << "fail: should ')'" << endl;
+      exit(1);
+    }
+    return e;
   }
   else if (token.type_ == NUMBER) // number
        {
@@ -67,6 +81,11 @@ ASTNode* term()
   ASTNode *left = factor();
   while(is_token("*") || is_token("/"))
   {
+    Token t = pop_token();
+    ASTNode *op = new ASTNode(t);
+    ASTNode *right = factor();
+    op->add_child(left, right);
+    left = op;
   }
 
   return left;
@@ -97,6 +116,7 @@ int main(int argc, char *argv[])
   ASTNode* root = expression();
   cout << "ast node type: " << root->type_str() << endl;
   root->print();
+  cout << endl;
 #if 0
   while(1)
   {
