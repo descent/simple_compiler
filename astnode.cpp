@@ -13,10 +13,18 @@ void ASTNode::print()
 {
   if (children_.size() == 0) // leaf node
   {
-    cout << token_.str_;
+    cout << token_.str_ << " ";
   }
   else
   {
+    cout << "( ";
+    cout << token_.str_ << " ";
+    for (int i=0 ; i < children_.size() ; ++i)
+    {
+      children_[i]->print();
+    }
+    cout << ")";
+  #if 0
     switch (type())
     {
       case ADD:
@@ -27,8 +35,16 @@ void ASTNode::print()
         children_[1]->print();
         cout << ")" << endl;
       }
+      case MUL:
+      {
+        cout << "(";
+        children_[0]->print();
+        cout << " * ";
+        children_[1]->print();
+        cout << ")" << endl;
+      }
     }
-
+  #endif
   }
 }
 
