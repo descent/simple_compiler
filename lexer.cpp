@@ -162,19 +162,19 @@ int get_token(Token &token)
            case '-':
            {
              token.str_ = "-";
-             token.type_ = ADD;
+             token.type_ = MIN;
              break;
            }
            case '*':
            {
              token.str_ = "*";
-             token.type_ = ADD;
+             token.type_ = MUL;
              break;
            }
            case '/':
            {
              token.str_ = "/";
-             token.type_ = ADD;
+             token.type_ = DIV;
              break;
            }
            case '(':
