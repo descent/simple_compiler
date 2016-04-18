@@ -177,6 +177,18 @@ int get_token(Token &token)
              token.type_ = ADD;
              break;
            }
+           case '(':
+           {
+             token.str_ = "(";
+             token.type_ = SEP;
+             break;
+           }
+           case ')':
+           {
+             token.str_ = ")";
+             token.type_ = SEP;
+             break;
+           }
            default:
            {
              return ERR;
