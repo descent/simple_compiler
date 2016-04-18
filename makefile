@@ -1,3 +1,9 @@
+# test parser
+# make clean; make DPARSER=1 
+
+# test lexer
+# make clean; make DLEXER=1 lexer
+
 CXXFLAGS=-g -std=c++11
 ifdef DLEXER
 CXXFLAGS+= -DDEBUG_LEXER
@@ -6,6 +12,7 @@ endif
 ifdef DPARSER
 CXXFLAGS+= -DDEBUG_PARSER
 endif
+
 
 
 parser: parser.o astnode.o token.o lexer.o
