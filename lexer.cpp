@@ -149,10 +149,25 @@ int get_token(Token &token)
          }while(isdigit(c));
          token.type_ = NUMBER;
        }
-       else 
+       else if (isalpha(c))
+            {
+              do
+              {
+                token.str_.push_back(c); 
+                c = getchar_la();
+              } while(isalnum(c));
+              token.type_ = NAME;
+            }
+            else
        {
          switch (c)
          {
+           case '>':
+           {
+             token.str_ = ">";
+             token.type_ = GREAT;
+             break;
+           }
            case '+':
            {
              token.str_ = "+";
@@ -236,6 +251,8 @@ int lexer()
 
 int main(int argc, char *argv[])
 {
+  int a,b;
+  a++ + ++b;
   lexer();
   return 0;
 }
