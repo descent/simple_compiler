@@ -15,11 +15,15 @@ endif
 
 
 
-parser: parser.o astnode.o token.o lexer.o
+parser: parser.o astnode.o token.o lexer.o op.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
-parser.o: parser.cpp astnode.h mytype.h token.h parser.h
+
+parser.o: parser.cpp astnode.h mytype.h token.h parser.h op.h
 	$(CXX) $(CXXFLAGS) -c $<
 astnode.o: astnode.cpp astnode.h mytype.h token.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+op.o: op.cpp 
 	$(CXX) $(CXXFLAGS) -c $<
 
 lexer: lexer.o token.o
