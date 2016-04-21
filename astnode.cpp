@@ -18,11 +18,12 @@ void ASTNode::print()
   else
   {
     cout << "( ";
-    cout << token_.str_ << " ";
+    cout << token_.str_ << " "; // preorder
     for (int i=0 ; i < children_.size() ; ++i)
     {
       children_[i]->print();
     }
+    // cout << token_.str_ << " "; // postorder 
     cout << ")";
   #if 0
     switch (type())
