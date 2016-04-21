@@ -4,12 +4,19 @@
 
 #include <iostream>
 #include <deque>
+#include <map>
+#include <string>
 
 using namespace std;
 
 #include "astnode.h"
 #include "parser.h"
 #include "token.h"
+#include "op.h"
+
+#define OP_PRECEDENCE
+
+std::map<std::string, Precedence*> operators;
 
 extern std::deque <Token> tokens;
 
@@ -91,6 +98,58 @@ ASTNode* term()
   return left;
 }
 
+#ifdef OP_PRECEDENCE
+Precedence* next_op()
+{
+  Token t = peek_token();
+  auto it = operators.find(t.str_);
+
+  if (it != operators.end())
+    return it->second;
+  else
+    return 0;
+}
+
+bool right_is_expr(int prec, Precedence* next_prec)
+{
+  if (next_prec->left_assoc_)
+    return prec < next_prec->value_;
+  else
+    return prec <= next_prec->value_;
+}
+
+ASTNode* do_shift(ASTNode* l, int prec)
+{
+  Token t = pop_token();
+  ASTNode *op = new ASTNode(t);
+  ASTNode *r = factor();
+  Precedence *next;
+
+  while((next = next_op()) != 0 && right_is_expr(prec, next))
+  {
+    r = do_shift(r, next->value_);
+  }
+
+  op->add_child(l, r);
+  return op;
+}
+
+ASTNode* expression()
+{
+  ASTNode *r = factor();
+  Precedence *next;
+
+  while((next = next_op()) != 0)
+  {
+    r = do_shift(r, next->value_);
+    // left = new ASTNode(left, , right);
+  }
+  #if 0
+  #endif
+  return r;
+}
+#else
+
 ASTNode* expression()
 {
   ASTNode *left = term();
@@ -107,10 +166,21 @@ ASTNode* expression()
   return left;
 }
 
+#endif
+
+
+// operator precedence parsing
+/*
+ *  factor: NUMBER | "(" expression ")"
+ *  expression: factor { OP factor}
+ */
 
 #ifdef DEBUG_PARSER
 int main(int argc, char *argv[])
 {
+  operators.insert({"+", new Precedence{1, true}});
+  operators.insert({"*", new Precedence{3, true}});
+
   int lexer();
   lexer(); 
   ASTNode* root = expression();
