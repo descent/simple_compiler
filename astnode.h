@@ -30,7 +30,7 @@ class ASTNode
     }
     const char* type_str() const
     {
-      const char *type_str[]={"INVALID", "SEP", "ADD", "MIN", "MUL", "DIV", "NUMBER"};
+      const char *type_str[]={"INVALID", "SEP", "NAME", "ADD", "MIN", "MUL", "DIV", "GREAT", "NUMBER"};
 
       if (INVALID <= type_ && type_ < LAST)
       {
