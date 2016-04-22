@@ -95,6 +95,18 @@ ASTNode* term()
 
 #ifdef OP_PRECEDENCE
 
+/* p 45 EBNF
+ * primary   : "(" expr ")" | NUMBER | IDENTIFIER | STRING
+ * factor    : "-" primary | primary
+ * expr      : factor { OP factor}
+ * block     : "{" [ statement ] { ("; " | EOL) [ statement ]} "}"
+ * simple    : expr
+ * statement :   "if" expr block [ "else" block ] 
+ *             | "while" expr block
+ *             | simple
+ * program   : [ statement ] ("; " | EOL)
+ */
+
 // operator precedence parsing
 /*
  *  factor: NUMBER | "(" expression ")"
