@@ -20,11 +20,6 @@ std::map<std::string, Precedence*> operators;
 
 extern std::deque <Token> tokens;
 
-/*
- *  factor: NUMBER | "(" expression ")"
- *  term: factor { ("*" | "/") factor}
- *  expression: term {("+" | "-") term}
- */
 
 
 Token peek_token()
@@ -72,7 +67,7 @@ ASTNode* factor()
     }
     return e;
   }
-  else if (token.type_ == NUMBER) // number
+  else if (token.type_ == NUMBER || token.type_ == NAME) // number || variable name
        {
          Token t = pop_token();
          return new ASTNode(t);
@@ -99,6 +94,13 @@ ASTNode* term()
 }
 
 #ifdef OP_PRECEDENCE
+
+// operator precedence parsing
+/*
+ *  factor: NUMBER | "(" expression ")"
+ *  expression: factor { OP factor}
+ */
+
 Precedence* next_op()
 {
   Token t = peek_token();
@@ -149,6 +151,11 @@ ASTNode* expression()
   return r;
 }
 #else
+/*
+ *  factor: NUMBER | "(" expression ")"
+ *  term: factor { ("*" | "/") factor}
+ *  expression: term {("+" | "-") term}
+ */
 
 ASTNode* expression()
 {
@@ -169,17 +176,12 @@ ASTNode* expression()
 #endif
 
 
-// operator precedence parsing
-/*
- *  factor: NUMBER | "(" expression ")"
- *  expression: factor { OP factor}
- */
-
 #ifdef DEBUG_PARSER
 int main(int argc, char *argv[])
 {
   operators.insert({"+", new Precedence{1, true}});
   operators.insert({"*", new Precedence{3, true}});
+  operators.insert({"=", new Precedence{0, false}});
 
   int lexer();
   lexer(); 
