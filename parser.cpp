@@ -182,6 +182,7 @@ int main(int argc, char *argv[])
   operators.insert({"+", new Precedence{1, true}});
   operators.insert({"*", new Precedence{3, true}});
   operators.insert({"=", new Precedence{0, false}});
+  operators.insert({"==", new Precedence{-1, true}});
 
   int lexer();
   lexer(); 
