@@ -24,7 +24,7 @@ static inline int isgraph_ex(int c)
   return isgraph(c);
 }
 
-int la=-1;
+int la=-1; // look ahead
 
 int getchar_la()
 {
@@ -206,8 +206,18 @@ int get_token(Token &token)
            }
            case '=':
            {
-             token.str_ = "=";
-             token.type_ = ASSIGN;
+             c = getchar_la();
+             if (c == '=')
+             {
+               token.str_ = "==";
+               token.type_ = EQUAL;
+             }
+             else
+             {
+               la = c;
+               token.str_ = "=";
+               token.type_ = ASSIGN;
+             }
              break;
            }
            default:
