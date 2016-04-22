@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#define PREORDER
+
 using std::cout;
 using std::endl;
 
@@ -18,12 +20,20 @@ void ASTNode::print()
   else
   {
     cout << "( ";
+#ifdef PREORDER
     cout << token_.str_ << " "; // preorder
+#endif
     for (int i=0 ; i < children_.size() ; ++i)
     {
       children_[i]->print();
+#ifdef INORDER
+      if (i == 0)
+        cout << token_.str_ << " "; // inorder
+#endif
     }
-    // cout << token_.str_ << " "; // postorder 
+#ifdef POSTORDER
+    cout << token_.str_ << " "; // postorder 
+#endif
     cout << ")";
   #if 0
     switch (type())
