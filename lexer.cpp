@@ -204,6 +204,12 @@ int get_token(Token &token)
              token.type_ = SEP;
              break;
            }
+           case '=':
+           {
+             token.str_ = "=";
+             token.type_ = ASSIGN;
+             break;
+           }
            default:
            {
              return ERR;
@@ -251,8 +257,8 @@ int lexer()
 
 int main(int argc, char *argv[])
 {
-  int a,b;
-  a++ + ++b;
+  //int a,b;
+  //a++ + ++b;
   lexer();
   return 0;
 }
