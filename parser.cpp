@@ -155,7 +155,7 @@ ASTNode* factor()
   return op;
 }
 
-// expr      : factor { OP factor} {eol}
+// expr      : factor { OP factor} 
 ASTNode* expr()
 {
   ASTNode *r = factor();
@@ -169,7 +169,8 @@ ASTNode* expr()
   return r;
 }
 
-// block     : "{" [ statement ] { ("; " | EOL) [ statement ] } "}"
+// block     : "{" [ statement ] { (";" | EOL) [ statement ] } "}"
+// modify - block     : "{" [ statement ] { ";" [ statement ] } "}"
 ASTNode* block()
 {
   Token token = peek_token(); 
@@ -217,7 +218,6 @@ ASTNode* block()
 }
 
 // simple    : expr
-// modify: simple    : expr { eol }
 ASTNode* simple()
 {
   ASTNode *e=0;
@@ -232,7 +232,7 @@ ASTNode* simple()
 }
 
 /*
- * statement :   "if" expr block [ "else" block ] 
+ * statement :   "if" "(" expr ")" block [ "else" block ] 
  *             | "while" expr block
  *             | simple
  */
@@ -246,7 +246,27 @@ ASTNode* statement()
     Token t = pop_token();
     t.type_ = IF;
     s_node = new ASTNode(t);
-    ASTNode *e = expr();
+
+    ASTNode *e = 0;
+    t = peek_token(); 
+    if (t.str_ == "(")
+    {
+      pop_token();
+      e = expr();
+    }
+    else
+    {
+      err("statement: should '('", t.str_);
+    }
+    t = peek_token(); 
+    if (t.str_ == ")")
+    {
+      pop_token();
+    }
+    else
+    {
+      err("statement: should ')'", t.str_);
+    }
 
     ASTNode *then_b = block();
 
@@ -287,14 +307,19 @@ ASTNode* statement()
 }
 
 // program   : [ statement ] ("; " | EOL)
+// modify - program   : [ statement ] {";"}
 ASTNode* program()
 {
   ASTNode *l = 0;
   need = false;
   l = statement();
   need = true;
-  Token token = peek_token(); 
-#if 1
+  //Token token = peek_token(); 
+  while(is_token(";"))
+  {
+    pop_token();
+  }
+#if 0
   if (token.str_ == ";" || token.str_ == "\n")
   {
     pop_token();
