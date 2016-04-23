@@ -9,6 +9,8 @@
 
 using namespace std;
 
+bool need = true;
+
 #include "astnode.h"
 #include "parser.h"
 #include "token.h"
@@ -21,10 +23,14 @@ ASTNode* statement();
 
 #define OP_PRECEDENCE
 
-void err(const char *msg, const std::string &str)
+void err(const char *msg, const std::string &str, bool end=true)
 {
-  printf("%s, token: %s\n", msg, str.c_str());
-  exit(1);
+  if (str=="\n")
+    printf("%s, token: eol\n", msg);
+  else
+    printf("%s, token: %s\n", msg, str.c_str());
+  if (end)
+    exit(1);
 }
 
 std::map<std::string, Precedence*> operators;
@@ -119,7 +125,10 @@ ASTNode* primary()
             }
             else
             {
-              err("primary: no match primer rule", token.str_);
+              if (need == true)
+                err("primary: no match primer rule", token.str_);
+              else
+                err("primary: warn!!", token.str_, false);
             }
   return 0;
 }
@@ -146,7 +155,7 @@ ASTNode* factor()
   return op;
 }
 
-// expr      : factor { OP factor}
+// expr      : factor { OP factor} {eol}
 ASTNode* expr()
 {
   ASTNode *r = factor();
@@ -168,31 +177,58 @@ ASTNode* block()
 
   if (token.str_ == "{")
   {
-    Token t = pop_token();
+    pop_token();
+
+    need = false;
     b = statement();
+    need = true;
     while(is_token(";") || is_token("\n"))
     {
       pop_token();
 
+      need = false;
       ASTNode *s = statement();
-      b->add_child(s);
-      if (token.str_ == "}")
-      {
-        Token t = pop_token();
-      }
+      need = true;
+      if (s==0)
+        continue;
+      if (b)
+        b->add_child(s);
       else
-      {
-        err("block: should '}'", token.str_);
-      }
+        b=s; // s is possiable 0??
     }
+
+    Token t = peek_token();
+    if (t.str_ == "}")
+    {
+      Token t = pop_token();
+    }
+    else
+    {
+      err("block: should '}'", t.str_);
+    }
+
+
+  }
+  else
+  {
+    err("block: should '{'", token.str_);
   }
   return b;
 }
 
 // simple    : expr
+// modify: simple    : expr { eol }
 ASTNode* simple()
 {
-  return expr();
+  ASTNode *e=0;
+  e = expr();
+  #if 0
+  while(is_token("\n"))
+  {
+    pop_token();
+  }
+  #endif
+  return e;
 }
 
 /*
@@ -253,18 +289,21 @@ ASTNode* statement()
 // program   : [ statement ] ("; " | EOL)
 ASTNode* program()
 {
-  ASTNode *l = statement();
+  ASTNode *l = 0;
+  need = false;
+  l = statement();
+  need = true;
   Token token = peek_token(); 
+#if 1
   if (token.str_ == ";" || token.str_ == "\n")
   {
     pop_token();
   }
-  #if 0
   else
   {
     err("program: should ; or eol", token.str_);
   }
-  #endif
+#endif
   return l;
 }
 
@@ -362,7 +401,7 @@ int main(int argc, char *argv[])
   lexer(); 
 
   ASTNode* root=0;
-  while ((root = program()))
+  while (tokens.size()>0 && (root = program()))
   {
     cout << "ast node type: " << root->type_str() << endl;
     root->print();
