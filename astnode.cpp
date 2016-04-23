@@ -23,7 +23,7 @@ void ASTNode::print()
 #ifdef PREORDER
     cout << token_.str_ << " "; // preorder
 #endif
-    for (int i=0 ; i < children_.size() ; ++i)
+    for (size_t i=0 ; i < children_.size() ; ++i)
     {
       children_[i]->print();
 #ifdef INORDER
