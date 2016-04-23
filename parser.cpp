@@ -14,7 +14,18 @@ using namespace std;
 #include "token.h"
 #include "op.h"
 
+ASTNode* expr();
+Precedence* next_op();
+ASTNode* do_shift(ASTNode* l, int prec);
+ASTNode* statement();
+
 #define OP_PRECEDENCE
+
+void err(const char *msg, const std::string &str)
+{
+  printf("%s, token: %s\n", msg, str.c_str());
+  exit(1);
+}
 
 std::map<std::string, Precedence*> operators;
 
@@ -52,31 +63,6 @@ bool is_token(const std::string &str)
 }
 
 
-ASTNode* factor()
-{
-  Token token = peek_token(); 
-  if (token.str_ == "(")
-  {
-    Token t = pop_token();
-    ASTNode *e = expression();
-    t = pop_token();
-    if (t.str_ != ")")
-    {
-      cout << "fail: should ')'" << endl;
-      exit(1);
-    }
-    return e;
-  }
-  else if (token.type_ == NUMBER || token.type_ == NAME) // number || variable name
-       {
-         Token t = pop_token();
-         return new ASTNode(t);
-       }
-       else
-       {
-       }
-  return 0;
-}
 
 ASTNode* term()
 {
@@ -106,6 +92,181 @@ ASTNode* term()
  *             | simple
  * program   : [ statement ] ("; " | EOL)
  */
+
+// primary   : "(" expr ")" | NUMBER | IDENTIFIER | STRING
+ASTNode* primary()
+{
+  Token token = peek_token(); 
+  if (token.str_ == "(")
+  {
+    Token t = pop_token();
+    ASTNode *e = expr();
+    t = pop_token();
+    if (t.str_ != ")")
+    {
+      cout << "fail: should ')'" << endl;
+      exit(1);
+    }
+    return e;
+  }
+  else if (token.type_ == NUMBER || token.type_ == NAME) // number || variable name
+       {
+         Token t = pop_token();
+         return new ASTNode(t);
+       }
+       else if (token.type_ == STRING)
+            {
+            }
+            else
+            {
+              err("primary: no match primer rule", token.str_);
+            }
+  return 0;
+}
+
+// factor    : "-" primary | primary
+ASTNode* factor()
+{
+  ASTNode *op = 0;
+
+  Token token = peek_token(); 
+  if (token.str_ == "-")
+  {
+    Token t = pop_token();
+    op = new ASTNode(t);
+    t.type_ = NEG;
+    ASTNode *p = primary();
+    op->add_child(p);
+  }
+  else
+  {
+    op = primary();
+  }
+
+  return op;
+}
+
+// expr      : factor { OP factor}
+ASTNode* expr()
+{
+  ASTNode *r = factor();
+  Precedence *next;
+
+  while((next = next_op()) != 0)
+  {
+    r = do_shift(r, next->value_);
+    // left = new ASTNode(left, , right);
+  }
+  return r;
+}
+
+// block     : "{" [ statement ] { ("; " | EOL) [ statement ] } "}"
+ASTNode* block()
+{
+  Token token = peek_token(); 
+  ASTNode *b = 0;
+
+  if (token.str_ == "{")
+  {
+    Token t = pop_token();
+    b = statement();
+    while(is_token(";") || is_token("\n"))
+    {
+      pop_token();
+
+      ASTNode *s = statement();
+      b->add_child(s);
+      if (token.str_ == "}")
+      {
+        Token t = pop_token();
+      }
+      else
+      {
+        err("block: should '}'", token.str_);
+      }
+    }
+  }
+  return b;
+}
+
+// simple    : expr
+ASTNode* simple()
+{
+  return expr();
+}
+
+/*
+ * statement :   "if" expr block [ "else" block ] 
+ *             | "while" expr block
+ *             | simple
+ */
+ASTNode* statement()
+{
+  ASTNode *s_node = 0; // statement node
+  Token token = peek_token(); 
+
+  if (token.str_ == "if")
+  {
+    Token t = pop_token();
+    t.type_ = IF;
+    s_node = new ASTNode(t);
+    ASTNode *e = expr();
+
+    ASTNode *then_b = block();
+
+
+    s_node->add_child(e, then_b);
+
+    Token token = peek_token(); 
+    if (token.str_ == "else")
+    {
+      Token t = pop_token();
+      ASTNode *else_b = block();
+      s_node->add_child(else_b);
+    }
+    #if 0
+    else
+    {
+      err("statement: should 'else'", token.str_);
+    }
+    #endif
+
+  }
+  else if (token.str_ == "while")
+       {
+         Token t = pop_token();
+         t.type_ = WHILE;
+         s_node = new ASTNode(t);
+
+         ASTNode *e = expr();
+         ASTNode *b = block();
+         s_node->add_child(e, b);
+       }
+       else // simple
+       {
+         s_node = simple();
+       }
+
+  return s_node;
+}
+
+// program   : [ statement ] ("; " | EOL)
+ASTNode* program()
+{
+  ASTNode *l = statement();
+  Token token = peek_token(); 
+  if (token.str_ == ";" || token.str_ == "\n")
+  {
+    pop_token();
+  }
+  #if 0
+  else
+  {
+    err("program: should ; or eol", token.str_);
+  }
+  #endif
+  return l;
+}
 
 // operator precedence parsing
 /*
@@ -191,17 +352,22 @@ ASTNode* expression()
 #ifdef DEBUG_PARSER
 int main(int argc, char *argv[])
 {
-  operators.insert({"+", new Precedence{1, true}});
-  operators.insert({"*", new Precedence{3, true}});
-  operators.insert({"=", new Precedence{0, false}});
-  operators.insert({"==", new Precedence{-1, true}});
+  operators.insert({"=", new Precedence{1, false}});
+  operators.insert({"==", new Precedence{2, true}});
+  operators.insert({">", new Precedence{2, false}});
+  operators.insert({"+", new Precedence{3, true}});
+  operators.insert({"*", new Precedence{4, true}});
 
   int lexer();
   lexer(); 
-  ASTNode* root = expression();
-  cout << "ast node type: " << root->type_str() << endl;
-  root->print();
-  cout << endl;
+
+  ASTNode* root=0;
+  while ((root = program()))
+  {
+    cout << "ast node type: " << root->type_str() << endl;
+    root->print();
+    cout << endl;
+  }
 #if 0
   while(1)
   {
