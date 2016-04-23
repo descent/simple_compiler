@@ -136,7 +136,8 @@ int get_token(Token &token)
   do
   {
     c = getchar_la();
-  }while(c==' ');
+  }while(c == ' ');
+  //}while(isspace(c));
 
   if (c == EOF)
     return EOF;
@@ -200,6 +201,12 @@ int get_token(Token &token)
              break;
            }
            #endif
+           case ';':
+           {
+             token.str_ = ";";
+             token.type_ = SEP;
+             break;
+           }
            case '{':
            {
              token.str_ = "{";
