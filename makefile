@@ -4,7 +4,7 @@
 # test lexer
 # make clean; make DLEXER=1 lexer
 
-CXXFLAGS=-g -std=c++11
+CXXFLAGS=-g -std=c++11 -Wall
 ifdef DLEXER
 CXXFLAGS+= -DDEBUG_LEXER
 endif
