@@ -232,9 +232,15 @@ ASTNode* simple()
 }
 
 /*
- * statement :   "if" "(" expr ")" block [ "else" block ] 
- *             | "while" expr block
- *             | simple
+ * statement :   "if" expr block [ "else" block ] 
+ *               | "while" expr block
+ *               | simple
+ */
+
+/*
+ * modify - statement :   "if" "(" expr ")" block [ "else" block ] 
+ *                        | "while" "(" expr ")" block
+ *                        | simple
  */
 ASTNode* statement()
 {
@@ -293,8 +299,28 @@ ASTNode* statement()
          Token t = pop_token();
          t.type_ = WHILE;
          s_node = new ASTNode(t);
+         ASTNode *e = 0;
+         t = peek_token(); 
+         if (t.str_ == "(")
+         {
+           pop_token();
+           e = expr();
+         }
+         else
+         {
+           err("statement: should '('", t.str_);
+         }
 
-         ASTNode *e = expr();
+         t = peek_token(); 
+         if (t.str_ == ")")
+         {
+           pop_token();
+         }
+         else
+         {
+           err("statement: should ')'", t.str_);
+         }
+
          ASTNode *b = block();
          s_node->add_child(e, b);
        }
