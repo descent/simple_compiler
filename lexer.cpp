@@ -136,7 +136,11 @@ int get_token(Token &token)
   do
   {
     c = getchar_la();
+#ifdef GET_EOL
+  }while(c == ' ');
+#else
   }while(isspace(c));
+#endif
 
   if (c == EOF)
     return EOF;
@@ -192,6 +196,32 @@ int get_token(Token &token)
              token.type_ = DIV;
              break;
            }
+#ifdef GET_EOL
+           case '\n':
+           {
+             token.str_ = "\n";
+             token.type_ = EOL;
+             break;
+           }
+#endif
+           case ';':
+           {
+             token.str_ = ";";
+             token.type_ = SEP;
+             break;
+           }
+           case '{':
+           {
+             token.str_ = "{";
+             token.type_ = SEP;
+             break;
+           }
+           case '}':
+           {
+             token.str_ = "}";
+             token.type_ = SEP;
+             break;
+           }
            case '(':
            {
              token.str_ = "(";
@@ -222,6 +252,7 @@ int get_token(Token &token)
            }
            default:
            {
+             token.str_.push_back(c); 
              return ERR;
            }
          }
@@ -251,11 +282,19 @@ int lexer()
     if (ret == OK)
     {
       tokens.push_back(token);
-      cout << "token: " << token.str_ << endl;
+#ifdef DEBUG_LEXER
+      if (token.str_ == "\n")
+        cout << "token: eol" << endl;
+      else
+        cout << "token: " << token.str_ << endl;
+#endif
     }
     else
     {
-      cout << "token error" << endl;
+      if (token.str_ == "\n")
+        cout << "error token: eol" << endl;
+      else
+      cout << "error token: " << token.str_ << endl;
     }
     token.str_.clear();
   }

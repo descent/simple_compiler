@@ -18,6 +18,11 @@ class ASTNode
     {
       type_ = token_.type_;
     }
+    bool add_child(ASTNode* l) // for - (NEG), ex: -52
+    {
+      children_.push_back(l);
+      return true;
+    }
     bool add_child(ASTNode* l, ASTNode* r)
     {
       children_.push_back(l);
@@ -30,7 +35,7 @@ class ASTNode
     }
     const char* type_str() const
     {
-      const char *type_str[]={"INVALID", "SEP", "ASSIGN", "EQUAL", "NAME", "ADD", "MIN", "MUL", "DIV", "GREAT", "NUMBER"};
+      const char *type_str[]={"INVALID", "SEP", "NEG", "ASSIGN", "EQUAL", "NAME", "ADD", "MIN", "MUL", "DIV", "GREAT", "NUMBER", "STRING", "IF", "WHILE", "EOL"};
 
       if (INVALID <= type_ && type_ < LAST)
       {
