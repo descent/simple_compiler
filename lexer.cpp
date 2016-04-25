@@ -166,6 +166,12 @@ int get_token(Token &token)
        {
          switch (c)
          {
+           case '<':
+           {
+             token.str_ = "<";
+             token.type_ = LESS;
+             break;
+           }
            case '>':
            {
              token.str_ = ">";
