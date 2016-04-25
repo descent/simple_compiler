@@ -19,7 +19,7 @@ endif
 parser: parser.o astnode.o token.o lexer.o op.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-parser.o: parser.cpp astnode.h mytype.h token.h parser.h op.h
+parser.o: parser.cpp astnode.h mytype.h token.h parser.h op.h lexer.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 parser_4op: parser_4op.o astnode.o token.o lexer.o op.o
@@ -34,7 +34,7 @@ op.o: op.cpp
 
 lexer: lexer.o token.o
 	$(CXX) $(CXXFLAGS) -o $@ $<
-lexer.o: lexer.cpp mytype.h token.h
+lexer.o: lexer.cpp mytype.h token.h lexer.h
 	$(CXX) $(CXXFLAGS) -c $<
 token.o: token.cpp token.h mytype.h
 	$(CXX) $(CXXFLAGS) -c $<
