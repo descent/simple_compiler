@@ -487,29 +487,6 @@ int main(int argc, char *argv[])
   cout << endl;
 #endif
 
-
-#if 0
-  while(1)
-  {
-    string token;
-
-    //int ret = get_token(token);
-    int ret = get_se_token(token);
-    if (ret == EOF)
-    {
-      break;
-    }
-    if (ret == OK)
-    {
-      cout << "token: " << token << endl;
-    }
-    else
-    {
-      cout << "token error" << endl;
-    }
-    token.clear();
-  }
-#endif
   return 0;
 }
 #endif
