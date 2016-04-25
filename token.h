@@ -8,7 +8,7 @@
 class Token
 {
   public:
-    Token(const std::string str);
+    Token(const std::string str, ASTType type=INVALID);
     Token(){type_ = INVALID;}
     bool valid() const
     {

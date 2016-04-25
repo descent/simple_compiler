@@ -1,7 +1,7 @@
 #include "token.h"
 
-Token::Token(const std::string str):str_(str)
+Token::Token(const std::string str, ASTType type) : str_(str), type_(type)
 {
 }
 
-Token invalid_token;
+Token invalid_token("invalid_token");
