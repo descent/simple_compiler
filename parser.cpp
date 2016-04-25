@@ -451,24 +451,42 @@ int main(int argc, char *argv[])
 
   lexer(); 
 
-  ASTNode* root=0;
-  while (tokens.size()>0 && (root = program()))
+  Token root_token("root");
+  ASTNode root(root_token);
+  ASTNode* n=0;
+  while (tokens.size()>0 && (n = program()))
   {
+    if (n)
+      root.add_child(n);
+
+#if 0
+    if (n)
+    {
+      root->add_child(n);
 #ifndef PRINT_TREE_STRING
-    cout << "ast node type: " << root->type_str() << endl;
-    root->print();
+      cout << "ast node type: " << root->type_str() << endl;
+      root->print();
+      cout << endl;
+#else
+      cout << "\\tree";
+      root->print_tree();
+    }
     cout << endl;
+#endif
 #endif
   }
 
+
 #ifdef PRINT_TREE_STRING
-  if (root)
-  {
-    cout << "\\tree";
-    root->print_tree();
-  }
+  cout << "\\tree";
+  root.print_tree();
+  cout << endl;
+#else
+  cout << "ast node type: " << root.type_str() << endl;
+  root.print();
   cout << endl;
 #endif
+
 
 #if 0
   while(1)
