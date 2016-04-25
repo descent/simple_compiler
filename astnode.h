@@ -46,6 +46,9 @@ class ASTNode
         return "unknown";
       }
     }
+
+    // for tool tree to print AST
+    void print_tree();
     void print();
   private:
     ASTType type_;

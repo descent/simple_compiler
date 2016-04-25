@@ -11,6 +11,23 @@ ASTNode::ASTNode(ASTType asttype)
 {
 }
 
+void ASTNode::print_tree()
+{
+  if (children_.size() == 0) // leaf node
+  {
+    cout << "(" << token_.str_ << ")";
+  }
+  else
+  {
+    cout << "( " << token_.str_;
+    for (size_t i=0 ; i < children_.size() ; ++i)
+    {
+      children_[i]->print_tree();
+    }
+    cout << ")";
+  }
+}
+
 void ASTNode::print()
 {
   if (children_.size() == 0) // leaf node
