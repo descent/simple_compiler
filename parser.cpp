@@ -7,6 +7,9 @@
 #include <map>
 #include <string>
 
+#define PRINT_TREE_STRING
+//#define WARN_MSG
+
 using namespace std;
 
 bool need = true;
@@ -128,7 +131,11 @@ ASTNode* primary()
               if (need == true)
                 err("primary: no match primer rule", token.str_);
               else
+                #ifdef WARN_MSG
                 err("primary: warn!!", token.str_, false);
+                #else
+                ;
+                #endif
             }
   return 0;
 }
@@ -454,10 +461,22 @@ int main(int argc, char *argv[])
   ASTNode* root=0;
   while (tokens.size()>0 && (root = program()))
   {
+#ifndef PRINT_TREE_STRING
     cout << "ast node type: " << root->type_str() << endl;
     root->print();
     cout << endl;
+#endif
   }
+
+#ifdef PRINT_TREE_STRING
+  if (root)
+  {
+    cout << "\\tree";
+    root->print_tree();
+  }
+  cout << endl;
+#endif
+
 #if 0
   while(1)
   {
