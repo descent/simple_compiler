@@ -7,7 +7,7 @@
 #include <deque>
 
 #include "mytype.h"
-#include "token.h"
+#include "lexer.h"
 
 using namespace std;
 
@@ -296,7 +296,7 @@ int lexer()
       else
       cout << "error token: " << token.str_ << endl;
     }
-    token.str_.clear();
+    // token.str_.clear();
   }
 
   return 0;
