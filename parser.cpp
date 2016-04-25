@@ -14,15 +14,10 @@ using namespace std;
 
 bool need = true;
 
-#include "astnode.h"
+#include "lexer.h"
 #include "parser.h"
 #include "token.h"
-#include "op.h"
 
-ASTNode* expr();
-Precedence* next_op();
-ASTNode* do_shift(ASTNode* l, int prec);
-ASTNode* statement();
 
 #define OP_PRECEDENCE
 
@@ -38,7 +33,6 @@ void err(const char *msg, const std::string &str, bool end=true)
 
 std::map<std::string, Precedence*> operators;
 
-extern std::deque <Token> tokens;
 
 
 
@@ -455,7 +449,6 @@ int main(int argc, char *argv[])
   operators.insert({"+", new Precedence{3, true}});
   operators.insert({"*", new Precedence{4, true}});
 
-  int lexer();
   lexer(); 
 
   ASTNode* root=0;
