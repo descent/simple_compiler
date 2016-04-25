@@ -9,6 +9,7 @@
 
 #define PRINT_TREE_STRING
 //#define WARN_MSG
+//#define DEBUG_MSG
 
 using namespace std;
 
@@ -373,7 +374,12 @@ Precedence* next_op()
   if (it != operators.end())
     return it->second;
   else
+  {
+#ifdef DEBUG_MSG
+    cout << "cannot find op: " << t.str_ << endl;
+#endif
     return 0;
+  }
 }
 
 bool right_is_expr(int prec, Precedence* next_prec)
@@ -439,6 +445,18 @@ ASTNode* expression()
 
 #endif
 
+ASTNode *get_root()
+{
+  static ASTNode *root = 0;
+
+  if (root == 0)
+  {
+    Token root_token("root", ROOT);
+    root = new ASTNode(root_token);
+  }
+
+  return root;
+}
 
 #ifdef DEBUG_PARSER
 int main(int argc, char *argv[])
@@ -446,18 +464,18 @@ int main(int argc, char *argv[])
   operators.insert({"=", new Precedence{1, false}});
   operators.insert({"==", new Precedence{2, true}});
   operators.insert({">", new Precedence{2, false}});
+  operators.insert({"<", new Precedence{2, false}});
   operators.insert({"+", new Precedence{3, true}});
   operators.insert({"*", new Precedence{4, true}});
 
   lexer(); 
 
-  Token root_token("root");
-  ASTNode root(root_token);
+  ASTNode *root = get_root();
   ASTNode* n=0;
   while (tokens.size()>0 && (n = program()))
   {
     if (n)
-      root.add_child(n);
+      root->add_child(n);
 
 #if 0
     if (n)
@@ -479,11 +497,11 @@ int main(int argc, char *argv[])
 
 #ifdef PRINT_TREE_STRING
   cout << "\\tree";
-  root.print_tree();
+  root->print_tree();
   cout << endl;
 #else
-  cout << "ast node type: " << root.type_str() << endl;
-  root.print();
+  cout << "ast node type: " << root->type_str() << endl;
+  root->print();
   cout << endl;
 #endif
 
