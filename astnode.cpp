@@ -20,9 +20,10 @@ void ASTNode::print_tree()
   else
   {
     cout << "( " << token_.str_;
-    for (size_t i=0 ; i < children_.size() ; ++i)
+    //for (std::vector<ASTNode*>::size_type i=0 ; i < children_.size() ; ++i)
+    for (auto i : children_)
     {
-      children_[i]->print_tree();
+      i->print_tree();
     }
     cout << ")";
   }
@@ -40,7 +41,7 @@ void ASTNode::print()
 #ifdef PREORDER
     cout << token_.str_ << " "; // preorder
 #endif
-    for (size_t i=0 ; i < children_.size() ; ++i)
+    for (std::vector<ASTNode*>::size_type i=0 ; i < children_.size() ; ++i)
     {
       children_[i]->print();
 #ifdef INORDER
