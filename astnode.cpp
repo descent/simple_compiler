@@ -7,10 +7,6 @@
 using std::cout;
 using std::endl;
 
-ASTNode::ASTNode(ASTType asttype)
-{
-}
-
 void ASTNode::print_tree()
 {
   if (children_.size() == 0) // leaf node
