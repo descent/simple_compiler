@@ -23,4 +23,6 @@ class Token
 };
 
 extern Token invalid_token;
+extern Token then_block;
+extern Token else_block;
 #endif
