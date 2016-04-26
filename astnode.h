@@ -12,10 +12,20 @@
 class ASTNode
 {
   public:
-    ASTNode(ASTType asttype);
     //ASTNode(const ASTNode* l, const ASTNode* op, const ASTNode* r);
+    ASTNode(){}
     ASTNode(const Token &token):token_(token)
     {
+    }
+    bool add_child(const std::vector<ASTNode*> &children)
+    {
+      for (auto i : children)
+        children_.push_back(i);
+      return true;
+    }
+    void set_token(const Token &t)
+    {
+      token_ = t;
     }
     bool add_child(ASTNode* l) // for - (NEG), ex: -52
     {
@@ -34,7 +44,7 @@ class ASTNode
     }
     const char* type_str() const
     {
-      const char *type_str[]={"INVALID", "ROOT", "SEP", "NEG", "ASSIGN", "EQUAL", "NAME", "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", "NUMBER", "STRING", "IF", "WHILE", "EOL"};
+      const char *type_str[]={"INVALID", "ROOT", "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", "NAME", "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", "NUMBER", "STRING", "IF", "WHILE", "EOL"};
 
       if (INVALID <= type() && type() < LAST)
       {
@@ -45,6 +55,10 @@ class ASTNode
         return "unknown";
       }
     }
+    const std::vector<ASTNode*> &children() const
+    {
+      return children_;
+    }
 
     // for tool tree to print AST
     void print_tree();
@@ -52,7 +66,6 @@ class ASTNode
   private:
     std::vector<ASTNode*> children_;
     Token token_;
-    
 };
 
 #endif
