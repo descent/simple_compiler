@@ -176,14 +176,17 @@ ASTNode* expr()
 ASTNode* block()
 {
   Token token = peek_token(); 
-  ASTNode *b = 0;
+
+  ASTNode *b = new ASTNode();
 
   if (token.str_ == "{")
   {
     pop_token();
 
     need = false;
-    b = statement();
+    ASTNode *s = statement();
+    if (s)
+      b->add_child(s);
     need = true;
     while(is_token(";") || is_token("\n"))
     {
@@ -191,6 +194,9 @@ ASTNode* block()
 
       need = false;
       ASTNode *s = statement();
+      if (s)
+        b->add_child(s);
+      #if 0
       need = true;
       if (s==0)
         continue;
@@ -198,6 +204,7 @@ ASTNode* block()
         b->add_child(s);
       else
         b=s; // s is possiable 0??
+      #endif
     }
 
     Token t = peek_token();
@@ -277,15 +284,17 @@ ASTNode* statement()
     }
 
     ASTNode *then_b = block();
-
+    then_b->set_token(then_block);
 
     s_node->add_child(e, then_b);
+    //s_node->add_child(then_b->children());
 
     Token token = peek_token(); 
     if (token.str_ == "else")
     {
       Token t = pop_token();
       ASTNode *else_b = block();
+      else_b->set_token(else_block);
       s_node->add_child(else_b);
     }
     #if 0
