@@ -11,6 +11,7 @@
 
 using namespace std;
 
+#define DEBUG_LEXER_MSG
 
 // printable ascii, but not (, )
 static inline int isgraph_ex(int c) 
@@ -288,7 +289,7 @@ int lexer()
     if (ret == OK)
     {
       tokens.push_back(token);
-#ifdef DEBUG_LEXER
+#ifdef DEBUG_LEXER_MSG
       if (token.str_ == "\n")
         cout << "token: eol" << endl;
       else
