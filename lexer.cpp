@@ -211,6 +211,12 @@ int get_token(Token &token)
              break;
            }
 #endif
+           case ',':
+           {
+             token.str_ = ",";
+             token.type_ = SEP;
+             break;
+           }
            case ';':
            {
              token.str_ = ";";
