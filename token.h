@@ -17,6 +17,10 @@ class Token
       else
         return true;
     }
+    const std::string& str() const
+    {
+      return str_;
+    }
     ASTType type() const
     {
       return type_;
