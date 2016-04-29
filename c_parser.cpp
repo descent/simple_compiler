@@ -20,6 +20,23 @@ bool need = true;
 #include "parser.h"
 #include "token.h"
 
+// ref: http://lotabout.me/2016/write-a-C-interpreter-5/
+/*
+ * program ::= {global_declaration}+
+ * modify program ::= global_declaration {global_declaration}
+ * global_declaration ::= enum_decl | variable_decl | function_decl
+ * enum_decl ::= 'enum' [id] '{' id ['=' 'num'] {',' id ['=' 'num'] '}'
+ * variable_decl ::= type {'*'} id { ',' {'*'} id } ';'
+ * function_decl ::= type {'*'} id '(' parameter_decl ')' '{' body_decl '}'
+ * parameter_decl ::= type {'*'} id {',' type {'*'} id}
+ * body_decl ::= {variable_decl}, {statement}
+ * statement ::= non_empty_statement | empty_statement
+ * non_empty_statement ::= if_statement | while_statement | '{' statement '}'
+ *                      | 'return' expression | expression ';'
+ * if_statement ::= 'if' '(' expression ')' statement ['else' non_empty_statement]
+ * while_statement ::= 'while' '(' expression ')' non_empty_statement
+*/
+
 
 #define OP_PRECEDENCE
 
@@ -250,6 +267,7 @@ ASTNode* simple()
   return e;
 }
 
+#if 0
 /*
  * statement :   "if" expr block [ "else" block ] 
  *               | "while" expr block
@@ -352,15 +370,147 @@ ASTNode* statement()
 
   return s_node;
 }
+#endif
 
 bool is_token_type(ASTType type)
 {
 }
 
-ASTNode* func_decl()
+ASTNode* non_empty_statement()
 {
 }
 
+ASTNode* empty_statement()
+{
+}
+
+// statement ::= non_empty_statement | empty_statement
+ASTNode* statement()
+{
+    // there are 6 kinds of statements here:
+    // 1. if (...) <statement> [else <statement>]
+    // 2. while (...) <statement>
+    // 3. { <statement> }
+    // 4. return xxx;
+    // 5. <empty statement>;
+    // 6. expression; (expression end with semicolon)
+}
+
+ASTNode* variable_decl()
+{
+}
+
+// body_decl ::= {variable_decl}, {statement}
+ASTNode* body_decl()
+{
+  ASTNode *var_decl = variable_decl();
+
+  while (is_token("}") == false)
+  {
+    statement();
+  }
+
+
+}
+
+// parameter_decl ::= type {'*'} id {',' type {'*'} id}
+ASTNode* parameter_decl()
+{
+  ASTNode *var_node = new ASTNode(var_token);
+
+  while(is_token("*"))
+  {
+    pop_token();
+  }
+  if (is_token(NAME))
+  {
+    Token t = pop_token();
+    ASTNode *v = new ASTNode(t);
+    var_node->add_child(v);
+  }
+
+  while(is_token(","))
+  {
+    pop_token();
+    while(is_token("*"))
+      pop_token();
+    if (is_token(NAME))
+    {
+      Token t = pop_token();
+      ASTNode *v = new ASTNode(t);
+      var_node->add_child(v);
+    }
+  }
+
+  return var_node;
+}
+
+// function_decl ::= type {'*'} id '(' parameter_decl ')' '{' body_decl '}'
+ASTNode* func_decl()
+{
+  ASTNode *func_node = new ASTNode(var_token);
+
+  while(is_token("*"))
+  {
+    pop_token();
+  }
+  if (is_token(NAME))
+  {
+    Token t = pop_token();
+  }
+  else
+  {
+    Token t = peek_token();
+    err("func_decl: should NAME\n", t.str());
+  }
+
+  if (is_token("("))
+  {
+    Token t = pop_token();
+  }
+  else
+  {
+    Token t = peek_token();
+    err("func_decl: should (\n", t.str());
+  }
+
+  ASTNode *func_para = parameter_decl();
+
+  if (is_token(")"))
+  {
+    Token t = pop_token();
+  }
+  else
+  {
+    Token t = peek_token();
+    err("func_decl: should )\n", t.str());
+  }
+
+  if (is_token("{"))
+  {
+    Token t = pop_token();
+  }
+  else
+  {
+    Token t = peek_token();
+    err("func_decl: should {\n", t.str());
+  }
+
+  ASTNode *func_body = body_decl();
+
+  if (is_token("}"))
+  {
+    Token t = pop_token();
+  }
+  else
+  {
+    Token t = peek_token();
+    err("func_decl: should }\n", t.str());
+  }
+
+}
+
+// variable_decl ::= type {'*'} id { ',' {'*'} id } ';'
 ASTNode* var_decl()
 {
   ASTNode *var_node = new ASTNode(var_token);
@@ -403,6 +553,7 @@ ASTNode* enum_decl()
 {
 }
 
+// global_declaration ::= enum_decl | variable_decl | function_decl
 ASTNode* global_declaration()
 {
   ASTNode* g;
@@ -432,24 +583,9 @@ ASTNode* global_declaration()
   return g;
 }
 
-// ref: http://lotabout.me/2016/write-a-C-interpreter-5/
-/*
- * program ::= {global_declaration}+
- * modify program ::= global_declaration {global_declaration}
- * global_declaration ::= enum_decl | variable_decl | function_decl
- * enum_decl ::= 'enum' [id] '{' id ['=' 'num'] {',' id ['=' 'num'] '}'
- * variable_decl ::= type {'*'} id { ',' {'*'} id } ';'
- * function_decl ::= type {'*'} id '(' parameter_decl ')' '{' body_decl '}'
- * parameter_decl ::= type {'*'} id {',' type {'*'} id}
- * body_decl ::= {variable_decl}, {statement}
- * statement ::= non_empty_statement | empty_statement
- * non_empty_statement ::= if_statement | while_statement | '{' statement '}'
- *                      | 'return' expression | expression ';'
- * if_statement ::= 'if' '(' expression ')' statement ['else' non_empty_statement]
- * while_statement ::= 'while' '(' expression ')' non_empty_statement
-*/
 
-// program : global_declaration {global_declaration}
+// program ::= {global_declaration}+
+// modify program ::= global_declaration {global_declaration}
 ASTNode* program()
 {
   ASTNode *p = new ASTNode(prog_token);
