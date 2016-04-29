@@ -17,6 +17,11 @@ class Token
       else
         return true;
     }
+    ASTType type() const
+    {
+      return type_;
+    }
+
     std::string str_;
     ASTType type_;
   private:
@@ -25,4 +30,6 @@ class Token
 extern Token invalid_token;
 extern Token then_block;
 extern Token else_block;
+extern Token var_token;
+extern Token prog_token;
 #endif
