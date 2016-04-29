@@ -15,11 +15,16 @@ CXXFLAGS+= -DDEBUG_PARSER
 endif
 
 
+c_parser: c_parser.o astnode.o token.o lexer.o op.o
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 parser: parser.o astnode.o token.o lexer.o op.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 parser.o: parser.cpp astnode.h mytype.h token.h parser.h op.h lexer.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+c_parser.o: c_parser.cpp astnode.h mytype.h token.h parser.h op.h lexer.h
 	$(CXX) $(CXXFLAGS) -c $<
 
 parser_4op: parser_4op.o astnode.o token.o lexer.o op.o
