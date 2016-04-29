@@ -11,7 +11,7 @@
 
 using namespace std;
 
-#define DEBUG_LEXER_MSG
+//#define DEBUG_LEXER_MSG
 
 // printable ascii, but not (, )
 static inline int isgraph_ex(int c) 
