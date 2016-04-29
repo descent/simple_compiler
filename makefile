@@ -1,4 +1,5 @@
 # test parser
+# make clean; make DPARSER=1 c_parser
 # make clean; make DPARSER=1 
 # make clean; make DPARSER=1 parser_4op
 
@@ -13,6 +14,9 @@ endif
 ifdef DPARSER
 CXXFLAGS+= -DDEBUG_PARSER
 endif
+
+all: 
+	make DPARSER=1 c_parser
 
 
 c_parser: c_parser.o astnode.o token.o lexer.o op.o
