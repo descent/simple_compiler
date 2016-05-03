@@ -430,10 +430,11 @@ ASTNode* body_decl()
 // parameter_decl ::= type {'*'} id {',' type {'*'} id}
 ASTNode* parameter_decl()
 {
-  ASTNode *var_node = new ASTNode(var_token);
+  ASTNode *var_node = 0;
 
   if(is_token("int") || is_token("char"))
   {
+    var_node = new ASTNode(para_token);
     pop_token();
 
   while(is_token("*"))
@@ -450,22 +451,34 @@ ASTNode* parameter_decl()
   while(is_token(","))
   {
     pop_token();
-    while(is_token("*"))
-      pop_token();
-    if (is_token(NAME))
+
+    if(is_token("int") || is_token("char"))
     {
-      Token t = pop_token();
-      ASTNode *v = new ASTNode(t);
-      var_node->add_child(v);
+      pop_token();
+      while(is_token("*"))
+        pop_token();
+      if (is_token(NAME))
+      {
+        Token t = pop_token();
+        ASTNode *v = new ASTNode(t);
+        var_node->add_child(v);
+      }
+    }
+    else
+    {
+      Token t = peek_token();
+      err("parameter_decl: should be type (ex: int or char)", t.str());
     }
   }
 
   }
+  #if 0
   else
   {
     Token token = peek_token(); 
     err("parameter_decl: should type(ex: int or char)", token.str());
   }
+  #endif
 
   return var_node;
 }
@@ -473,7 +486,7 @@ ASTNode* parameter_decl()
 // function_decl ::= type {'*'} id '(' parameter_decl ')' '{' body_decl '}'
 ASTNode* func_decl()
 {
-  ASTNode *func_node = new ASTNode(var_token);
+  ASTNode *func_node = new ASTNode(func_token);
 
   while(is_token("*"))
   {
@@ -520,6 +533,8 @@ ASTNode* func_decl()
     Token t = peek_token();
     err("func_decl: should {\n", t.str());
   }
+  if (func_para)
+    func_node->add_child(func_para);
 
   ASTNode *func_body = body_decl();
   if (func_body)
