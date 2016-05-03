@@ -405,10 +405,9 @@ ASTNode* variable_decl()
 // body_decl ::= {variable_decl}, {statement}
 ASTNode* body_decl()
 {
-  ASTNode *body_node = 0;
-  if(is_token("int") || is_token("char"))
+  ASTNode *body_node = new ASTNode(func_body_token);
+  while(is_token("int") || is_token("char"))
   {
-    body_node = new ASTNode(var_token);
     pop_token();
     ASTNode *v = var_decl();
     if (v)
