@@ -55,12 +55,12 @@ std::map<std::string, Precedence*> operators;
 
 
 
-Token peek_token()
+Token peek_token(int i=0)
 {
   if (tokens.size() == 0)
     return invalid_token;
   else
-    return tokens[0];
+    return tokens[i];
 }
 
 Token pop_token()
@@ -394,6 +394,8 @@ ASTNode* statement()
     // 4. return xxx;
     // 5. <empty statement>;
     // 6. expression; (expression end with semicolon)
+  ASTNode* s = 0;
+  return s;
 }
 
 ASTNode* variable_decl()
@@ -403,20 +405,36 @@ ASTNode* variable_decl()
 // body_decl ::= {variable_decl}, {statement}
 ASTNode* body_decl()
 {
-  ASTNode *var_decl = variable_decl();
+  ASTNode *body_node = 0;
+  if(is_token("int") || is_token("char"))
+  {
+    body_node = new ASTNode(var_token);
+    pop_token();
+    ASTNode *v = var_decl();
+    if (v)
+      body_node->add_child(v);
+  }
 
   while (is_token("}") == false)
   {
-    statement();
+    body_node = new ASTNode(var_token); // new statement node
+    pop_token();
+    ASTNode *s = statement();
+    if (s)
+      body_node->add_child(s);
   }
 
-
+  return body_node;
 }
 
 // parameter_decl ::= type {'*'} id {',' type {'*'} id}
 ASTNode* parameter_decl()
 {
   ASTNode *var_node = new ASTNode(var_token);
+
+  if(is_token("int") || is_token("char"))
+  {
+    pop_token();
 
   while(is_token("*"))
   {
@@ -440,6 +458,13 @@ ASTNode* parameter_decl()
       ASTNode *v = new ASTNode(t);
       var_node->add_child(v);
     }
+  }
+
+  }
+  else
+  {
+    Token token = peek_token(); 
+    err("parameter_decl: should type(ex: int or char)", token.str());
   }
 
   return var_node;
@@ -497,6 +522,9 @@ ASTNode* func_decl()
   }
 
   ASTNode *func_body = body_decl();
+  if (func_body)
+    func_node->add_child(func_body);
+    
 
   if (is_token("}"))
   {
@@ -508,6 +536,7 @@ ASTNode* func_decl()
     err("func_decl: should }\n", t.str());
   }
 
+  return func_node;
 }
 
 // variable_decl ::= type {'*'} id { ',' {'*'} id } ';'
@@ -566,13 +595,20 @@ ASTNode* global_declaration()
   else if(is_token("int") || is_token("char"))
        {
          pop_token();
-         if (is_token("(")) // function decl
+         if (is_token(NAME)) 
          {
-           func_decl();
+           Token t = peek_token(1); // ll(1)
+           if (t.str() == "(")
+           {
+             g = func_decl();
+           }
+           else // variable decl
+             g = var_decl();
          }
-         else // variable decl
+         else 
          {
-           g = var_decl();
+           Token t = peek_token();
+           err("global_declaration: should var name", t.str());
          }
        }
        else
