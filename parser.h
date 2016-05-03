@@ -4,6 +4,7 @@
 #include "astnode.h"
 #include "op.h"
 
+ASTNode* var_decl();
 ASTNode* expression();
 ASTNode* term();
 ASTNode* factor();
