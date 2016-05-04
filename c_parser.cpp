@@ -151,7 +151,7 @@ ASTNode* primary()
             else
             {
               if (need == true)
-                err("primary: no match primer rule", token.str_);
+                err("primary: no match primer rule", token.str());
               else
                 #ifdef WARN_MSG
                 err("primary: warn!!", token.str_, false);
@@ -200,6 +200,7 @@ ASTNode* expr()
 
 // block     : "{" [ statement ] { (";" | EOL) [ statement ] } "}"
 // modify - block     : "{" [ statement ] { ";" [ statement ] } "}"
+// modify 2 - block     : "{" { statement } "}"
 ASTNode* block()
 {
   Token token = peek_token(); 
@@ -209,12 +210,24 @@ ASTNode* block()
   if (token.str_ == "{")
   {
     pop_token();
+  
+    while(is_token("}") == false)
+    {
+      need = false;
+      ASTNode *s = statement();
+      need = true;
+      if (s)
+        b->add_child(s);
+    }
 
+
+#if 0
     need = false;
     ASTNode *s = statement();
     if (s)
       b->add_child(s);
     need = true;
+
     while(is_token(";") || is_token("\n"))
     {
       pop_token();
@@ -233,9 +246,9 @@ ASTNode* block()
         b=s; // s is possiable 0??
       #endif
     }
-
+#endif
     Token t = peek_token();
-    if (t.str_ == "}")
+    if (t.str() == "}")
     {
       Token t = pop_token();
     }
@@ -267,7 +280,7 @@ ASTNode* simple()
   return e;
 }
 
-#if 0
+#if 1
 /*
  * statement :   "if" expr block [ "else" block ] 
  *               | "while" expr block
@@ -277,7 +290,7 @@ ASTNode* simple()
 /*
  * modify - statement :   "if" "(" expr ")" block [ "else" block ] 
  *                        | "while" "(" expr ")" block
- *                        | simple
+ *                        | simple ";"
  */
 ASTNode* statement()
 {
@@ -366,6 +379,16 @@ ASTNode* statement()
        else // simple
        {
          s_node = simple();
+         if (is_token(";"))
+         {
+           pop_token();
+         }
+         else
+         {
+           Token t = peek_token();
+           err("statement|simple: should be ;", t.str());
+         }
+
        }
 
   return s_node;
@@ -384,6 +407,7 @@ ASTNode* empty_statement()
 {
 }
 
+#if 0
 // statement ::= non_empty_statement | empty_statement
 ASTNode* statement()
 {
@@ -397,6 +421,7 @@ ASTNode* statement()
   ASTNode* s = 0;
   return s;
 }
+#endif
 
 ASTNode* variable_decl()
 {
@@ -416,8 +441,8 @@ ASTNode* body_decl()
 
   while (is_token("}") == false)
   {
-    body_node = new ASTNode(var_token); // new statement node
-    pop_token();
+    //body_node = new ASTNode(var_token); // new statement node
+    //pop_token();
     ASTNode *s = statement();
     if (s)
       body_node->add_child(s);
