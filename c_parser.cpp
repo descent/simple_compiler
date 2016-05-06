@@ -147,13 +147,15 @@ ASTNode* primary()
     }
     return e;
   }
-  else if (token.type_ == NUMBER || token.type_ == NAME) // number || variable name
+  else if (token.type() == NUMBER || token.type() == NAME) // number || variable name
        {
          Token t = pop_token();
          return new ASTNode(t);
        }
-       else if (token.type_ == STRING)
+       else if (token.type() == STRING)
             {
+              Token t = pop_token();
+              return new ASTNode(t);
             }
             else
             {
