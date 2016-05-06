@@ -93,6 +93,13 @@ bool is_token(const std::string &str)
     return false;
 }
 
+bool is_type()
+{
+  if(is_token("int") || is_token("char"))
+    return true;
+  else
+    return false;
+}
 
 
 ASTNode* term()
