@@ -643,9 +643,19 @@ ASTNode* global_declaration()
   else if(is_token("int") || is_token("char"))
        {
          pop_token();
-         if (is_token(NAME)) 
+         int skip_start = 0; // skip *, **, *** ...
+         Token t = peek_token(skip_start); 
+
+         while (t.str() == "*")
          {
-           Token t = peek_token(1); // ll(1)
+           ++skip_start;
+           t = peek_token(skip_start); 
+         }
+
+         if (t.type()==NAME)
+         {
+           ++skip_start;
+           Token t = peek_token(skip_start); // ll(n)
            if (t.str() == "(")
            {
              g = func_decl();
