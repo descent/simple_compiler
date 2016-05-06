@@ -13,6 +13,14 @@ using namespace std;
 
 //#define DEBUG_LEXER_MSG
 
+static inline int isascii_ex(int c) 
+{
+  if (c == '"')
+    return 0;
+  else
+    return isascii(c);
+}
+
 // printable ascii, but not (, )
 static inline int isgraph_ex(int c) 
 {
@@ -37,6 +45,38 @@ int getchar_la()
   }
   else
     return getchar();
+}
+
+// " asdf "
+int get_string_token(string &token)
+{
+  int c;
+
+  do
+  {
+    c = getchar_la();
+  }while(isspace(c));
+
+  do
+  {
+    token.push_back(c); 
+    c = getchar_la();
+  }while (isascii_ex(c));
+
+  if (c=='"')
+  {
+    //token.push_back(c); 
+    return OK;
+  }
+  else
+  {
+    printf("should \"\n");
+    if (c != EOF)
+      la = c;
+    return ERR;
+  }
+
+  return OK; 
 }
 
 int get_token(string &token)
@@ -162,6 +202,17 @@ int get_token(Token &token)
                 c = getchar_la();
               } while(isalnum(c));
               token.type_ = NAME;
+            }
+            else if (c == '"')
+            {
+              int ret = get_string_token(token.str_);
+
+              if (ret == OK)
+              {
+                token.type_ = STRING;
+              }
+
+              return ret;
             }
             else
        {
