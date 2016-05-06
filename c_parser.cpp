@@ -621,7 +621,7 @@ ASTNode* var_decl()
   else
   {
     Token token = peek_token(); 
-    err("var_decl: should \"", token.str_);
+    err("var_decl: should ;", token.str_);
   }
   return var_node;
 }
