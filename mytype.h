@@ -4,6 +4,11 @@
 #define OK 0
 #define ERR 1
 
+#define RED(str) "\x1b[31m" << str << "\x1b[0m"
+#define BLUE(str) "\x1b[34m" << str << "\x1b[0m"
+#define LIGHTBLUE(str) "\x1b[94m" << str << "\x1b[0m"
+#define LIGHTYELLOW(str) "\x1b[93m" << str << "\x1b[0m"
+
 typedef signed char s8;
 typedef signed short s16;
 typedef signed int s32;
