@@ -8,7 +8,6 @@
 
 //using std::vector;
 
-
 class ASTNode
 {
   public:
@@ -44,7 +43,15 @@ class ASTNode
     }
     const char* type_str() const
     {
-      const char *type_str[]={"INVALID", "ROOT", "ENUM", "INT", "CHAR", "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", "NAME", "VAR", "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", "NUMBER", "STRING", "IF", "WHILE", "EOL"};
+      const char *type_str[]=
+      {
+        "INVALID", "ROOT", 
+        "ENUM", "INT", "CHAR", 
+        "IF", "WHILE",
+        "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
+        "NAME", "VAR", "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", 
+        "NUMBER", "STRING", "EOL"
+      };
 
       if (INVALID <= type() && type() < LAST)
       {
