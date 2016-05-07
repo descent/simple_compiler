@@ -11,6 +11,7 @@
 
 using namespace std;
 
+//#define LEX_COLOR
 //#define DEBUG_LEXER_MSG
 
 static inline int isascii_ex(int c) 
@@ -179,6 +180,13 @@ int get_token(Token &token)
   do
   {
     c = getchar_la();
+#ifdef LEX_COLOR
+//  这句话, 决定是否打印空格，如果不输出空格，source code 中空格将被去掉,
+//  所有 source code 挤在一起
+    if(isspace(c)) 
+      printf("%c", c);
+#endif
+    
 #ifdef GET_EOL
   }while(c == ' ');
 #else
@@ -203,7 +211,19 @@ int get_token(Token &token)
                 token.str_.push_back(c); 
                 c = getchar_la();
               } while(isalnum(c));
-              token.type_ = NAME;
+              if (token.str() == "char")
+                token.type_ = CHAR;
+              else if (token.str() == "int")
+                     token.type_ = INT;
+                   else if (token.str() == "enum")
+                          token.type_ = ENUM;
+                        else if (token.str() == "if")
+                               token.type_ = IF;
+                             else if (token.str() == "while")
+                                    token.type_ = WHILE;
+                                  else
+                                    token.type_ = NAME;
+                   
             }
             else if (c == '"')
             {
@@ -368,13 +388,70 @@ int lexer()
   return 0;
 }
 
+int lexer_color()
+{
+  while(1)
+  {
+    //string token;
+    Token token;
+
+    int ret = get_token(token);
+    //int ret = get_se_token(token);
+    if (ret == EOF)
+    {
+      break;
+    }
+    if (ret == OK)
+    {
+      tokens.push_back(token);
+      if (ENUM <= token.type() && token.type() <= WHILE)
+      {
+        cout << LIGHTBLUE(token.str());
+      }
+      else
+        cout << token.str();
+    }
+    else
+    {
+      if (token.str_ == "\n")
+        cout << "error token: eol" << endl;
+      else
+      cout << "error token: " << token.str_ << endl;
+    }
+    // token.str_.clear();
+  }
+
+  return 0;
+}
+
 #ifdef DEBUG_LEXER
+
+
+//ref: http://stackoverflow.com/questions/11672876/colored-console-output-in-linux
+//printf("\x1b[31m%s\x1b[0m\n", i.str().c_str());
+//cout << "\x1b[34m" << i.str() << "\x1b[0m" << endl;
 
 int main(int argc, char *argv[])
 {
   //int a,b;
   //a++ + ++b;
+
+#ifdef LEX_COLOR
+  lexer_color();
+#else
   lexer();
+#endif
+  // http://misc.flogisoft.com/bash/tip_colors_and_formatting
+
+#if 0
+  for (auto i : tokens)
+  {
+    if (ENUM <= i.type() && i.type() <= WHILE)
+      cout << LIGHTBLUE(i.str()) << endl;
+    else
+      cout << i.str() << endl;
+  }
+#endif
   return 0;
 }
 #endif
