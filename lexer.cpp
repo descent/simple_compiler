@@ -52,15 +52,17 @@ int get_string_token(string &token)
 {
   int c;
 
+#if 0
   do
   {
     c = getchar_la();
   }while(isspace(c));
+#endif
 
   do
   {
-    token.push_back(c); 
     c = getchar_la();
+    token.push_back(c); 
   }while (isascii_ex(c));
 
   if (c=='"')
