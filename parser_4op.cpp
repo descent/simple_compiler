@@ -202,6 +202,9 @@ int main(int argc, char *argv[])
   cout << "ast node type: " << root->type_str() << endl;
   root->print();
   cout << endl;
+  cout << "\\tree";
+  root->print_tree();
+  cout << endl;
 #if 0
   while(1)
   {
