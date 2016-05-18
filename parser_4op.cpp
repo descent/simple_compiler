@@ -16,7 +16,9 @@ using namespace std;
 
 #define OP_PRECEDENCE
 
+#ifdef OP_PRECEDENCE
 std::map<std::string, Precedence*> operators;
+#endif
 
 extern std::deque <Token> tokens;
 
@@ -191,10 +193,12 @@ ASTNode* expression()
 #ifdef DEBUG_PARSER
 int main(int argc, char *argv[])
 {
+#ifdef OP_PRECEDENCE
   operators.insert({"+", new Precedence{1, true}});
   operators.insert({"*", new Precedence{3, true}});
   operators.insert({"=", new Precedence{0, false}});
   operators.insert({"==", new Precedence{-1, true}});
+#endif
 
   int lexer();
   lexer(); 
