@@ -176,7 +176,7 @@ ASTNode* expression()
   {
     Token t = pop_token();
     ASTNode *op = new ASTNode(t);
-    ASTNode *right = factor();
+    ASTNode *right = term();
     op->add_child(left, right);
     left = op;
     // left = new ASTNode(left, , right);
