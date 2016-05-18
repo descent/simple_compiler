@@ -47,5 +47,7 @@ lexer.o: lexer.cpp mytype.h token.h lexer.h
 	$(CXX) $(CXXFLAGS) -c $<
 token.o: token.cpp token.h mytype.h
 	$(CXX) $(CXXFLAGS) -c $<
+doc_html:
+	make -C doc
 clean:
-	rm parser lexer *.o
+	rm parser lexer *.o ; make -C doc clean
