@@ -4,6 +4,8 @@
 #define OK 0
 #define ERR 1
 
+// ref: http://jafrog.com/2013/11/23/colors-in-terminal.html
+// \x1b[0m means “reset all attributes”.
 #define RED(str) "\x1b[31m" << str << "\x1b[0m"
 #define BLUE(str) "\x1b[34m" << str << "\x1b[0m"
 #define LIGHTBLUE(str) "\x1b[94m" << str << "\x1b[0m"
