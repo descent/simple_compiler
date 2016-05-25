@@ -11,8 +11,8 @@
 
 using namespace std;
 
-//#define LEX_COLOR
-//#define DEBUG_LEXER_MSG
+#define LEX_COLOR
+#define DEBUG_LEXER_MSG
 
 static inline int isascii_ex(int c) 
 {
@@ -60,11 +60,12 @@ int get_string_token(string &token)
   }while(isspace(c));
 #endif
 
-  do
+  c = getchar_la();
+  while (isascii_ex(c))
   {
-    c = getchar_la();
     token.push_back(c); 
-  }while (isascii_ex(c));
+    c = getchar_la();
+  }
 
   if (c=='"')
   {
