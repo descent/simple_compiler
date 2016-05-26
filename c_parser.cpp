@@ -131,7 +131,9 @@ ASTNode* term()
  * program   : [ statement ] ("; " | EOL)
  */
 
-// primary   : "(" expr ")" | NUMBER | IDENTIFIER | STRING
+/*!
+ * primary   : "(" expr ")" | NUMBER | IDENTIFIER | STRING
+ */
 ASTNode* primary()
 {
   Token token = peek_token(); 
@@ -275,11 +277,94 @@ ASTNode* block()
   return b;
 }
 
-// simple    : expr
+/// func_call: NAME '(' [ (expr)  { ',' (expr) } ] ')'
+ASTNode* func_call()
+{
+  ASTNode *fc = 0;
+  Token t = peek_token();
+
+  if (t.type() == NAME)
+  {
+    fc = new ASTNode(func_call_token);
+
+    ASTNode *e=0;
+    pop_token();
+    t = peek_token();
+    if (t.str() == ("("))
+    {
+      pop_token();
+
+      //if((e = expr()) != 0)
+      t = peek_token();
+      if(t.str() != ")")
+      {
+        e = expr();
+        if (e)
+          fc->add_child(e);
+
+        while (is_token(")") == false)
+        {
+            Token t = peek_token();
+            if (t.str() == ",")
+            {
+              pop_token();
+              e = expr();
+              if (e);
+                fc->add_child(e);
+            }
+            else
+            {
+              err("func_call: should ','", t.str());
+            }
+
+        } 
+
+      }
+      else // function call passes no argument
+      {
+
+      }
+
+      t = peek_token();
+      if (t.str() == (")"))
+      {
+        pop_token();
+      }
+      else
+      {
+        err("func_call: should )", t.str());
+      }
+    }
+    else
+    {
+      err("func_call: should (", t.str());
+    }
+  }
+  else
+  {
+    err("func_call: should NAME", t.str());
+  }
+
+  return fc;
+}
+
+// simple    : expr | func_call
 ASTNode* simple()
 {
   ASTNode *e=0;
+
+  Token t = peek_token();
+  if (t.type() == NAME)
+  {
+    t = peek_token(1);
+    if (t.str() == "(") // func_call
+    {
+      e = func_call();
+    }
+  }
+
   e = expr();
+
   #if 0
   while(is_token("\n"))
   {
@@ -683,6 +768,9 @@ ASTNode* global_declaration()
 ASTNode* program()
 {
   ASTNode *p = new ASTNode(prog_token);
+  ASTNode *g = func_call();
+  p->add_child(g);
+#if 0
   ASTNode *g = global_declaration();
   if (g)
     p->add_child(g);
@@ -694,6 +782,7 @@ ASTNode* program()
     //pop_token();
     token = peek_token(); 
   }
+#endif
   return p;
 }
 
@@ -810,6 +899,7 @@ int main(int argc, char *argv[])
 
   ASTNode *root = get_root();
   ASTNode* n=0;
+
   while (tokens.size()>0 && (n = program()))
   {
     if (n)
