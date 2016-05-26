@@ -11,4 +11,5 @@ Token var_token("var", VAR);
 Token para_token("para", VAR);
 Token func_token("func", VAR);
 Token func_body_token("func_body", VAR);
+Token func_call_token("func call", FUNC_NAME);
 Token prog_token("prog", VAR);

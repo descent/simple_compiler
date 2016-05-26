@@ -37,6 +37,7 @@ extern Token else_block;
 extern Token var_token;
 extern Token para_token;
 extern Token func_token;
+extern Token func_call_token;
 extern Token func_body_token;
 extern Token prog_token;
 #endif
