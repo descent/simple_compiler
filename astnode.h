@@ -49,7 +49,8 @@ class ASTNode
         "ENUM", "INT", "CHAR", 
         "IF", "WHILE",
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
-        "NAME", "VAR", "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", 
+        "NAME", "VAR", "FUNC_NAME", 
+        "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", 
         "NUMBER", "STRING", "EOL"
       };
 
