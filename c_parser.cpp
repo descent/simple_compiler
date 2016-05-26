@@ -360,6 +360,7 @@ ASTNode* simple()
     if (t.str() == "(") // func_call
     {
       e = func_call();
+      return e;
     }
   }
 
@@ -768,9 +769,11 @@ ASTNode* global_declaration()
 ASTNode* program()
 {
   ASTNode *p = new ASTNode(prog_token);
+#if 0
   ASTNode *g = func_call();
   p->add_child(g);
-#if 0
+#endif
+#if 1
   ASTNode *g = global_declaration();
   if (g)
     p->add_child(g);
