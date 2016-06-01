@@ -37,7 +37,7 @@ class ASTNode
       children_.push_back(r);
       return true;
     }
-    ASTType type() const
+    ASTType ast_type() const
     {
       return token_.ast_type();
     }
@@ -54,9 +54,9 @@ class ASTNode
         "NUMBER", "STRING", "EOL"
       };
 
-      if (INVALID <= type() && type() < LAST)
+      if (INVALID <= ast_type() && ast_type() < LAST)
       {
-        return type_str[type()];
+        return type_str[ast_type()];
       }
       else
       {
