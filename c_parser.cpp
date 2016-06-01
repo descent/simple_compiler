@@ -277,6 +277,19 @@ ASTNode* block()
   return b;
 }
 
+bool is_func_call()
+{
+  Token t = peek_token();
+  if (t.type() == NAME)
+  {
+    t = peek_token(1);
+    if (t.str() == "(") // func_call
+      return true;
+  }
+
+  return false;
+}
+
 /// func_call: NAME '(' [ (expr)  { ',' (expr) } ] ')'
 ASTNode* func_call()
 {
@@ -298,7 +311,16 @@ ASTNode* func_call()
       t = peek_token();
       if(t.str() != ")")
       {
-        e = expr();
+
+        if (is_func_call())
+        {
+          e = func_call();
+        }
+        else
+        {
+          e = expr();
+        }
+
         if (e)
           fc->add_child(e);
 
