@@ -290,7 +290,7 @@ bool is_func_call()
   return false;
 }
 
-/// func_call: NAME '(' [ (expr)  { ',' (expr) } ] ')'
+/// func_call: NAME '(' [ (expr | func_call)  { ',' (expr | func_call) } ] ')' // 這是左遞迴嗎?
 ASTNode* func_call()
 {
   ASTNode *fc = 0;
