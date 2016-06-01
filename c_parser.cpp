@@ -78,7 +78,7 @@ Token pop_token()
 bool is_token(ASTType type)
 {
   Token t = peek_token();
-  if (t.type() == type)
+  if (t.ast_type() == type)
     return true;
   else
     return false;
@@ -93,7 +93,7 @@ bool is_token(const std::string &str)
     return false;
 }
 
-bool is_type()
+bool is_ast_type()
 {
   if(is_token("int") || is_token("char"))
     return true;
@@ -149,12 +149,12 @@ ASTNode* primary()
     }
     return e;
   }
-  else if (token.type() == NUMBER || token.type() == NAME) // number || variable name
+  else if (token.ast_type() == NUMBER || token.ast_type() == NAME) // number || variable name
        {
          Token t = pop_token();
          return new ASTNode(t);
        }
-       else if (token.type() == STRING)
+       else if (token.ast_type() == STRING)
             {
               Token t = pop_token();
               return new ASTNode(t);
@@ -183,7 +183,7 @@ ASTNode* factor()
   {
     Token t = pop_token();
     op = new ASTNode(t);
-    t.type_ = NEG;
+    t.ast_type_ = NEG;
     ASTNode *p = primary();
     op->add_child(p);
   }
@@ -280,7 +280,7 @@ ASTNode* block()
 bool is_func_call()
 {
   Token t = peek_token();
-  if (t.type() == NAME)
+  if (t.ast_type() == NAME)
   {
     t = peek_token(1);
     if (t.str() == "(") // func_call
@@ -296,7 +296,7 @@ ASTNode* func_call()
   ASTNode *fc = 0;
   Token t = peek_token();
 
-  if (t.type() == NAME)
+  if (t.ast_type() == NAME)
   {
     fc = new ASTNode(func_call_token);
 
@@ -376,7 +376,7 @@ ASTNode* simple()
   ASTNode *e=0;
 
   Token t = peek_token();
-  if (t.type() == NAME)
+  if (t.ast_type() == NAME)
   {
     t = peek_token(1);
     if (t.str() == "(") // func_call
@@ -417,7 +417,7 @@ ASTNode* statement()
   if (token.str_ == "if")
   {
     Token t = pop_token();
-    t.type_ = IF;
+    t.ast_type_ = IF;
     s_node = new ASTNode(t);
 
     ASTNode *e = 0;
@@ -466,7 +466,7 @@ ASTNode* statement()
   else if (token.str_ == "while")
        {
          Token t = pop_token();
-         t.type_ = WHILE;
+         t.ast_type_ = WHILE;
          s_node = new ASTNode(t);
          ASTNode *e = 0;
          t = peek_token(); 
@@ -760,7 +760,7 @@ ASTNode* global_declaration()
            t = peek_token(skip_start); 
          }
 
-         if (t.type()==NAME)
+         if (t.ast_type()==NAME)
          {
            ++skip_start;
            Token t = peek_token(skip_start); // ll(n)

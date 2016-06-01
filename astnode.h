@@ -39,7 +39,7 @@ class ASTNode
     }
     ASTType type() const
     {
-      return token_.type_;
+      return token_.ast_type();
     }
     const char* type_str() const
     {

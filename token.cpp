@@ -1,6 +1,6 @@
 #include "token.h"
 
-Token::Token(const std::string str, ASTType type) : str_(str), type_(type)
+Token::Token(const std::string str, ASTType ast_type) : str_(str), ast_type_(ast_type)
 {
 }
 

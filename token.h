@@ -8,11 +8,11 @@
 class Token
 {
   public:
-    Token(const std::string str, ASTType type=INVALID);
-    Token(){type_ = INVALID;}
+    Token(const std::string str, ASTType ast_type=INVALID);
+    Token(){ast_type_ = INVALID;}
     bool valid() const
     {
-      if (type_ == INVALID)
+      if (ast_type_ == INVALID)
         return false;
       else
         return true;
@@ -21,13 +21,13 @@ class Token
     {
       return str_;
     }
-    ASTType type() const
+    ASTType ast_type() const
     {
-      return type_;
+      return ast_type_;
     }
 
     std::string str_;
-    ASTType type_;
+    ASTType ast_type_;
   private:
 };
 

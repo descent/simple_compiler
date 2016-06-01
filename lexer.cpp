@@ -11,8 +11,8 @@
 
 using namespace std;
 
-#define LEX_COLOR
-#define DEBUG_LEXER_MSG
+//#define LEX_COLOR
+//#define DEBUG_LEXER_MSG
 
 static inline int isascii_ex(int c) 
 {
@@ -203,7 +203,7 @@ int get_token(Token &token)
            token.str_.push_back(c);
            c = getchar_la();
          }while(isdigit(c));
-         token.type_ = NUMBER;
+         token.ast_type_ = NUMBER;
        }
        else if (isalpha(c))
             {
@@ -213,17 +213,17 @@ int get_token(Token &token)
                 c = getchar_la();
               } while(isalnum(c));
               if (token.str() == "char")
-                token.type_ = CHAR;
+                token.ast_type_ = CHAR;
               else if (token.str() == "int")
-                     token.type_ = INT;
+                     token.ast_type_ = INT;
                    else if (token.str() == "enum")
-                          token.type_ = ENUM;
+                          token.ast_type_ = ENUM;
                         else if (token.str() == "if")
-                               token.type_ = IF;
+                               token.ast_type_ = IF;
                              else if (token.str() == "while")
-                                    token.type_ = WHILE;
+                                    token.ast_type_ = WHILE;
                                   else
-                                    token.type_ = NAME;
+                                    token.ast_type_ = NAME;
                    
             }
             else if (c == '"')
@@ -232,7 +232,7 @@ int get_token(Token &token)
 
               if (ret == OK)
               {
-                token.type_ = STRING;
+                token.ast_type_ = STRING;
               }
 
               return ret;
@@ -244,81 +244,81 @@ int get_token(Token &token)
            case '<':
            {
              token.str_ = "<";
-             token.type_ = LESS;
+             token.ast_type_ = LESS;
              break;
            }
            case '>':
            {
              token.str_ = ">";
-             token.type_ = GREAT;
+             token.ast_type_ = GREAT;
              break;
            }
            case '+':
            {
              token.str_ = "+";
-             token.type_ = ADD;
+             token.ast_type_ = ADD;
              break;
            }
            case '-':
            {
              token.str_ = "-";
-             token.type_ = MIN;
+             token.ast_type_ = MIN;
              break;
            }
            case '*':
            {
              token.str_ = "*";
-             token.type_ = MUL;
+             token.ast_type_ = MUL;
              break;
            }
            case '/':
            {
              token.str_ = "/";
-             token.type_ = DIV;
+             token.ast_type_ = DIV;
              break;
            }
 #ifdef GET_EOL
            case '\n':
            {
              token.str_ = "\n";
-             token.type_ = EOL;
+             token.ast_type_ = EOL;
              break;
            }
 #endif
            case ',':
            {
              token.str_ = ",";
-             token.type_ = SEP;
+             token.ast_type_ = SEP;
              break;
            }
            case ';':
            {
              token.str_ = ";";
-             token.type_ = SEP;
+             token.ast_type_ = SEP;
              break;
            }
            case '{':
            {
              token.str_ = "{";
-             token.type_ = SEP;
+             token.ast_type_ = SEP;
              break;
            }
            case '}':
            {
              token.str_ = "}";
-             token.type_ = SEP;
+             token.ast_type_ = SEP;
              break;
            }
            case '(':
            {
              token.str_ = "(";
-             token.type_ = SEP;
+             token.ast_type_ = SEP;
              break;
            }
            case ')':
            {
              token.str_ = ")";
-             token.type_ = SEP;
+             token.ast_type_ = SEP;
              break;
            }
            case '=':
@@ -327,13 +327,13 @@ int get_token(Token &token)
              if (c == '=')
              {
                token.str_ = "==";
-               token.type_ = EQUAL;
+               token.ast_type_ = EQUAL;
              }
              else
              {
                la = c;
                token.str_ = "=";
-               token.type_ = ASSIGN;
+               token.ast_type_ = ASSIGN;
              }
              break;
            }
@@ -405,7 +405,7 @@ int lexer_color()
     if (ret == OK)
     {
       tokens.push_back(token);
-      if (ENUM <= token.type() && token.type() <= WHILE)
+      if (ENUM <= token.ast_type() && token.ast_type() <= WHILE)
       {
         cout << LIGHTBLUE(token.str());
       }
