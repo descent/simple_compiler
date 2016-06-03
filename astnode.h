@@ -8,6 +8,46 @@
 
 //using std::vector;
 
+/**
+ * \brief record ASTNode real type. ex: int, int pointer, char, function ...
+ */
+struct ObjType
+{
+  public:
+    ObjType()
+    {
+      clear();
+    }
+    void clear_pointer()
+    {
+      pointer_number_ = 0;
+      pointer_ = false;
+    }
+    void clear()
+    {
+      pointer_ = char_ = int_ = func_ = array_ = global_ = false;
+      pointer_number_ = 0;
+    }
+    std::string str();
+    void set_int(){int_ = true;}
+    void set_char() {char_ = true;}
+    void set_func() {func_ = true;}
+    void set_global() {global_ = true;}
+    void set_pointer(int num=1) 
+    {
+      pointer_number_ = num;
+      pointer_ = true;
+    }
+
+    bool pointer_;
+    bool char_;
+    bool int_;
+    bool func_;
+    bool array_;
+    bool global_;
+    u32 pointer_number_;
+};
+
 class ASTNode
 {
   public:
@@ -71,9 +111,18 @@ class ASTNode
     // for tool tree to print AST
     void print_tree();
     void print();
+    void set_obj_type(const ObjType &obj_type)
+    {
+      obj_type_ = obj_type;
+    }
+    void set_str(const std::string &s)
+    {
+      token_.str_ = s;
+    }
   private:
     std::vector<ASTNode*> children_;
     Token token_;
+    ObjType obj_type_;
 };
 
 #endif

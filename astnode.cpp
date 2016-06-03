@@ -7,15 +7,39 @@
 using std::cout;
 using std::endl;
 
+std::string ObjType::str()
+{
+  std::string s;
+  if (pointer_)
+    s += " |ptr<" + std::to_string(pointer_number_) + ">";
+  if(char_)
+    s += " |char";
+  if(int_)
+    s += " |int";
+  if(func_)
+    s += " |func";
+  if(array_)
+    s += " |array";
+  if(global_)
+    s += " |global";
+  return s;
+}
+
 void ASTNode::print_tree()
 {
   if (children_.size() == 0) // leaf node
   {
-    cout << "(" << token_.str_ << ")";
+    cout << "(" << token_.str_;
+    if (ast_type() == NAME)
+      cout << obj_type_.str();
+
+    cout << ")";
   }
   else
   {
     cout << "( " << token_.str_;
+    if (ast_type() == NAME)
+      cout << obj_type_.str();
     //for (std::vector<ASTNode*>::size_type i=0 ; i < children_.size() ; ++i)
     for (auto i : children_)
     {
