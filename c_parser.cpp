@@ -14,11 +14,14 @@
 
 using namespace std;
 
+
 bool need = true;
 
 #include "lexer.h"
 #include "parser.h"
 #include "token.h"
+
+ObjType obj_type;
 
 // ref: http://lotabout.me/2016/write-a-C-interpreter-5/
 /*
@@ -550,6 +553,11 @@ ASTNode* body_decl()
   ASTNode *body_node = new ASTNode(func_body_token);
   while(is_token("int") || is_token("char"))
   {
+         if (is_token("int"))
+           obj_type.set_int();
+         if (is_token("char"))
+           obj_type.set_char();
+
     pop_token();
     ASTNode *v = var_decl();
     if (v)
@@ -575,17 +583,31 @@ ASTNode* parameter_decl()
 
   if(is_token("int") || is_token("char"))
   {
+
+         if (is_token("int"))
+           obj_type.set_int();
+         if (is_token("char"))
+           obj_type.set_char();
+
     var_node = new ASTNode(para_token);
     pop_token();
 
+  u32 ptr_num=0;
   while(is_token("*"))
   {
+    ++ptr_num;
     pop_token();
   }
+
+  if (ptr_num > 0)
+    obj_type.set_pointer(ptr_num);
+
   if (is_token(NAME))
   {
     Token t = pop_token();
     ASTNode *v = new ASTNode(t);
+    v->set_obj_type(obj_type);
+    obj_type.clear();
     var_node->add_child(v);
   }
 
@@ -595,13 +617,30 @@ ASTNode* parameter_decl()
 
     if(is_token("int") || is_token("char"))
     {
+
+         if (is_token("int"))
+           obj_type.set_int();
+         if (is_token("char"))
+           obj_type.set_char();
+
+
       pop_token();
+      ptr_num = 0;
       while(is_token("*"))
+      {
+        ++ptr_num;
         pop_token();
+      }
+
+  if (ptr_num > 0)
+    obj_type.set_pointer(ptr_num);
+
       if (is_token(NAME))
       {
         Token t = pop_token();
         ASTNode *v = new ASTNode(t);
+    v->set_obj_type(obj_type);
+    obj_type.clear();
         var_node->add_child(v);
       }
     }
@@ -628,6 +667,8 @@ ASTNode* parameter_decl()
 ASTNode* func_decl()
 {
   ASTNode *func_node = new ASTNode(func_token);
+  func_node->set_obj_type(obj_type);
+  obj_type.clear();
 
   while(is_token("*"))
   {
@@ -636,6 +677,7 @@ ASTNode* func_decl()
   if (is_token(NAME))
   {
     Token t = pop_token();
+    func_node->set_str(t.str());
   }
   else
   {
@@ -700,32 +742,52 @@ ASTNode* var_decl()
 {
   ASTNode *var_node = new ASTNode(var_token);
 
+  int ptr_num=0;
   while(is_token("*"))
   {
+    ++ptr_num;
     pop_token();
   }
+  if (ptr_num > 0)
+    obj_type.set_pointer(ptr_num);
+
   if (is_token(NAME))
   {
     Token t = pop_token();
     ASTNode *v = new ASTNode(t);
+
+    v->set_obj_type(obj_type);
+
     var_node->add_child(v);
   }
 
   while(is_token(","))
   {
     pop_token();
+    int ptr_num = 0;
     while(is_token("*"))
+    {
+      ++ptr_num;
       pop_token();
+    }
+
+  if (ptr_num > 0)
+    obj_type.set_pointer(ptr_num);
+
     if (is_token(NAME))
     {
       Token t = pop_token();
       ASTNode *v = new ASTNode(t);
+      v->set_obj_type(obj_type);
       var_node->add_child(v);
     }
   }
 
   if (is_token(";"))
+  {
     pop_token();
+    obj_type.clear();
+  }
   else
   {
     Token token = peek_token(); 
@@ -750,6 +812,11 @@ ASTNode* global_declaration()
   }
   else if(is_token("int") || is_token("char"))
        {
+         if (is_token("int"))
+           obj_type.set_int();
+         if (is_token("char"))
+           obj_type.set_char();
+
          pop_token();
          int skip_start = 0; // skip *, **, *** ...
          Token t = peek_token(skip_start); 
@@ -760,16 +827,24 @@ ASTNode* global_declaration()
            t = peek_token(skip_start); 
          }
 
+         if (skip_start > 0)
+           obj_type.set_pointer(skip_start);
+
          if (t.ast_type()==NAME)
          {
            ++skip_start;
            Token t = peek_token(skip_start); // ll(n)
            if (t.str() == "(")
            {
+             obj_type.set_func();
              g = func_decl();
            }
            else // variable decl
+           {
+             obj_type.clear_pointer();
+             obj_type.set_global();
              g = var_decl();
+           }
          }
          else 
          {
