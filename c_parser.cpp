@@ -8,12 +8,13 @@
 #include <string>
 
 #define PRINT_TREE_STRING
-//#define WARN_MSG
+#define WARN_MSG
 //#define DEBUG_MSG
 //#define DEBUG_LEXER_MSG
 
 using namespace std;
 
+#define TEST_STATEMENT
 
 bool need = true;
 
@@ -796,6 +797,7 @@ ASTNode* var_decl()
   return var_node;
 }
 
+// enum_decl ::= 'enum' [id] '{' id ['=' 'num'] {',' id ['=' 'num'] '}'
 ASTNode* enum_decl()
 {
 }
@@ -870,8 +872,11 @@ ASTNode* program()
   ASTNode *g = func_call();
   p->add_child(g);
 #endif
-#if 1
+#ifdef TEST_STATEMENT
+  ASTNode *g = statement();
+#else
   ASTNode *g = global_declaration();
+#endif
   if (g)
     p->add_child(g);
   Token token = peek_token(); 
@@ -882,7 +887,6 @@ ASTNode* program()
     //pop_token();
     token = peek_token(); 
   }
-#endif
   return p;
 }
 
