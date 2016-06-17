@@ -69,7 +69,7 @@ ASTNode* factor()
     }
     return e;
   }
-  else if (token.type_ == NUMBER || token.type_ == NAME) // number || variable name
+  else if (token.ast_type() == NUMBER || token.ast_type() == NAME) // number || variable name
        {
          Token t = pop_token();
          return new ASTNode(t);
