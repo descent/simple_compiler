@@ -14,7 +14,7 @@
 
 using namespace std;
 
-// #define TEST_STATEMENT
+#define TEST_STATEMENT
 
 bool need = true;
 
@@ -1036,6 +1036,7 @@ int main(int argc, char *argv[])
   root->print();
   cout << endl;
 #endif
+  root->eval();
 
   return 0;
 }
