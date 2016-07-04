@@ -97,6 +97,49 @@ void ASTNode::print()
   }
 }
 
+ASTNode* ASTNode::eval()
+{
+  if (children_.size() == 0) // leaf node
+  {
+    return this;
+  }
+  else
+  {
+    for (const auto &i : children_)
+      i->eval();
+    if (token_.str_ == "+" || token_.str_ == "-" || token_.str_ == "*")
+    {
+      if (children_.size() == 2)
+      {
+        ASTNode *c1 = children_[0]->eval();
+        ASTNode *c2 = children_[1]->eval();
+
+        int n1 = stoi(c1->str());
+        int n2 = stoi(c2->str());
+        int ret = 0;
+        if (token_.str_ == "+")
+          ret = n1 + n2;
+        if (token_.str_ == "-")
+          ret = n1 - n2;
+        if (token_.str_ == "*")
+          ret = n1 * n2;
+
+        printf("ret: %d, n1: %d, n2: %d\n", ret, n1, n2);
+        Token t;
+        t.str_ = std::to_string(ret);
+        ASTNode *tmp = new ASTNode(t);
+        *this = *tmp;
+        //return new ASTNode(t);
+        return this;
+      }
+      else
+      {
+        printf("children_.size() != 2, %ld\n", children_.size());
+      }
+    }
+  }
+}
+
 #if 0
 ASTNode::ASTNode(const ASTNode* l, const ASTNode* op, const ASTNode* r)
 {

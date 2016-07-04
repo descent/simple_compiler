@@ -77,6 +77,7 @@ class ASTNode
       children_.push_back(r);
       return true;
     }
+    ASTNode* eval();
     ASTType ast_type() const
     {
       return token_.ast_type();
