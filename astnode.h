@@ -115,6 +115,10 @@ class ASTNode
     {
       obj_type_ = obj_type;
     }
+    const std::string str() const
+    {
+      return token_.str_;
+    }
     void set_str(const std::string &s)
     {
       token_.str_ = s;
