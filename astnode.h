@@ -124,10 +124,26 @@ class ASTNode
     {
       token_.str_ = s;
     }
+    bool is_leaf() const
+    {
+      if (children().size() == 0)
+        return true;
+      else
+        return false;
+    }
+    void free_children()
+    {
+      for (auto &i : children_)
+        delete i;
+      children_.resize(0);
+    }
   private:
     std::vector<ASTNode*> children_;
     Token token_;
     ObjType obj_type_;
 };
+
+ASTNode *get_root();
+void print_ast();
 
 #endif
