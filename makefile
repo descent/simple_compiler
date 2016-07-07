@@ -38,6 +38,9 @@ parser_4op.o: parser_4op.cpp astnode.h mytype.h token.h parser.h op.h
 astnode.o: astnode.cpp astnode.h mytype.h token.h
 	$(CXX) $(CXXFLAGS) -c $<
 
+env.o: env.cpp env.h
+	$(CXX) $(CXXFLAGS) -c $<
+
 op.o: op.cpp 
 	$(CXX) $(CXXFLAGS) -c $<
 
