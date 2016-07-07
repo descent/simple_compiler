@@ -7,6 +7,24 @@
 using std::cout;
 using std::endl;
 
+#define PRINT_TREE_STRING
+
+void print_ast()
+{
+  ASTNode *root = get_root();
+  cout << "===========================" << endl;
+#ifdef PRINT_TREE_STRING
+  cout << "\\tree";
+  root->print_tree();
+  cout << endl;
+#else
+  cout << "ast node type: " << root->type_str() << endl;
+  root->print();
+  cout << endl;
+#endif
+  cout << "---------------------------" << endl;
+}
+
 std::string ObjType::str()
 {
   std::string s;
