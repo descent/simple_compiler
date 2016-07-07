@@ -149,11 +149,16 @@ ASTNode* ASTNode::eval()
           ret = n1 * n2;
 
         printf("ret: %d, n1: %d, n2: %d\n", ret, n1, n2);
+        set_str(std::to_string(ret));
+        free_children();
+
+#if 0
         Token t;
         t.str_ = std::to_string(ret);
         ASTNode *tmp = new ASTNode(t);
         *this = *tmp;
         //return new ASTNode(t);
+#endif
         return this;
       }
       else
