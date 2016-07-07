@@ -124,7 +124,13 @@ ASTNode* ASTNode::eval()
   else
   {
     for (const auto &i : children_)
+    {
+      bool leaf = i->is_leaf();
       i->eval();
+      if (leaf == false)
+        print_ast();
+
+    }
     if (token_.str_ == "+" || token_.str_ == "-" || token_.str_ == "*")
     {
       if (children_.size() == 2)
