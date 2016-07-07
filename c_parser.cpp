@@ -988,6 +988,73 @@ ASTNode *get_root()
   return root;
 }
 
+
+#if 0
+ASTNode *eval(ASTNode *non_leaf, vector<ASTNode *> children);
+vector<ASTNode *> list_of_vals(vector<ASTNode *> children);
+
+vector<ASTNode *> list_of_vals(vector<ASTNode *> children)
+{
+  vector<ASTNode *> v;
+
+  for (auto &i : children)
+  {
+    if (i->is_leaf())
+    {
+      v.push_back(i);
+    }
+    else
+    {
+      vector<ASTNode *> list = list_of_vals(i->children());
+      v.push_back(eval(i, list));
+    }
+  }
+  return v;
+}
+
+ASTNode *eval(ASTNode *non_leaf, vector<ASTNode *> children)
+{
+  ASTNode *n = 0;
+
+  if ((non_leaf->str() == "root") || (non_leaf->str() == "prog"))
+  {
+    ASTNode *op = children[0];
+
+    vector<ASTNode *> list = list_of_vals(op->children());
+    n = eval(op, list);
+    
+    // n = eval(op, list_of_vals(op->children()));
+  }
+
+  if (non_leaf->str() == "+")
+  {
+    if (children.size() == 2)
+    {
+      ASTNode *c1 = children[0];
+      ASTNode *c2 = children[1];
+
+      cout << "c1: " << c1->str() << endl;
+      cout << "c2: " << c2->str() << endl;
+      int n1 = stoi(c1->str());
+      int n2 = stoi(c2->str());
+      int ret = n1 + n2;
+
+      printf("ret: %d, n1: %d, n2: %d\n", ret, n1, n2);
+
+      Token t;
+      t.str_ = std::to_string(ret);
+      ASTNode *n = new ASTNode(t);
+    }
+
+  }
+  return n;
+}
+
+void apply()
+{
+}
+#endif
+
 #ifdef DEBUG_PARSER
 int main(int argc, char *argv[])
 {
@@ -1036,6 +1103,9 @@ int main(int argc, char *argv[])
   root->print();
   cout << endl;
 #endif
+
+  //vector<ASTNode *> list = list_of_vals(root->children());
+  //eval(root, list);
   root->eval();
 
   return 0;
