@@ -868,21 +868,27 @@ ASTNode* global_declaration()
 ASTNode* program()
 {
   ASTNode *p = new ASTNode(prog_token);
+
+  ASTNode *g = 0;
 #if 0
   ASTNode *g = func_call();
   p->add_child(g);
 #endif
 #ifdef TEST_STATEMENT
-  ASTNode *g = statement();
+  g = statement();
 #else
-  ASTNode *g = global_declaration();
+  g = global_declaration();
 #endif
   if (g)
     p->add_child(g);
   Token token = peek_token(); 
   while(token.valid())
   {
-    ASTNode *g = global_declaration();
+#ifdef TEST_STATEMENT
+  g = statement();
+#else
+  g = global_declaration();
+#endif
     p->add_child(g);
     //pop_token();
     token = peek_token(); 
