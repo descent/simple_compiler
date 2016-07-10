@@ -133,8 +133,10 @@ class ASTNode
     }
     void free_children()
     {
+    #if 1
       for (auto &i : children_)
         delete i;
+    #endif
       children_.resize(0);
     }
   private:

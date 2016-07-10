@@ -128,7 +128,7 @@ ASTNode* ASTNode::eval()
       if (env.count(str()))
       {
         ASTNode *n = env[str()];
-        cout << "n: " << n->str() << endl;
+        cout << "eval name n: " << n->str() << endl;
         return env[str()];
       }
       else
@@ -190,7 +190,7 @@ ASTNode* ASTNode::eval()
            ASTNode *c2 = children_[1]->eval();
            env.insert({c1->str(), c2});
            //free_children();
-           //delete this;
+           // delete this;
            // how to free myself
          }
   }
