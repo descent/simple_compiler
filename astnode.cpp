@@ -1,6 +1,7 @@
 #include "astnode.h"
 
 #include <iostream>
+#include <map>
 
 #define PREORDER
 
@@ -8,6 +9,8 @@ using std::cout;
 using std::endl;
 
 #define PRINT_TREE_STRING
+
+std::map<std::string, ASTNode *> env;
 
 void print_ast()
 {
@@ -119,7 +122,20 @@ ASTNode* ASTNode::eval()
 {
   if (children_.size() == 0) // leaf node
   {
-    return this;
+    if (ast_type() == NAME)
+    {
+      //env.find(str());
+      if (env.count(str()))
+      {
+        ASTNode *n = env[str()];
+        cout << "n: " << n->str() << endl;
+        return env[str()];
+      }
+      else
+        return this;
+    }
+    else
+      return this;
   }
   else
   {
@@ -166,6 +182,17 @@ ASTNode* ASTNode::eval()
         printf("children_.size() != 2, %ld\n", children_.size());
       }
     }
+    else if (str() == "=")
+         {
+           cout << "op is =" << endl;
+           // add var/val to env
+           ASTNode *c1 = children_[0]->eval();
+           ASTNode *c2 = children_[1]->eval();
+           env.insert({c1->str(), c2});
+           //free_children();
+           //delete this;
+           // how to free myself
+         }
   }
 }
 
