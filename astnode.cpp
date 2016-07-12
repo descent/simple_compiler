@@ -139,20 +139,34 @@ ASTNode* ASTNode::eval()
   }
   else
   {
-    for (const auto &i : children_)
-    {
-      bool leaf = i->is_leaf();
-      i->eval();
-      if (leaf == false)
-        print_ast();
+    cout << "cur node: " << str() << endl;
 
-    }
+    //for (const auto &i : children_)
+    {
+
     if (token_.str_ == "+" || token_.str_ == "-" || token_.str_ == "*")
     {
       if (children_.size() == 2)
       {
+        bool c1_leaf = children_[0]->is_leaf();
+        bool c2_leaf = children_[1]->is_leaf();
+
         ASTNode *c1 = children_[0]->eval();
+        cout << "xx cur: " << str() << endl;
+        cout << "c1: " << c1->str() << endl;
         ASTNode *c2 = children_[1]->eval();
+        cout << "c2: " << c2->str() << endl;
+
+        if ((c1_leaf == false) || (c2_leaf == false))
+        {
+          print_ast();
+        }
+        else
+        {
+          cout << "ppp" << endl;
+        }
+        //|| children_[1]->is_leaf() == false)
+          //print_ast();
 
         int n1 = stoi(c1->str());
         int n2 = stoi(c2->str());
@@ -180,6 +194,7 @@ ASTNode* ASTNode::eval()
       else
       {
         printf("children_.size() != 2, %ld\n", children_.size());
+        return nullptr;
       }
     }
     else if (str() == "=")
@@ -189,10 +204,61 @@ ASTNode* ASTNode::eval()
            ASTNode *c1 = children_[0]->eval();
            ASTNode *c2 = children_[1]->eval();
            env.insert({c1->str(), c2});
+           return this;
            //free_children();
            // delete this;
            // how to free myself
          }
+         else if ((str() == "root"))
+              {
+                ASTNode *n=0;
+                cout << " op: root" << endl;
+                //cout << " i child: " << i->children()[0]->str() << endl;
+                for (auto &i : children_)
+                {
+                  n = i->eval();
+                  #if 1
+                  cout << "xx n: " << n->str() << endl;
+                  //delete i;
+                  if (n)
+                    i = n;
+                  #endif
+                }
+
+                cout << " yy op: " << str() << endl;
+                //children_ = new_children;
+                print_ast();
+                return this;
+
+              }
+              else if ((str() == "prog"))
+                   {
+                     ASTNode *n=0;
+                     
+                     for (auto &i : children_)
+                     {
+                       n = i->eval();
+                       cout << " op: " << str() << ", zz n: " << n->str() << endl;
+                       //delete i; // need free ASTNode
+                       i = n;
+                       print_ast();
+                       //new_children.push_back(n);
+                     }
+                     //children_ = new_children;
+                     return this;
+                   }
+                   else
+                   {
+                     cout << " op: " << str() << endl;
+                     return nullptr;
+                   }
+#if 0
+      bool leaf = i->is_leaf();
+      //i->eval();
+      if (leaf == false)
+        print_ast();
+#endif
+    } // end for (const auto &i : children_)
   }
 }
 
