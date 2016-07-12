@@ -156,6 +156,10 @@ class ASTNode
     #endif
       children_.resize(0);
     }
+    u32 num() const
+    {
+      return no_;
+    }
   private:
     std::vector<ASTNode*> children_;
     Token token_;
