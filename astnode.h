@@ -2,6 +2,10 @@
 #define ASTNODE_H
 
 #include <vector>
+#include <iostream>
+
+using std::cout;
+using std::endl;
 
 #include "mytype.h"
 #include "token.h"
@@ -52,9 +56,22 @@ class ASTNode
 {
   public:
     //ASTNode(const ASTNode* l, const ASTNode* op, const ASTNode* r);
-    ASTNode(){}
+    ASTNode()
+    {
+      id_ = no_;
+      ++no_;
+    }
     ASTNode(const Token &token):token_(token)
     {
+      id_ = no_;
+      ++no_;
+    }
+    ~ASTNode()
+    {
+      static u32 i=0;
+      cout << "~ASTNode: " << id_ << ": " << str() << endl;
+      ++i;
+      free_children();
     }
     bool add_child(const std::vector<ASTNode*> &children)
     {
@@ -143,6 +160,8 @@ class ASTNode
     std::vector<ASTNode*> children_;
     Token token_;
     ObjType obj_type_;
+    u32 id_;
+    static u32 no_;
 };
 
 ASTNode *get_root();
