@@ -148,15 +148,29 @@ ASTNode* ASTNode::eval()
     {
       if (children_.size() == 2)
       {
-        bool c1_leaf = children_[0]->is_leaf();
-        bool c2_leaf = children_[1]->is_leaf();
-
         ASTNode *c1 = children_[0]->eval();
         cout << "xx cur: " << str() << endl;
         cout << "c1: " << c1->str() << endl;
         ASTNode *c2 = children_[1]->eval();
         cout << "c2: " << c2->str() << endl;
 
+        if (children_[0]->eval_result_)
+        {
+          ASTNode *e = children_[0]->eval_result_;
+          delete children_[0];
+          children_[0] = e;
+          print_ast();
+        }
+
+        if (children_[1]->eval_result_)
+        {
+          ASTNode *e = children_[1]->eval_result_;
+          delete children_[1];
+          children_[1] = e;
+          print_ast();
+        }
+
+#if 0
         if (c1_leaf == false)
         { // replace child node by eval node;
           delete children_[0];
@@ -172,7 +186,7 @@ ASTNode* ASTNode::eval()
 
         //|| children_[1]->is_leaf() == false)
           //print_ast();
-
+#endif
         int n1 = stoi(c1->str());
         int n2 = stoi(c2->str());
         int ret = 0;
@@ -183,7 +197,8 @@ ASTNode* ASTNode::eval()
         if (token_.str_ == "*")
           ret = n1 * n2;
 
-        printf("ret: %d, n1: %d, n2: %d\n", ret, n1, n2);
+        //printf("ret: %d = n1: %d %s n2: %d\n", ret, n1, str().c_str(), n2);
+        cout << "eval: " << n1 << " " << str() << " " << n2 << " = " << ret << endl;
 
 #if 0
         set_str(std::to_string(ret));
@@ -191,16 +206,17 @@ ASTNode* ASTNode::eval()
         return this;
 
 #else
-        Token t;
-        t.str_ = std::to_string(ret);
-        //ASTNode *tmp = new ASTNode(t);
+        Token t(std::to_string(ret), NUMBER);
+        //t.str_ = std::to_string(ret);
+        eval_result_ = new ASTNode(t);
+
         //*this = *tmp;
-        return new ASTNode(t);
+        return eval_result_;
 #endif
       }
       else
       {
-        printf("children_.size() != 2, %ld\n", children_.size());
+        cout << "children_.size() != 2, " << children_.size() << endl;
         return nullptr;
       }
     }
@@ -246,8 +262,11 @@ ASTNode* ASTNode::eval()
                      {
                        n = i->eval();
                        cout << " op: " << str() << ", zz n: " << n->str() << " i: " << i->str() << endl;
-                       delete i; // need free ASTNode
-                       i = n;
+                       if (n != i)
+                       {
+                         delete i; // need free ASTNode
+                         i = n;
+                       }
                        print_ast();
                        //new_children.push_back(n);
                      }
