@@ -1,16 +1,14 @@
 #include "astnode.h"
 
-#include <iostream>
 #include <map>
 
 #define PREORDER
 
-using std::cout;
-using std::endl;
 
 #define PRINT_TREE_STRING
 
 std::map<std::string, ASTNode *> env;
+
 
 void print_ast()
 {
@@ -45,6 +43,8 @@ std::string ObjType::str()
     s += " |global";
   return s;
 }
+
+u32 ASTNode::no_=0;
 
 void ASTNode::print_tree()
 {
@@ -157,14 +157,19 @@ ASTNode* ASTNode::eval()
         ASTNode *c2 = children_[1]->eval();
         cout << "c2: " << c2->str() << endl;
 
-        if ((c1_leaf == false) || (c2_leaf == false))
-        {
+        if (c1_leaf == false)
+        { // replace child node by eval node;
+          delete children_[0];
+          children_[0] = c1;
           print_ast();
         }
-        else
-        {
-          cout << "ppp" << endl;
-        }
+        else if(c2_leaf == false)
+             { // replace child node by eval node;
+               delete children_[1];
+               children_[1] = c2;
+               print_ast();
+             }
+
         //|| children_[1]->is_leaf() == false)
           //print_ast();
 
@@ -179,17 +184,19 @@ ASTNode* ASTNode::eval()
           ret = n1 * n2;
 
         printf("ret: %d, n1: %d, n2: %d\n", ret, n1, n2);
-        set_str(std::to_string(ret));
-        free_children();
 
 #if 0
+        set_str(std::to_string(ret));
+        free_children();
+        return this;
+
+#else
         Token t;
         t.str_ = std::to_string(ret);
-        ASTNode *tmp = new ASTNode(t);
-        *this = *tmp;
-        //return new ASTNode(t);
+        //ASTNode *tmp = new ASTNode(t);
+        //*this = *tmp;
+        return new ASTNode(t);
 #endif
-        return this;
       }
       else
       {
@@ -205,6 +212,7 @@ ASTNode* ASTNode::eval()
            ASTNode *c2 = children_[1]->eval();
            env.insert({c1->str(), c2});
            return this;
+
            //free_children();
            // delete this;
            // how to free myself
@@ -220,8 +228,7 @@ ASTNode* ASTNode::eval()
                   #if 1
                   cout << "xx n: " << n->str() << endl;
                   //delete i;
-                  if (n)
-                    i = n;
+                  //  i = n;
                   #endif
                 }
 
@@ -238,8 +245,8 @@ ASTNode* ASTNode::eval()
                      for (auto &i : children_)
                      {
                        n = i->eval();
-                       cout << " op: " << str() << ", zz n: " << n->str() << endl;
-                       //delete i; // need free ASTNode
+                       cout << " op: " << str() << ", zz n: " << n->str() << " i: " << i->str() << endl;
+                       delete i; // need free ASTNode
                        i = n;
                        print_ast();
                        //new_children.push_back(n);
