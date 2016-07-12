@@ -1113,6 +1113,7 @@ int main(int argc, char *argv[])
   //vector<ASTNode *> list = list_of_vals(root->children());
   //eval(root, list);
   root->eval();
+  delete root;
 
   return 0;
 }
