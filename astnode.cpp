@@ -246,7 +246,8 @@ ASTNode* ASTNode::eval()
                      {
                        n = i->eval();
                        cout << " op: " << str() << ", zz n: " << n->str() << " i: " << i->str() << endl;
-                       delete i; // need free ASTNode
+                       if (i->str() != "=")
+                         delete i; // need free ASTNode
                        i = n;
                        print_ast();
                        //new_children.push_back(n);
