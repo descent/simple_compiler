@@ -60,11 +60,13 @@ class ASTNode
     {
       id_ = no_;
       ++no_;
+      eval_result_ = 0;
     }
     ASTNode(const Token &token):token_(token)
     {
       id_ = no_;
       ++no_;
+      eval_result_ = 0;
     }
     ~ASTNode()
     {
@@ -72,6 +74,7 @@ class ASTNode
       cout << "~ASTNode: " << id_ << ": " << str() << endl;
       ++i;
       free_children();
+      // delete eval_result_; // need not delete eval_result_;
     }
     bool add_child(const std::vector<ASTNode*> &children)
     {
@@ -156,8 +159,13 @@ class ASTNode
     #endif
       children_.resize(0);
     }
+    u32 num() const
+    {
+      return no_;
+    }
   private:
     std::vector<ASTNode*> children_;
+    ASTNode* eval_result_;
     Token token_;
     ObjType obj_type_;
     u32 id_;
