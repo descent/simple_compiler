@@ -230,12 +230,14 @@ ASTNode* ASTNode::eval()
 
            env.insert({c1->str(), c2});
 
+#if 0
            if (children_[0] != c1)
            {
              delete children_[0];
              children_[0] = c1;
              print_ast();
            }
+#endif
 
            if (children_[1] != c2)
            {
