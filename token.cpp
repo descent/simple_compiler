@@ -13,3 +13,5 @@ Token func_token("func", NAME);
 Token func_body_token("func_body", VAR);
 Token func_call_token("func call", FUNC_NAME);
 Token prog_token("prog", VAR);
+Token true_token("t", TRUE);
+Token false_token("f", FALSE);

@@ -40,4 +40,6 @@ extern Token func_token;
 extern Token func_call_token;
 extern Token func_body_token;
 extern Token prog_token;
+extern Token true_token;
+extern Token false_token;
 #endif
