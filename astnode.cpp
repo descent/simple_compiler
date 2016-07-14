@@ -128,7 +128,7 @@ ASTNode* ASTNode::eval()
       if (env.count(str()))
       {
         ASTNode *n = env[str()];
-        cout << "eval name n: " << n->str() << endl;
+        cout << "eval name '" << str() << "' : " << n->str() << endl;
         return env[str()];
       }
       else
