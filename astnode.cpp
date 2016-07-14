@@ -254,10 +254,10 @@ ASTNode* ASTNode::eval()
            }
 #endif
 
-           if (children_[1] != c2)
+           if (children_[1] != c1)
            {
              delete children_[1];
-             children_[1] = c2;
+             children_[1] = c1;
              print_ast();
            }
 
@@ -307,11 +307,104 @@ ASTNode* ASTNode::eval()
                      //children_ = new_children;
                      return this;
                    }
-                   else
-                   {
-                     cout << " op: " << str() << endl;
-                     return nullptr;
-                   }
+                   else if ((str() == "if"))
+                        {
+                          ASTNode *then_node = 0;
+                          ASTNode *else_node = 0;
+                          auto children_size = children().size();
+
+                          if (children_size >= 2)
+                          {
+                            ASTNode *c0 = children_[0]->eval();
+                            if (c0->ast_type() == TRUE)
+                            {
+                              then_node = children_[1]->eval();
+                              return then_node;
+                            }
+                            else
+                            {
+                              if (children_size >= 3)
+                              {
+                                else_node = children_[2]->eval();
+                                return else_node;
+                              }
+                            }
+
+
+                          }
+                          else
+                          {
+                            cout << "if node error" << endl;
+                            return this;
+                          }
+                        }
+                        else if ((str() == ">"))
+                             {
+                               if (children().size() == 2)
+                               {
+                                 ASTNode *c0 = children_[0]->eval();
+                                 ASTNode *c1 = children_[1]->eval();
+                                 int n0 = stoi(c0->str());
+                                 int n1 = stoi(c1->str());
+                                 cout << "n0: " << n0 << " n1: " << n1 << endl;
+                                 if (n0 > n1)
+                                 {
+                                   cout << "true node" << endl;
+                                   return new ASTNode(true_token);
+                                 }
+                                 else
+                                 {
+                                   cout << "false node" << endl;
+                                   return new ASTNode(false_token);
+                                 }
+                               }
+                               else
+                               {
+                                 cout << "> node error: " << children().size() << endl;
+                                 return this;
+                               }
+                             }
+                             else if ((str() == "then_block"))
+                                  {
+
+                                    ASTNode *n=0;
+                                     
+                                    for (auto &i : children_)
+                                    {
+                                      n = i->eval();
+                                      cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
+                                      if (n != i)
+                                      {
+                                        delete i; // need free ASTNode
+                                        i = n;
+                                      }
+                                      print_ast();
+                                    }
+                                    return this;
+                                  }
+                                  else if ((str() == "else_block"))
+                                       {
+                                    ASTNode *n=0;
+                                     
+                                    for (auto &i : children_)
+                                    {
+                                      n = i->eval();
+                                      cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
+                                      if (n != i)
+                                      {
+                                        delete i; // need free ASTNode
+                                        i = n;
+                                      }
+                                      print_ast();
+                                    }
+                                    return this;
+
+                                       }
+                                       else
+                                       {
+                                         cout << "unhandle op: " << str() << endl;
+                                         return this;
+                                       }
 #if 0
       bool leaf = i->is_leaf();
       //i->eval();
