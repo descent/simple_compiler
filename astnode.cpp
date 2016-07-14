@@ -154,6 +154,7 @@ ASTNode* ASTNode::eval()
         ASTNode *c2 = children_[1]->eval();
         cout << "c2: " << c2->str() << endl;
 
+#if 0
         if (children_[0]->eval_result_)
         {
           ASTNode *e = children_[0]->eval_result_;
@@ -169,6 +170,7 @@ ASTNode* ASTNode::eval()
           children_[1] = e;
           print_ast();
         }
+#endif
 
 #if 0
         if (c1_leaf == false)
@@ -254,13 +256,14 @@ ASTNode* ASTNode::eval()
            }
 #endif
 
+#if 0
            if (children_[1] != c1)
            {
              delete children_[1];
              children_[1] = c1;
              print_ast();
            }
-
+#endif
            return this;
 
            //free_children();
@@ -296,11 +299,13 @@ ASTNode* ASTNode::eval()
                      {
                        n = i->eval();
                        cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
+                       #if 0
                        if (n != i)
                        {
                          delete i; // need free ASTNode
                          i = n;
                        }
+                       #endif
                        print_ast();
                        //new_children.push_back(n);
                      }
@@ -338,7 +343,7 @@ ASTNode* ASTNode::eval()
                             return this;
                           }
                         }
-                        else if ((str() == ">"))
+                        else if ((str() == ">") || (str() == "<") || (str() == "==") || (str() == "!="))
                              {
                                if (children().size() == 2)
                                {
@@ -346,17 +351,61 @@ ASTNode* ASTNode::eval()
                                  ASTNode *c1 = children_[1]->eval();
                                  int n0 = stoi(c0->str());
                                  int n1 = stoi(c1->str());
-                                 cout << "n0: " << n0 << " n1: " << n1 << endl;
-                                 if (n0 > n1)
+                                 cout << "n0: " << n0 << " " << str() << " n1: " << n1 << endl;
+                                 if (str() == ">")
                                  {
-                                   cout << "true node" << endl;
-                                   return new ASTNode(true_token);
+                                   if (n0 > n1)
+                                   {
+                                     cout << "true node" << endl;
+                                     return new ASTNode(true_token);
+                                   }
+                                   else
+                                   {
+                                     cout << "false node" << endl;
+                                     return new ASTNode(false_token);
+                                   }
                                  }
-                                 else
+                                 if (str() == "<")
                                  {
-                                   cout << "false node" << endl;
-                                   return new ASTNode(false_token);
+                                   if (n0 < n1)
+                                   {
+                                     cout << "true node" << endl;
+                                     return new ASTNode(true_token);
+                                   }
+                                   else
+                                   {
+                                     cout << "false node" << endl;
+                                     return new ASTNode(false_token);
+                                   }
                                  }
+                                 if (str() == "==")
+                                 {
+                                   if (n0 == n1)
+                                   {
+                                     cout << "true node" << endl;
+                                     return new ASTNode(true_token);
+                                   }
+                                   else
+                                   {
+                                     cout << "false node" << endl;
+                                     return new ASTNode(false_token);
+                                   }
+                                 }
+                                 if (str() == "!=")
+                                 {
+                                   if (n0 == n1)
+                                   {
+                                     cout << "true node" << endl;
+                                     return new ASTNode(true_token);
+                                   }
+                                   else
+                                   {
+                                     cout << "false node" << endl;
+                                     return new ASTNode(false_token);
+                                   }
+                                 }
+
+
                                }
                                else
                                {
@@ -364,7 +413,7 @@ ASTNode* ASTNode::eval()
                                  return this;
                                }
                              }
-                             else if ((str() == "then_block"))
+                             else if ((str() == "then_block") || (str() == "while_block"))
                                   {
 
                                     ASTNode *n=0;
@@ -373,11 +422,13 @@ ASTNode* ASTNode::eval()
                                     {
                                       n = i->eval();
                                       cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
+                                      #if 0
                                       if (n != i)
                                       {
                                         delete i; // need free ASTNode
                                         i = n;
                                       }
+                                      #endif
                                       print_ast();
                                     }
                                     return this;
@@ -399,6 +450,26 @@ ASTNode* ASTNode::eval()
                                         }
                                         return this;
                                        }
+                                       else if ((str() == "while"))
+                                            {
+                                              cout << "begin eval while" << endl;
+                                              if (children().size() == 2)
+                                              {
+                                                ASTNode *c0 = children_[0];
+                                                ASTNode *eval_while = 0;
+                                                while(c0->eval()->ast_type() == TRUE)
+                                                {
+                                                  eval_while = children_[1]->eval();
+                                                  cout << "eval while eval_while:" << eval_while->str() << endl;
+                                                }
+                                                return eval_while;
+                                              }
+                                              else
+                                              {
+                                                cout << "while node fail" << endl;
+                                              }
+                                              return this;
+                                            }
 
                                        else
                                        {
