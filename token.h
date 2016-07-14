@@ -42,4 +42,5 @@ extern Token func_body_token;
 extern Token prog_token;
 extern Token true_token;
 extern Token false_token;
+extern Token while_token;
 #endif

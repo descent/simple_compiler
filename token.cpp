@@ -15,3 +15,4 @@ Token func_call_token("func call", FUNC_NAME);
 Token prog_token("prog", VAR);
 Token true_token("t", TRUE);
 Token false_token("f", FALSE);
+Token while_token("while_block", WHILE);
