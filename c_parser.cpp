@@ -495,6 +495,7 @@ ASTNode* statement()
          }
 
          ASTNode *b = block();
+         b->set_token(while_token);
          s_node->add_child(e, b);
        }
        else // simple
