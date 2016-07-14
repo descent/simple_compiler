@@ -224,11 +224,26 @@ ASTNode* ASTNode::eval()
          {
            cout << "op is =" << endl;
            // add var/val to env
-           ASTNode *c1 = children_[0]->eval();
-           ASTNode *c2 = children_[1]->eval();
+           ASTNode *c1 = children_[1]->eval();
+
+           ASTNode *c0 = children_[0];
+
+           if (c0->ast_type() != NAME)
+           {
+             cout << "= error: left side should be variable name" << endl;
+             return this;
+           }
 
 
-           env.insert({c1->str(), c2});
+           cout << "c0 str: " << c0->str() << " c1: " << c1->str() << endl;
+           //env.insert({c0->str(), c1});
+           env[c0->str()] = c1;
+           if (env.count(c0->str()))
+           {
+             ASTNode *f = env[c0->str()];
+             cout << "f str: " << f->str() << endl;
+           }
+
 
 #if 0
            if (children_[0] != c1)
