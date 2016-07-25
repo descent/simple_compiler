@@ -1,11 +1,15 @@
 #include "astnode.h"
 
 #include <map>
+using namespace std;
 
 #define PREORDER
 
 
 #define PRINT_TREE_STRING
+
+extern map<string, ASTNode*> func_map;
+
 
 std::map<std::string, ASTNode *> env;
 
@@ -120,6 +124,30 @@ void ASTNode::print()
 
 ASTNode* ASTNode::eval()
 {
+  if (ast_type() == FUNC_NAME) // func call
+  {
+    ASTNode *f_node = func_map[str()];
+    if (f_node->children().size() == 1)
+    {
+      ASTNode *f_body = f_node->children()[0];
+      ASTNode *ret=0;
+      for (auto &i : f_body->children())
+        ret = i->eval();
+      return ret;
+      //return f_body->eval();
+      //cout << "xxx " << endl;
+      //exit(0);
+    }
+    else if (f_node->children().size() == 2)
+         {
+         }
+         else
+         {
+           // some error
+           exit(5);
+         }
+  }
+
   if (children_.size() == 0) // leaf node
   {
     if (ast_type() == NAME)
