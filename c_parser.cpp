@@ -14,7 +14,8 @@
 
 using namespace std;
 
-#define TEST_STATEMENT
+
+//#define TEST_STATEMENT
 
 bool need = true;
 
@@ -22,7 +23,20 @@ bool need = true;
 #include "parser.h"
 #include "token.h"
 
+map<string, ASTNode*> func_map;
+
 ObjType obj_type;
+
+ASTNode* prog_node;
+
+void add_call_main_node(ASTNode *p_node)
+{
+  ASTNode *fc = new ASTNode(func_call_token);
+
+  fc->set_str("main");
+  p_node->add_child(fc);
+}
+
 
 // ref: http://lotabout.me/2016/write-a-C-interpreter-5/
 /*
@@ -303,6 +317,7 @@ ASTNode* func_call()
   if (t.ast_type() == NAME)
   {
     fc = new ASTNode(func_call_token);
+    fc->set_str(t.str());
 
     ASTNode *e=0;
     pop_token();
@@ -680,6 +695,7 @@ ASTNode* func_decl()
   {
     Token t = pop_token();
     func_node->set_str(t.str());
+    func_map[t.str()] = func_node;
   }
   else
   {
@@ -869,6 +885,7 @@ ASTNode* global_declaration()
 ASTNode* program()
 {
   ASTNode *p = new ASTNode(prog_token);
+  prog_node = p;
 
   ASTNode *g = 0;
 #if 0
@@ -1099,6 +1116,8 @@ int main(int argc, char *argv[])
 #endif
 #endif
   }
+
+  add_call_main_node(prog_node);
 
 
 #ifdef PRINT_TREE_STRING
