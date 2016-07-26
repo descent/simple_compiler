@@ -6,7 +6,7 @@
 # test lexer
 # make clean; make DLEXER=1 lexer
 
-CXXFLAGS=-g -std=c++11 -Wall
+CXXFLAGS=-g -std=c++14 -Wall
 ifdef DLEXER
 CXXFLAGS+= -DDEBUG_LEXER
 endif
@@ -19,7 +19,7 @@ all:
 	make DPARSER=1 c_parser
 
 
-c_parser: c_parser.o astnode.o token.o lexer.o op.o
+c_parser: c_parser.o astnode.o token.o lexer.o op.o env.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 parser: parser.o astnode.o token.o lexer.o op.o
@@ -40,6 +40,9 @@ astnode.o: astnode.cpp astnode.h mytype.h token.h
 
 env.o: env.cpp env.h
 	$(CXX) $(CXXFLAGS) -c $<
+
+env: env.cpp 
+	$(CXX) -DTEST_DEBUG $(CXXFLAGS) -o $@ $^
 
 op.o: op.cpp 
 	$(CXX) $(CXXFLAGS) -c $<
