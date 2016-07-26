@@ -107,12 +107,12 @@ class ASTNode
     {
       const char *type_str[]=
       {
-        "INVALID", "ROOT", 
+        "INVALID", "ROOT", "PROG",
         "TRUE", "FALSE", 
         "ENUM", "INT", "CHAR", 
         "IF", "WHILE",
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
-        "NAME", "VAR", "FUNC_NAME", 
+        "NAME", "VAR", "FUNC_CALL", "FUNC_BODY",
         "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", 
         "NUMBER", "STRING", "EOL"
       };
