@@ -1,0 +1,20 @@
+int x;
+int f1()
+{
+  2*3;
+  12+13;
+}
+
+int f2(int i)
+{
+  int a;
+  5*i;
+}
+int main()
+{
+  int z;
+  61+2;
+  9*7;
+  f1();
+  f2(z);
+}
