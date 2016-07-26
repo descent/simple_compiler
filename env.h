@@ -14,10 +14,8 @@ typedef map<string, ASTNode*> Frame;
 class Environment 
 {
   public:
-    Environment(Environment *outer=0, const char *name=0): outer_(outer)
+    Environment(Environment *outer, const string &name): outer_(outer), name_(name)
     {
-      if (name != 0)
-        name_ = string(name);
     }
     Environment *outer_;
 
@@ -43,9 +41,19 @@ class Environment
       return frame_;
     }
 
-
-    string name_; // env name for debug
+    const string &name() const
+    {
+      return name_;
+    }
     int free_frame_index_;
+
+    bool edit(const string &str, ASTNode *node) 
+    {
+      cout  << "ss edit" << endl;
+      frame_[str] = node;
+      return true;
+    }
+
   private:
     ASTNode* lookup_by_env(const Environment *env, const string &var)
     {
@@ -64,9 +72,11 @@ class Environment
     }
 
     Frame frame_;
+    string name_; // env name for debug
 };
 
 void create_primitive_procedure(Environment *env);
+Environment *get_global_env();
 
 
 #endif

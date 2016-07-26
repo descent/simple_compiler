@@ -6,6 +6,12 @@ Cell *proc_add(Cell *cell)
 #endif
 
 
+Environment *get_global_env()
+{
+  static Environment g_env(0, "global_env");
+  return &g_env;
+}
+
 Environment *new_env(Environment *outer, const char *name)
 {
   return new Environment(outer, name);
