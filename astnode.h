@@ -9,6 +9,7 @@ using std::endl;
 
 #include "mytype.h"
 #include "token.h"
+#include "env.h"
 
 //using std::vector;
 
@@ -97,7 +98,7 @@ class ASTNode
       children_.push_back(r);
       return true;
     }
-    ASTNode* eval();
+    ASTNode* eval(Environment *env);
     ASTType ast_type() const
     {
       return token_.ast_type();
