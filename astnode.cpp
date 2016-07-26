@@ -10,6 +10,7 @@ using namespace std;
 
 extern map<string, ASTNode*> func_map;
 
+ASTNode true_node(true_token);
 
 std::map<std::string, ASTNode *> env;
 
@@ -122,17 +123,44 @@ void ASTNode::print()
   }
 }
 
-ASTNode* ASTNode::eval()
+ASTNode* ASTNode::eval(Environment *env)
 {
-  if (ast_type() == FUNC_NAME) // func call
+#if 1
+  if (ast_type() == VAR) // var declare
   {
+    cout << "Xx env str:" << env->name() << endl;
+
+    for (auto &i : children())
+    {
+      env->add(i->str(), &true_node);
+    }
+    return this;
+  }
+#endif
+  if (ast_type() == FUNC_CALL) 
+  {
+    cout << "aa function call str: " << str() << endl;
+    if (children().size() > 0) // has arguments
+    {
+      // new env
+      //Environment *env = new Environment();
+    }
+    
     ASTNode *f_node = func_map[str()];
     if (f_node->children().size() == 1)
     {
+      cout << "1111 " << endl;
+      Environment *env = new Environment(env, str() + "_env");
+      cout << "env->name(): ";
+      cout << env->name() << endl;
+
       ASTNode *f_body = f_node->children()[0];
       ASTNode *ret=0;
+      cout << "2222 " << endl;
+      f_body->print();
+      cout << "3333 " << endl;
       for (auto &i : f_body->children())
-        ret = i->eval();
+        ret = i->eval(env);
       return ret;
       //return f_body->eval();
       //cout << "xxx " << endl;
@@ -140,10 +168,13 @@ ASTNode* ASTNode::eval()
     }
     else if (f_node->children().size() == 2)
          {
+           ASTNode *f_para = f_node->children()[0];
+           ASTNode *f_body = f_node->children()[1];
          }
          else
          {
            // some error
+           cout << "eval func error!!" << endl;
            exit(5);
          }
   }
@@ -152,15 +183,23 @@ ASTNode* ASTNode::eval()
   {
     if (ast_type() == NAME)
     {
-      //env.find(str());
-      if (env.count(str()))
-      {
-        ASTNode *n = env[str()];
-        cout << "eval name '" << str() << "' : " << n->str() << endl;
-        return env[str()];
-      }
+      cout << "name env name: " << env->name() << endl;
+      ASTNode *n = env->lookup(str());
+      if (n)
+        return n;
       else
         return this;
+
+    #if 0
+      //if (env.count(str()))
+      {
+        //ASTNode *n = env[str()];
+        //cout << "eval name '" << str() << "' : " << n->str() << endl;
+        //return env[str()];
+      }
+      else
+      #endif
+        //return this;
     }
     else
       return this;
@@ -176,10 +215,10 @@ ASTNode* ASTNode::eval()
     {
       if (children_.size() == 2)
       {
-        ASTNode *c1 = children_[0]->eval();
+        ASTNode *c1 = children_[0]->eval(env);
         cout << "xx cur: " << str() << endl;
         cout << "c1: " << c1->str() << endl;
-        ASTNode *c2 = children_[1]->eval();
+        ASTNode *c2 = children_[1]->eval(env);
         cout << "c2: " << c2->str() << endl;
 
 #if 0
@@ -254,7 +293,7 @@ ASTNode* ASTNode::eval()
          {
            cout << "op is =" << endl;
            // add var/val to env
-           ASTNode *c1 = children_[1]->eval();
+           ASTNode *c1 = children_[1]->eval(env);
 
            ASTNode *c0 = children_[0];
 
@@ -267,12 +306,27 @@ ASTNode* ASTNode::eval()
 
            cout << "c0 str: " << c0->str() << " c1: " << c1->str() << endl;
            //env.insert({c0->str(), c1});
+           #if 0
            env[c0->str()] = c1;
            if (env.count(c0->str()))
            {
              ASTNode *f = env[c0->str()];
              cout << "f str: " << f->str() << endl;
            }
+           #endif
+           string s{c0->str()};
+           cout << "s: " << s << endl;
+           ASTNode *f = env->lookup(c0->str());
+           if (f)
+           {
+             env->edit(c0->str(), c1);
+           }
+           else
+           {
+             cout << "cannot look up: " << c0->str() << endl;
+             exit(3);
+           }
+
 
 
 #if 0
@@ -305,7 +359,7 @@ ASTNode* ASTNode::eval()
                 //cout << " i child: " << i->children()[0]->str() << endl;
                 for (auto &i : children_)
                 {
-                  n = i->eval();
+                  n = i->eval(env);
                   #if 1
                   cout << "xx n: " << n->str() << endl;
                   //delete i;
@@ -325,7 +379,7 @@ ASTNode* ASTNode::eval()
                      
                      for (auto &i : children_)
                      {
-                       n = i->eval();
+                       n = i->eval(env);
                        cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
                        #if 0
                        if (n != i)
@@ -348,17 +402,17 @@ ASTNode* ASTNode::eval()
 
                           if (children_size >= 2)
                           {
-                            ASTNode *c0 = children_[0]->eval();
+                            ASTNode *c0 = children_[0]->eval(env);
                             if (c0->ast_type() == TRUE)
                             {
-                              then_node = children_[1]->eval();
+                              then_node = children_[1]->eval(env);
                               return then_node;
                             }
                             else
                             {
                               if (children_size >= 3)
                               {
-                                else_node = children_[2]->eval();
+                                else_node = children_[2]->eval(env);
                                 return else_node;
                               }
                             }
@@ -375,8 +429,8 @@ ASTNode* ASTNode::eval()
                              {
                                if (children().size() == 2)
                                {
-                                 ASTNode *c0 = children_[0]->eval();
-                                 ASTNode *c1 = children_[1]->eval();
+                                 ASTNode *c0 = children_[0]->eval(env);
+                                 ASTNode *c1 = children_[1]->eval(env);
                                  int n0 = stoi(c0->str());
                                  int n1 = stoi(c1->str());
                                  cout << "n0: " << n0 << " " << str() << " n1: " << n1 << endl;
@@ -448,7 +502,7 @@ ASTNode* ASTNode::eval()
                                      
                                     for (auto &i : children_)
                                     {
-                                      n = i->eval();
+                                      n = i->eval(env);
                                       cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
                                       #if 0
                                       if (n != i)
@@ -467,7 +521,7 @@ ASTNode* ASTNode::eval()
                                        
                                         for (auto &i : children_)
                                         {
-                                          n = i->eval();
+                                          n = i->eval(env);
                                           cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
                                           if (n != i)
                                           {
@@ -485,9 +539,9 @@ ASTNode* ASTNode::eval()
                                               {
                                                 ASTNode *c0 = children_[0];
                                                 ASTNode *eval_while = 0;
-                                                while(c0->eval()->ast_type() == TRUE)
+                                                while(c0->eval(env)->ast_type() == TRUE)
                                                 {
-                                                  eval_while = children_[1]->eval();
+                                                  eval_while = children_[1]->eval(env);
                                                   cout << "eval while eval_while:" << eval_while->str() << endl;
                                                 }
                                                 return eval_while;
@@ -501,7 +555,7 @@ ASTNode* ASTNode::eval()
 
                                        else
                                        {
-                                         cout << "unhandle op: " << str() << endl;
+                                         cout << "can not handle op: " << str() << ", ast type: " << type_str() << endl;
                                          return this;
                                        }
 #if 0
