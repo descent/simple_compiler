@@ -22,6 +22,7 @@ bool need = true;
 #include "lexer.h"
 #include "parser.h"
 #include "token.h"
+#include "env.h"
 
 map<string, ASTNode*> func_map;
 
@@ -1133,7 +1134,7 @@ int main(int argc, char *argv[])
 
   //vector<ASTNode *> list = list_of_vals(root->children());
   //eval(root, list);
-  root->eval();
+  root->eval(get_global_env());
   delete root;
 
   return 0;
