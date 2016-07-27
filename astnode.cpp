@@ -10,7 +10,12 @@ using namespace std;
 
 extern map<string, ASTNode*> func_map;
 
-ASTNode true_node(true_token);
+
+ASTNode *get_true_node()
+{
+  static ASTNode true_node(true_token);
+  return &true_node;
+}
 
 std::map<std::string, ASTNode *> env;
 
@@ -133,7 +138,7 @@ ASTNode* ASTNode::eval(Environment *env)
     for (auto &i : children())
     {
       //cout << "add: " << i->str() << " to env: " << env->name() << endl;
-      env->add(i->str(), &true_node);
+      env->add(i->str(), get_true_node());
     }
     return this;
   }
@@ -225,7 +230,7 @@ ASTNode* ASTNode::eval(Environment *env)
         }
 
       }
-      return &true_node;
+      return get_true_node();
     }
 
       Environment *func_env = new Environment(env, str() + "_env");
