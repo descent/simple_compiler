@@ -63,7 +63,27 @@ int get_string_token(string &token)
   c = getchar_la();
   while (isascii_ex(c))
   {
-    token.push_back(c); 
+    if (c=='\\')
+    {
+      c = getchar_la();
+      switch (c)
+      {
+        case 'n':
+        {
+          token.push_back('\n'); 
+          break;
+        }
+        default:
+        {
+          token.push_back(c); 
+          break;
+        }
+      }
+    }
+    else
+    {
+      token.push_back(c); 
+    }
     c = getchar_la();
   }
 
