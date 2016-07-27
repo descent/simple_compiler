@@ -72,7 +72,7 @@ class ASTNode
     ~ASTNode()
     {
       static u32 i=0;
-      cout << "~ASTNode: " << id_ << ": " << str() << endl;
+      //cout << "~ASTNode: " << id_ << ": " << str() << endl;
       ++i;
       free_children();
       // delete eval_result_; // need not delete eval_result_;
