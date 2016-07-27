@@ -1130,7 +1130,7 @@ int main(int argc, char *argv[])
   root->print();
   cout << endl;
 #endif
-  cout << "num: " << root->num() << endl;
+  //cout << "num: " << root->num() << endl;
 
   //vector<ASTNode *> list = list_of_vals(root->children());
   //eval(root, list);
