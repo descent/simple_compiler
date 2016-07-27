@@ -33,7 +33,7 @@ class Environment
     bool add(const string var, ASTNode *node)
     {
       auto count = frame_.count(var);
-      cout << "frame_.count(var): " << count << endl;
+      // cout << "frame_.count(var): " << count << endl;
       if (count > 0) // var exists
         return false;
 
@@ -54,7 +54,6 @@ class Environment
 
     bool edit(const string &str, ASTNode *node) 
     {
-      cout  << "ss edit" << endl;
       frame_[str] = node;
       return true;
     }
