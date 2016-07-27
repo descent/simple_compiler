@@ -132,6 +132,7 @@ ASTNode* ASTNode::eval(Environment *env)
 
     for (auto &i : children())
     {
+      cout << "add: " << i->str() << " to env: " << env->name() << endl;
       env->add(i->str(), &true_node);
     }
     return this;
@@ -147,29 +148,23 @@ ASTNode* ASTNode::eval(Environment *env)
     }
     
     ASTNode *f_node = func_map[str()];
+    ASTNode *f_para = 0;
+    ASTNode *f_body = 0;
+
     if (f_node->children().size() == 1)
     {
-      cout << "1111 " << endl;
-      Environment *env = new Environment(env, str() + "_env");
-      cout << "env->name(): ";
-      cout << env->name() << endl;
 
-      ASTNode *f_body = f_node->children()[0];
-      ASTNode *ret=0;
-      cout << "2222 " << endl;
-      f_body->print();
-      cout << "3333 " << endl;
-      for (auto &i : f_body->children())
-        ret = i->eval(env);
-      return ret;
+      f_body = f_node->children()[0];
+
+
       //return f_body->eval();
       //cout << "xxx " << endl;
       //exit(0);
     }
     else if (f_node->children().size() == 2)
          {
-           ASTNode *f_para = f_node->children()[0];
-           ASTNode *f_body = f_node->children()[1];
+           f_para = f_node->children()[0];
+           f_body = f_node->children()[1];
          }
          else
          {
@@ -177,18 +172,60 @@ ASTNode* ASTNode::eval(Environment *env)
            cout << "eval func error!!" << endl;
            exit(5);
          }
+
+      cout << "1111 " << endl;
+      Environment *func_env = new Environment(env, str() + "_env");
+      cout << "func_env->name(): ";
+      cout << func_env->name() << endl;
+      cout << "f_para" << endl;
+      if (f_para)
+      {
+        //if (children().size() > 0) // has arguments
+        //for (auto &i : f_para->children())
+        for (auto i=0 ; i < f_para->children().size() ; ++i)
+        {
+          ASTNode *arg_node = children()[i];
+          #if 0
+          ASTNode *n = func_env->lookup(f_para->children()[i]->str());
+          if (n)
+          {
+            func_env->edit(f_para->children()[i]->str(), arg_node->eval(func_env));
+          }
+          else
+          #endif
+          func_env->add(f_para->children()[i]->str(), arg_node->eval(func_env));
+        }
+
+        //f_para->print();
+      }
+
+      ASTNode *ret=0;
+#if 0
+      cout << "2222 " << endl;
+      f_body->print();
+      cout << "3333 " << endl;
+#endif
+      for (auto &i : f_body->children())
+        ret = i->eval(func_env);
+      return ret;
   }
 
   if (children_.size() == 0) // leaf node
   {
     if (ast_type() == NAME)
     {
-      cout << "name env name: " << env->name() << endl;
+      cout << "lookup: " << str() << ", in env name: " << env->name() << endl;
       ASTNode *n = env->lookup(str());
       if (n)
+      {
+        cout << "find" << endl;
         return n;
+      }
       else
+      {
+        cout << "not found" << endl;
         return this;
+      }
 
     #if 0
       //if (env.count(str()))
