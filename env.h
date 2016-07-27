@@ -1,6 +1,8 @@
 #ifndef ENV_H
 #define ENV_H
 
+#include "mytype.h"
+
 #include <map>
 #include <string>
 #include <iostream>
@@ -16,6 +18,9 @@ class Environment
   public:
     Environment(Environment *outer, const string &name): outer_(outer), name_(name)
     {
+      id_ = count_;
+      name_ = name + "##" + to_string(id_);
+      ++count_;
     }
     Environment *outer_;
 
@@ -73,6 +78,8 @@ class Environment
 
     Frame frame_;
     string name_; // env name for debug
+    static u32 count_;
+    u32 id_;
 };
 
 void create_primitive_procedure(Environment *env);

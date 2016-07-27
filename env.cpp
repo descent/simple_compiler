@@ -5,6 +5,7 @@ Cell *proc_sub(Cell *cell)
 Cell *proc_add(Cell *cell)
 #endif
 
+u32 Environment::count_=0;
 
 Environment *get_global_env()
 {
