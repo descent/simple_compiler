@@ -128,11 +128,11 @@ ASTNode* ASTNode::eval(Environment *env)
 #if 1
   if (ast_type() == VAR) // var declare
   {
-    cout << "Xx env str:" << env->name() << endl;
+    //cout << "Xx env str:" << env->name() << endl;
 
     for (auto &i : children())
     {
-      cout << "add: " << i->str() << " to env: " << env->name() << endl;
+      //cout << "add: " << i->str() << " to env: " << env->name() << endl;
       env->add(i->str(), &true_node);
     }
     return this;
@@ -140,7 +140,6 @@ ASTNode* ASTNode::eval(Environment *env)
 #endif
   if (ast_type() == FUNC_CALL) 
   {
-    cout << "aa function call str: " << str() << endl;
     if (children().size() > 0) // has arguments
     {
       // new env
@@ -180,22 +179,61 @@ ASTNode* ASTNode::eval(Environment *env)
 
     if (str()=="printf")
     {
+      #if 0
       cout << "print arg: " << endl;
-    #if 1
       for (auto &i : children())
       {
         cout << i->str() << endl;
       }
       #endif
-      printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()));
+      switch (children().size())
+      {
+        case 0:
+        {
+          cout << "printf has no arguments" << endl;
+          break;
+        }
+        case 1:
+        {
+          printf(children()[0]->str().c_str());
+          break;
+        }
+        case 2:
+        {
+          printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()));
+          break;
+        }
+        case 3:
+        {
+          printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()), stoi(children()[2]->eval(env)->str()));
+          break;
+        }
+        case 4:
+        {
+          printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()), stoi(children()[2]->eval(env)->str()), stoi(children()[3]->eval(env)->str()));
+          break;
+        }
+        case 5:
+        {
+          printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()), stoi(children()[2]->eval(env)->str()), stoi(children()[3]->eval(env)->str()), stoi(children()[4]->eval(env)->str()));
+          break;
+        }
+        case 6:
+        {
+          printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()), stoi(children()[2]->eval(env)->str()), stoi(children()[3]->eval(env)->str()), stoi(children()[4]->eval(env)->str()), stoi(children()[5]->eval(env)->str()));
+          break;
+        }
+
+      }
       return &true_node;
     }
 
-      cout << "1111 " << endl;
       Environment *func_env = new Environment(env, str() + "_env");
+      #if 0
       cout << "func_env->name(): ";
       cout << func_env->name() << endl;
       cout << "f_para" << endl;
+      #endif
       if (f_para)
       {
         //if (children().size() > 0) // has arguments
@@ -232,16 +270,16 @@ ASTNode* ASTNode::eval(Environment *env)
   {
     if (ast_type() == NAME)
     {
-      cout << "lookup: " << str() << ", in env name: " << env->name() << endl;
+      //cout << "lookup: " << str() << ", in env name: " << env->name() << endl;
       ASTNode *n = env->lookup(str());
       if (n)
       {
-        cout << "find" << endl;
+        //cout << "find" << endl;
         return n;
       }
       else
       {
-        cout << "not found" << endl;
+        //cout << "not found" << endl;
         return this;
       }
 
@@ -261,7 +299,7 @@ ASTNode* ASTNode::eval(Environment *env)
   }
   else
   {
-    cout << "cur node: " << str() << endl;
+    //cout << "cur node: " << str() << endl;
 
     //for (const auto &i : children_)
     {
@@ -271,10 +309,14 @@ ASTNode* ASTNode::eval(Environment *env)
       if (children_.size() == 2)
       {
         ASTNode *c1 = children_[0]->eval(env);
+        #ifdef DEBUG_MSG
         cout << "xx cur: " << str() << endl;
         cout << "c1: " << c1->str() << endl;
+        #endif
         ASTNode *c2 = children_[1]->eval(env);
+        #ifdef DEBUG_MSG
         cout << "c2: " << c2->str() << endl;
+        #endif
 
 #if 0
         if (children_[0]->eval_result_)
@@ -322,7 +364,9 @@ ASTNode* ASTNode::eval(Environment *env)
           ret = n1 * n2;
 
         //printf("ret: %d = n1: %d %s n2: %d\n", ret, n1, str().c_str(), n2);
+        #ifdef DEBUG_MSG
         cout << "eval: " << n1 << " " << str() << " " << n2 << " = " << ret << endl;
+        #endif
 
 #if 0
         set_str(std::to_string(ret));
@@ -346,7 +390,9 @@ ASTNode* ASTNode::eval(Environment *env)
     }
     else if (str() == "=")
          {
+        #ifdef DEBUG_MSG
            cout << "op is =" << endl;
+        #endif
            // add var/val to env
            ASTNode *c1 = children_[1]->eval(env);
 
@@ -359,7 +405,9 @@ ASTNode* ASTNode::eval(Environment *env)
            }
 
 
+        #ifdef DEBUG_MSG
            cout << "c0 str: " << c0->str() << " c1: " << c1->str() << endl;
+        #endif
            //env.insert({c0->str(), c1});
            #if 0
            env[c0->str()] = c1;
@@ -370,7 +418,10 @@ ASTNode* ASTNode::eval(Environment *env)
            }
            #endif
            string s{c0->str()};
+
+           #ifdef DEBUG_MSG
            cout << "s: " << s << endl;
+           #endif
            ASTNode *f = env->lookup(c0->str());
            if (f)
            {
@@ -415,16 +466,16 @@ ASTNode* ASTNode::eval(Environment *env)
                 for (auto &i : children_)
                 {
                   n = i->eval(env);
-                  #if 1
+                  #if 0
                   cout << "xx n: " << n->str() << endl;
                   //delete i;
                   //  i = n;
                   #endif
                 }
 
-                cout << " yy op: " << str() << endl;
+                //cout << " yy op: " << str() << endl;
                 //children_ = new_children;
-                print_ast();
+                //print_ast();
                 return this;
 
               }
@@ -435,7 +486,7 @@ ASTNode* ASTNode::eval(Environment *env)
                      for (auto &i : children_)
                      {
                        n = i->eval(env);
-                       cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
+                       //cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
                        #if 0
                        if (n != i)
                        {
@@ -443,7 +494,7 @@ ASTNode* ASTNode::eval(Environment *env)
                          i = n;
                        }
                        #endif
-                       print_ast();
+                       //print_ast();
                        //new_children.push_back(n);
                      }
                      //children_ = new_children;
@@ -488,17 +539,19 @@ ASTNode* ASTNode::eval(Environment *env)
                                  ASTNode *c1 = children_[1]->eval(env);
                                  int n0 = stoi(c0->str());
                                  int n1 = stoi(c1->str());
-                                 cout << "n0: " << n0 << " " << str() << " n1: " << n1 << endl;
+                                 #ifdef DEBUG_MSG
+                                 cout << endl << "n0: " << n0 << " " << str() << " n1: " << n1 << endl;
+                                 #endif
                                  if (str() == ">")
                                  {
                                    if (n0 > n1)
                                    {
-                                     cout << "true node" << endl;
+                                     //cout << "true node" << endl;
                                      return new ASTNode(true_token);
                                    }
                                    else
                                    {
-                                     cout << "false node" << endl;
+                                     //cout << "false node" << endl;
                                      return new ASTNode(false_token);
                                    }
                                  }
@@ -506,12 +559,12 @@ ASTNode* ASTNode::eval(Environment *env)
                                  {
                                    if (n0 < n1)
                                    {
-                                     cout << "true node" << endl;
+                                     //cout << "true node" << endl;
                                      return new ASTNode(true_token);
                                    }
                                    else
                                    {
-                                     cout << "false node" << endl;
+                                     //cout << "false node" << endl;
                                      return new ASTNode(false_token);
                                    }
                                  }
@@ -519,12 +572,12 @@ ASTNode* ASTNode::eval(Environment *env)
                                  {
                                    if (n0 == n1)
                                    {
-                                     cout << "true node" << endl;
+                                     //cout << "true node" << endl;
                                      return new ASTNode(true_token);
                                    }
                                    else
                                    {
-                                     cout << "false node" << endl;
+                                     //cout << "false node" << endl;
                                      return new ASTNode(false_token);
                                    }
                                  }
@@ -532,12 +585,12 @@ ASTNode* ASTNode::eval(Environment *env)
                                  {
                                    if (n0 == n1)
                                    {
-                                     cout << "true node" << endl;
+                                     //cout << "true node" << endl;
                                      return new ASTNode(true_token);
                                    }
                                    else
                                    {
-                                     cout << "false node" << endl;
+                                     //cout << "false node" << endl;
                                      return new ASTNode(false_token);
                                    }
                                  }
@@ -558,7 +611,9 @@ ASTNode* ASTNode::eval(Environment *env)
                                     for (auto &i : children_)
                                     {
                                       n = i->eval(env);
+                                      #ifdef DEBUG_MSG
                                       cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
+                                      #endif
                                       #if 0
                                       if (n != i)
                                       {
@@ -566,7 +621,7 @@ ASTNode* ASTNode::eval(Environment *env)
                                         i = n;
                                       }
                                       #endif
-                                      print_ast();
+                                      //print_ast();
                                     }
                                     return this;
                                   }
@@ -577,19 +632,22 @@ ASTNode* ASTNode::eval(Environment *env)
                                         for (auto &i : children_)
                                         {
                                           n = i->eval(env);
+
+                                          #ifdef DEBUG_MSG
                                           cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
+                                          #endif
                                           if (n != i)
                                           {
                                             delete i; // need free ASTNode
                                             i = n;
                                           }
-                                          print_ast();
+                                          //print_ast();
                                         }
                                         return this;
                                        }
                                        else if ((str() == "while"))
                                             {
-                                              cout << "begin eval while" << endl;
+                                              //cout << "begin eval while" << endl;
                                               if (children().size() == 2)
                                               {
                                                 ASTNode *c0 = children_[0];
@@ -597,7 +655,7 @@ ASTNode* ASTNode::eval(Environment *env)
                                                 while(c0->eval(env)->ast_type() == TRUE)
                                                 {
                                                   eval_while = children_[1]->eval(env);
-                                                  cout << "eval while eval_while:" << eval_while->str() << endl;
+                                                  //cout << "eval while eval_while:" << eval_while->str() << endl;
                                                 }
                                                 return eval_while;
                                               }
