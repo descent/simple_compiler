@@ -146,10 +146,14 @@ ASTNode* ASTNode::eval(Environment *env)
       // new env
       //Environment *env = new Environment();
     }
+
     
     ASTNode *f_node = func_map[str()];
     ASTNode *f_para = 0;
     ASTNode *f_body = 0;
+
+    if (f_node)
+    {
 
     if (f_node->children().size() == 1)
     {
@@ -172,6 +176,20 @@ ASTNode* ASTNode::eval(Environment *env)
            cout << "eval func error!!" << endl;
            exit(5);
          }
+    }
+
+    if (str()=="printf")
+    {
+      cout << "print arg: " << endl;
+    #if 1
+      for (auto &i : children())
+      {
+        cout << i->str() << endl;
+      }
+      #endif
+      printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()));
+      return &true_node;
+    }
 
       cout << "1111 " << endl;
       Environment *func_env = new Environment(env, str() + "_env");
