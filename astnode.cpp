@@ -55,11 +55,41 @@ std::string ObjType::str()
 
 u32 ASTNode::no_=0;
 
+string tree_string(const string &str)
+{
+    string print_str{str};
+    string s1("%");
+    string s2("(");
+    string s3(")");
+    char s4='\n';
+    //cout << endl << "XXX:" << print_str << "YYY" << endl;
+    if (print_str.find(s1) != string::npos)
+    {
+      print_str.replace(print_str.find(s1), s1.length(), R"(\%)");
+      //cout << endl << "BBB:" << print_str << endl;
+    }
+
+    if (print_str.find(s2) != string::npos)
+    {
+      //cout << endl << "CCC:" << print_str << endl;
+      print_str.replace(print_str.find(s2), s2.length(), R"(\()");
+    }
+    if (print_str.find(s3) != string::npos)
+      print_str.replace(print_str.find(s3), s3.length(), R"(\))");
+    if (print_str.find(s4) != string::npos)
+    {
+      print_str.replace(print_str.find(s4), 1, R"(\\n)");
+      //cout << endl << "AAA:" << print_str << endl;
+    }
+  return print_str;
+}
+
 void ASTNode::print_tree()
 {
   if (children_.size() == 0) // leaf node
   {
-    cout << "(" << token_.str_;
+    string print_str = tree_string(token_.str_);
+    cout << "(" << print_str;
     if (ast_type() == NAME)
       cout << obj_type_.str();
 
@@ -67,9 +97,19 @@ void ASTNode::print_tree()
   }
   else
   {
-    cout << "( " << token_.str_;
+  #if 0
+    string str("one three two four");
+    string str2("three");
+    str.replace(str.find(str2),str2.length(),"five");
+  #endif
+
+    string print_str = tree_string(token_.str_);
+    //cout << "( " << token_.str_;
+    cout << "( " << print_str;
     if (ast_type() == NAME)
+    {
       cout << obj_type_.str();
+    }
     //for (std::vector<ASTNode*>::size_type i=0 ; i < children_.size() ; ++i)
     for (auto i : children_)
     {
