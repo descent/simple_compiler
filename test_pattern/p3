@@ -33,6 +33,6 @@ int main()
   {
     printf("z <= 1\n");
   }
-  printf("z: %d, 1+2=%d, 5*6 = %d\n", z, 1+2, 5*6);
+  printf("\tz: %d, 1+2=%d, 5*6 = %d\n", z, 1+2, 5*6);
   f2(5);
 }
