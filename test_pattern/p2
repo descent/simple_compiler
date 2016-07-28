@@ -10,5 +10,5 @@ int main()
   int x;
 
   x = f2();
-  printf("%d\n", f2());
+  printf("f2() %d\n", f2());
 }
