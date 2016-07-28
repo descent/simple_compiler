@@ -10,7 +10,6 @@ using namespace std;
 
 extern map<string, ASTNode*> func_map;
 
-
 ASTNode *get_true_node()
 {
   static ASTNode true_node(true_token);
@@ -131,6 +130,15 @@ void ASTNode::print()
 ASTNode* ASTNode::eval(Environment *env)
 {
 #if 1
+  if (ast_type() == RETURN)
+  {
+    ASTNode *r;
+    for (auto &i : children())
+    {
+      r = i->eval(env);
+    }
+    return r;
+  }
   if (ast_type() == VAR) // var declare
   {
     //cout << "Xx env str:" << env->name() << endl;
