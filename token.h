@@ -43,4 +43,6 @@ extern Token prog_token;
 extern Token true_token;
 extern Token false_token;
 extern Token while_token;
+extern Token return_token;
+
 #endif

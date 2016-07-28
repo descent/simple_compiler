@@ -16,3 +16,4 @@ Token prog_token("prog", PROG);
 Token true_token("t", TRUE);
 Token false_token("f", FALSE);
 Token while_token("while_block", WHILE);
+Token return_token("return", RETURN);
