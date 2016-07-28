@@ -34,6 +34,7 @@ class Token
 extern Token invalid_token;
 extern Token then_block;
 extern Token else_block;
+extern Token g_var_token;
 extern Token var_token;
 extern Token para_token;
 extern Token func_token;
