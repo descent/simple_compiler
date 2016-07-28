@@ -25,6 +25,7 @@ using namespace std;
 
 bool is_func_call();
 ASTNode* func_call();
+ASTNode* var_decl(bool is_global);
 
 bool need = true;
 
@@ -628,7 +629,7 @@ ASTNode* body_decl()
            obj_type.set_char();
 
     pop_token();
-    ASTNode *v = var_decl();
+    ASTNode *v = var_decl(false);
     if (v)
       body_node->add_child(v);
   }
@@ -808,9 +809,14 @@ ASTNode* func_decl()
 }
 
 // variable_decl ::= type {'*'} id { ',' {'*'} id } ';'
-ASTNode* var_decl()
+ASTNode* var_decl(bool is_global)
 {
-  ASTNode *var_node = new ASTNode(var_token);
+  ASTNode *var_node = 0;
+
+  if (is_global)
+    var_node = new ASTNode(g_var_token);
+  else
+    var_node = new ASTNode(var_token);
 
   int ptr_num=0;
   while(is_token("*"))
@@ -914,7 +920,7 @@ ASTNode* global_declaration()
            {
              obj_type.clear_pointer();
              obj_type.set_global();
-             g = var_decl();
+             g = var_decl(true);
            }
          }
          else 
