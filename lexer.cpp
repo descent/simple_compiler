@@ -14,6 +14,16 @@ using namespace std;
 //#define LEX_COLOR
 //#define DEBUG_LEXER_MSG
 
+#if 0
+#define ESCAPE_CHAR(n)
+case n:
+{
+  token.push_back(n); 
+  break;
+}
+#endif
+
+
 static inline int isascii_ex(int c) 
 {
   if (c == '"')
@@ -68,9 +78,39 @@ int get_string_token(string &token)
       c = getchar_la();
       switch (c)
       {
+        case 'a':
+        {
+          token.push_back('\a'); 
+          break;
+        }
+        case 'b':
+        {
+          token.push_back('\b'); 
+          break;
+        }
+        case 'f':
+        {
+          token.push_back('\f'); 
+          break;
+        }
         case 'n':
         {
           token.push_back('\n'); 
+          break;
+        }
+        case 'r':
+        {
+          token.push_back('\r'); 
+          break;
+        }
+        case 't':
+        {
+          token.push_back('\t'); 
+          break;
+        }
+        case 'v':
+        {
+          token.push_back('\v'); 
           break;
         }
         default:
