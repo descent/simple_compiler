@@ -1,3 +1,4 @@
+int a;
 
 int f2(int i)
 {
@@ -7,9 +8,14 @@ int f2(int i)
 
 int main()
 {
-  int x;
+  int x,y;
+  int a;
 
-  x = f2(5);
+  a=99;
+  printf("a: %d\n", a);
+  
+  y=2;
+  x = f2(y+1);
 
   printf("f2(): %d\n", x);
 }
