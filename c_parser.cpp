@@ -17,12 +17,16 @@ using namespace std;
 
 //#define TEST_STATEMENT
 
-bool need = true;
 
 #include "lexer.h"
 #include "parser.h"
 #include "token.h"
 #include "env.h"
+
+bool is_func_call();
+ASTNode* func_call();
+
+bool need = true;
 
 map<string, ASTNode*> func_map;
 
@@ -151,12 +155,17 @@ ASTNode* term()
  */
 
 /*!
- * primary   : "(" expr ")" | NUMBER | IDENTIFIER | STRING
+ * primary   : "(" expr ")" | NUMBER | IDENTIFIER | STRING | func_call
  */
 ASTNode* primary()
 {
   Token token = peek_token(); 
-  if (token.str_ == "(")
+  if (is_func_call())
+  {
+    ASTNode *e = func_call();
+    return e;
+  }
+  else if (token.str_ == "(")
   {
     Token t = pop_token();
     ASTNode *e = expr();
