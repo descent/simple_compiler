@@ -112,7 +112,7 @@ class ASTNode
         "ENUM", "INT", "CHAR", 
         "IF", "WHILE", "RETURN", 
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
-        "NAME", "VAR", "FUNC_CALL", "FUNC_BODY",
+        "NAME", "GLOBAL_VAR", "VAR", "FUNC_CALL", "FUNC_BODY",
         "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", 
         "NUMBER", "STRING", "EOL"
       };
