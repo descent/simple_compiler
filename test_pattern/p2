@@ -1,14 +1,15 @@
 
-int f2()
+int f2(int i)
 {
   1+2;
-  return 2+5+6;
+  return 2+5+i;
 }
 
 int main()
 {
   int x;
 
-  x = f2();
-  printf("f2() %d\n", f2());
+  x = f2(5);
+
+  printf("f2(): %d\n", x);
 }
