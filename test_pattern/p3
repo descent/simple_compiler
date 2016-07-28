@@ -1,0 +1,38 @@
+int x;
+int f1()
+{
+  2*3;
+  12+13;
+}
+
+int f2(int i)
+{
+  int a;
+
+  a=2;
+
+  while(a <5)
+  {
+    a=a+1;
+    printf("a < 5, a: %d\n", a);
+  }
+  3+i;
+  a*i;
+  printf("a*i: %d\n", a*i);
+}
+int main()
+{
+  int z;
+
+  z=6;
+  if (z > 1)
+  {
+    printf("z > 1\n");
+  }
+  else
+  {
+    printf("z <= 1\n");
+  }
+  printf("z: %d, 1+2=%d, 5*6 = %d\n", z, 1+2, 5*6);
+  f2(5);
+}
