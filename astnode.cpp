@@ -205,7 +205,19 @@ ASTNode* ASTNode::eval(Environment *env)
         }
         case 2:
         {
-          printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()));
+          //printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()));
+          if (children()[1]->eval(env)->ast_type() == STRING)
+          {
+            printf(children()[0]->str().c_str(), children()[1]->eval(env)->str().c_str());
+          }
+          else if (children()[1]->eval(env)->ast_type() == NUMBER)
+               {
+                 printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()));
+               }
+               else
+               {
+                 cout << "only handle STRING/NUMBER" << endl;
+               }
           break;
         }
         case 3:
