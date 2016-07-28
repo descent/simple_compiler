@@ -427,6 +427,7 @@ ASTNode* simple()
 /*
  * modify - statement :   "if" "(" expr ")" block [ "else" block ] 
  *                        | "while" "(" expr ")" block
+ *                        | "return" [expr]
  *                        | simple ";"
  */
 ASTNode* statement()
@@ -514,20 +515,48 @@ ASTNode* statement()
          b->set_token(while_token);
          s_node->add_child(e, b);
        }
-       else // simple
-       {
-         s_node = simple();
-         if (is_token(";"))
-         {
-           pop_token();
-         }
-         else
-         {
-           Token t = peek_token();
-           err("statement|simple: should be ;", t.str());
-         }
+       else if (token.str_ == "return")
+            {
+              pop_token();
+              cout << "xx return" << endl;
+              s_node = new ASTNode(return_token);
+              Token t = peek_token();
+              if (t.str() == ";")
+              { 
+                pop_token();
+              }
+              else
+              { // expression
+                cout << "expr return" << endl;
+                ASTNode *e = 0;
+                e = expr();
+                if (e)
+                  s_node->add_child(e);
 
-       }
+                if (is_token(";"))
+                {
+                  pop_token();
+                }
+                else
+                {
+                  Token t = peek_token();
+                  err("statement|simple: should be ;", t.str());
+                }
+              }
+            }
+            else // simple
+            {
+              s_node = simple();
+              if (is_token(";"))
+              {
+                pop_token();
+              }
+              else
+              {
+                Token t = peek_token();
+                err("statement|simple: should be ;", t.str());
+              }
+            }
 
   return s_node;
 }
