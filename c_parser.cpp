@@ -176,6 +176,7 @@ ASTNode* primary()
        else if (token.ast_type() == STRING)
             {
               Token t = pop_token();
+              cout << "STRING: " << t.str() << endl;
               return new ASTNode(t);
             }
             else
@@ -344,13 +345,25 @@ ASTNode* func_call()
         if (e)
           fc->add_child(e);
 
-        while (is_token(")") == false)
+        Token t = peek_token();
+
+        while (t.str() != ")")
         {
-            Token t = peek_token();
+
+
             if (t.str() == ",")
             {
               pop_token();
-              e = expr();
+
+              if (is_func_call())
+              {
+                e = func_call();
+              }
+              else
+              {
+                e = expr();
+              }
+
               if (e);
                 fc->add_child(e);
             }
@@ -358,7 +371,7 @@ ASTNode* func_call()
             {
               err("func_call: should ','", t.str());
             }
-
+            t = peek_token();
         } 
 
       }
