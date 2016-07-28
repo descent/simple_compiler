@@ -170,6 +170,13 @@ void ASTNode::print()
 ASTNode* ASTNode::eval(Environment *env)
 {
 #if 1
+  if (ast_type() == GLOBAL_VAR)
+  {
+    for (auto &i : children())
+      env->add(i->str(), get_true_node());
+    
+    return this;
+  }
   if (ast_type() == RETURN)
   {
     ASTNode *r;
