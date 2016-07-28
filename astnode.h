@@ -110,7 +110,7 @@ class ASTNode
         "INVALID", "ROOT", "PROG",
         "TRUE", "FALSE", 
         "ENUM", "INT", "CHAR", 
-        "IF", "WHILE",
+        "IF", "WHILE", "RETURN", 
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
         "NAME", "VAR", "FUNC_CALL", "FUNC_BODY",
         "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", 
