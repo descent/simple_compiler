@@ -914,6 +914,7 @@ ASTNode* global_declaration()
            if (t.str() == "(")
            {
              obj_type.set_func();
+             obj_type.set_global();
              g = func_decl();
            }
            else // variable decl
