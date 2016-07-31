@@ -310,18 +310,30 @@ ASTNode* ASTNode::eval(Environment *env)
       {
         //if (children().size() > 0) // has arguments
         //for (auto &i : f_para->children())
-        for (auto i=0 ; i < f_para->children().size() ; ++i)
+
+        auto var_size = f_para->children().size();
+        auto val_size = children().size();
+
+        if (var_size == val_size)
         {
-          ASTNode *arg_node = children()[i];
-          #if 0
-          ASTNode *n = func_env->lookup(f_para->children()[i]->str());
-          if (n)
+          for (auto i=0 ; i < f_para->children().size() ; ++i)
           {
-            func_env->edit(f_para->children()[i]->str(), arg_node->eval(func_env));
+            ASTNode *arg_node = children()[i];
+            #if 0
+            ASTNode *n = func_env->lookup(f_para->children()[i]->str());
+            if (n)
+            {
+              func_env->edit(f_para->children()[i]->str(), arg_node->eval(func_env));
+            }
+            else
+            #endif
+            func_env->add(f_para->children()[i]->str(), arg_node->eval(func_env));
           }
-          else
-          #endif
-          func_env->add(f_para->children()[i]->str(), arg_node->eval(func_env));
+        }
+        else
+        {
+          cout << "ASTNode: " << str()<< ", var_size: " << var_size << ", val_size: " << val_size << " are not the same." << endl;
+          exit(FUNC_PARA_ARGU_NOT_MATCH);
         }
 
         //f_para->print();
