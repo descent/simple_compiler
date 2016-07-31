@@ -4,8 +4,7 @@
 #include <vector>
 #include <iostream>
 
-using std::cout;
-using std::endl;
+using namespace std;
 
 #include "mytype.h"
 #include "token.h"
@@ -112,7 +111,8 @@ class ASTNode
         "ENUM", "INT", "CHAR", 
         "IF", "WHILE", "RETURN", 
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
-        "NAME", "GLOBAL_VAR", "VAR", "FUNC_CALL", "FUNC_BODY",
+        "NAME", "GLOBAL_VAR", "VAR", 
+        "FUNC_CALL", "FUNC_BODY", "FUNC_NAME", "FUNC_PARA", 
         "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", 
         "NUMBER", "STRING", "EOL"
       };
@@ -166,7 +166,7 @@ class ASTNode
       return no_;
     }
   private:
-    std::vector<ASTNode*> children_;
+    vector<ASTNode*> children_;
     ASTNode* eval_result_;
     Token token_;
     ObjType obj_type_;
