@@ -32,5 +32,9 @@ enum ASTType
   ADD, MIN, MUL, DIV, GREAT, LESS, NUMBER, STRING, EOL, LAST
 };
 
+enum ErrorType
+{
+  FUNC_PARA_ARGU_NOT_MATCH=1
+};
 
 #endif
