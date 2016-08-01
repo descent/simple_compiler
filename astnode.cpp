@@ -250,17 +250,9 @@ ASTNode* ASTNode::eval(Environment *env)
       {
         ASTNode *eval_node = children()[i]->eval(env);
 
-        if (eval_node->ast_type() == STRING)
-        {
-          cmd += "\"";
-          cmd += eval_node->str();
-          cmd += "\"";
-        }
-        else
-        {
-          cmd += eval_node->str();
-        }
-        cmd += " ";
+        cmd += "\"";
+        cmd += eval_node->str();
+        cmd += "\" ";
       }
       cout << "cmd: " << cmd << endl;
       system(cmd.c_str());
