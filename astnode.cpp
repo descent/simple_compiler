@@ -1,5 +1,6 @@
 #include "astnode.h"
 
+#include <cstdlib>
 #include <map>
 using namespace std;
 
@@ -239,13 +240,37 @@ ASTNode* ASTNode::eval(Environment *env)
 
     if (str()=="printf")
     {
+      string cmd{R"(printf ")"};
+      cmd += children()[0]->str();
+      cmd += "\" ";
+
+      auto arg_num =  children().size();
+
+      for (decltype(arg_num) i=1 ; i < arg_num; ++i)
+      {
+        ASTNode *eval_node = children()[i]->eval(env);
+
+        if (eval_node->ast_type() == STRING)
+        {
+          cmd += "\"";
+          cmd += eval_node->str();
+          cmd += "\"";
+        }
+        else
+        {
+          cmd += eval_node->str();
+        }
+        cmd += " ";
+      }
+      cout << "cmd: " << cmd << endl;
+      system(cmd.c_str());
+
       #if 0
       cout << "print arg: " << endl;
       for (auto &i : children())
       {
         cout << i->str() << endl;
       }
-      #endif
       switch (children().size())
       {
         case 0:
@@ -277,7 +302,17 @@ ASTNode* ASTNode::eval(Environment *env)
         }
         case 3:
         {
-          printf(children()[0]->str().c_str(), stoi(children()[1]->eval(env)->str()), stoi(children()[2]->eval(env)->str()));
+          ASTNode *arg1 = children()[1]->eval(env);
+          ASTNode *arg2 = children()[2]->eval(env);
+
+                  (arg1->ast_type() == STRING) ? arg1->str().c_str() : stoi(arg1->str().c_str());
+
+#if 0
+          printf(children()[0]->str().c_str(), 
+                  (arg1->ast_type() == STRING) ? arg1->str().c_str() : stoi(arg1->str()), 
+                  (arg2->ast_type() == STRING) ? arg2->str().c_str() : stoi(arg2->str())
+                )
+    #endif             
           break;
         }
         case 4:
@@ -297,6 +332,7 @@ ASTNode* ASTNode::eval(Environment *env)
         }
 
       }
+      #endif
       return get_true_node();
     }
 
