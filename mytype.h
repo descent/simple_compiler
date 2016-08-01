@@ -34,7 +34,7 @@ enum ASTType
 
 enum ErrorType
 {
-  FUNC_PARA_ARGU_NOT_MATCH=1
+  FUNC_PARA_ARGU_NOT_MATCH=1, VAR_NOT_DEFINE,
 };
 
 #endif
