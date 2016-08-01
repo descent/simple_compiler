@@ -544,7 +544,7 @@ ASTNode* ASTNode::eval(Environment *env)
            else
            {
              cout << "cannot look up: " << c0->str() << endl;
-             exit(3);
+             exit(VAR_NOT_DEFINE);
            }
 
 
