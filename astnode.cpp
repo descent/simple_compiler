@@ -254,7 +254,9 @@ ASTNode* ASTNode::eval(Environment *env)
         cmd += eval_node->str();
         cmd += "\" ";
       }
+      #ifdef DEBUG_MSG
       cout << "cmd: " << cmd << endl;
+      #endif
       system(cmd.c_str());
 
       #if 0
