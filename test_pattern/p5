@@ -1,0 +1,23 @@
+int f1()
+{
+  int x,y;
+
+  x=5;
+  y=9;
+
+  printf("y: %d\n", y);
+  return y;
+
+  printf("x: %d\n", x);
+  return x;
+
+}
+
+int main()
+{
+  char *s;
+
+  s="test";
+
+  f1();
+}
