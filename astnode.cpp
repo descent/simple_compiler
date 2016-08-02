@@ -198,6 +198,7 @@ ASTNode* ASTNode::eval(Environment *env)
     {
       r = i->eval(env);
     }
+    r->set_ast_type(RETURN_VAL);
     return r;
   }
   if (ast_type() == VAR) // var declare
@@ -389,7 +390,12 @@ ASTNode* ASTNode::eval(Environment *env)
       cout << "3333 " << endl;
 #endif
       for (auto &i : f_body->children())
+      {
         ret = i->eval(func_env);
+
+        if (ret->ast_type() == RETURN_VAL) // the eval is a return statement, so break the loop.
+          break;
+      }
       return ret;
   }
 
@@ -480,8 +486,11 @@ ASTNode* ASTNode::eval(Environment *env)
         //|| children_[1]->is_leaf() == false)
           //print_ast();
 #endif
+        #ifdef DEBUG_MSG
+        cout << "str: " << str() << endl;
         cout << "c1: " << c1->str() << endl;
         cout << "c2:" << c2->str() << endl;
+        #endif
         int n1 = stoi(c1->str());
         int n2 = stoi(c2->str());
         int ret = 0;
@@ -765,11 +774,13 @@ ASTNode* ASTNode::eval(Environment *env)
                                           #ifdef DEBUG_MSG
                                           cout << " op: " << str() << ", op child: " << i->str() << ", eval op child: " << n->str() << endl;
                                           #endif
+                                          #if 0
                                           if (n != i)
                                           {
                                             delete i; // need free ASTNode
                                             i = n;
                                           }
+                                          #endif
                                           //print_ast();
                                         }
                                         return n;
