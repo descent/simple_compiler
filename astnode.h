@@ -113,7 +113,7 @@ class ASTNode
         "INVALID", "ROOT", "PROG",
         "TRUE", "FALSE", 
         "ENUM", "INT", "CHAR", 
-        "IF", "WHILE", "RETURN", 
+        "IF", "WHILE", "RETURN", "RETURN_VAL", 
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
         "NAME", "GLOBAL_VAR", "VAR", 
         "FUNC_CALL", "FUNC_BODY", "FUNC_NAME", "FUNC_PARA", 
