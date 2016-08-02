@@ -566,7 +566,7 @@ ASTNode* ASTNode::eval(Environment *env)
              print_ast();
            }
 #endif
-           return this;
+           return c1;
 
            //free_children();
            // delete this;
