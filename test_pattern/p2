@@ -1,21 +1,31 @@
 int a;
 
-int f2(int i)
+int f2(int i, int j)
 {
+  int r;
   1+2;
-  return 2+5+i;
+  r = 2+5+i+j;
+  printf("in f2() ## i: %d, j: %d, r: %d\n", i, j, r);
+  return r=3;
 }
 
 int main()
 {
   int x,y;
-  int a;
+  int a, b, c;
+
+  char *p;
+
+  a=b=c=97;
+  printf("a: %d, b: %d, b: %d\n", a, b, c);
+
+  p="point string";
 
   a=99;
-  printf("a: %d\n", a);
+  printf("a: %d, %d\n", a, 12*3);
   
   y=2;
-  x = f2(y+1);
+  x = f2(y+1, 5);
 
-  printf("f2(): %d\n", x);
+  printf("f2(y+1, 5): x=%d, x=%#x, %s, y=%d, p=%s\n", x, x,"test_string", y, p);
 }
