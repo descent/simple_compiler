@@ -480,6 +480,8 @@ ASTNode* ASTNode::eval(Environment *env)
         //|| children_[1]->is_leaf() == false)
           //print_ast();
 #endif
+        cout << "c1: " << c1->str() << endl;
+        cout << "c2:" << c2->str() << endl;
         int n1 = stoi(c1->str());
         int n2 = stoi(c2->str());
         int ret = 0;
@@ -750,7 +752,7 @@ ASTNode* ASTNode::eval(Environment *env)
                                       #endif
                                       //print_ast();
                                     }
-                                    return this;
+                                    return n;
                                   }
                                   else if ((str() == "else_block"))
                                        {
@@ -770,7 +772,7 @@ ASTNode* ASTNode::eval(Environment *env)
                                           }
                                           //print_ast();
                                         }
-                                        return this;
+                                        return n;
                                        }
                                        else if ((str() == "while"))
                                             {
