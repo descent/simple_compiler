@@ -1,0 +1,22 @@
+int a;
+
+int f(int i)
+{
+  if (i==1)
+  {
+    return 1;
+  }
+  else
+  {
+    return i*f(i-1);
+  }
+}
+
+int main()
+{
+  int x;
+
+  x = f(3);
+  printf("x: %d\n", x);
+
+}
