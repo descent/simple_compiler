@@ -23,7 +23,7 @@ typedef unsigned long long u64;
 
 enum ASTType 
 {
-  INVALID, ROOT, PROG,
+  INVALID, ROOT, PROG, COMMENT,
   TRUE, FALSE,
   ENUM, INT, CHAR, 
   IF, WHILE, RETURN, RETURN_VAL,

@@ -110,7 +110,7 @@ class ASTNode
     {
       const char *type_str[]=
       {
-        "INVALID", "ROOT", "PROG",
+        "INVALID", "ROOT", "PROG", "COMMENT", 
         "TRUE", "FALSE", 
         "ENUM", "INT", "CHAR", 
         "IF", "WHILE", "RETURN", "RETURN_VAL", 
