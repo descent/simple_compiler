@@ -333,8 +333,21 @@ int get_token(Token &token)
            }
            case '/':
            {
-             token.str_ = "/";
-             token.ast_type_ = DIV;
+             c = getchar_la();
+             if (c == '/') // comment symbol: //
+             {
+               do
+               {
+                 c = getchar_la();
+               } while(c != '\n' && c != EOF);
+               token.ast_type_ = COMMENT;
+             }
+             else
+             {
+               token.str_ = "/";
+               token.ast_type_ = DIV;
+             }
+             la = c; // put back
              break;
            }
 #ifdef GET_EOL
@@ -428,13 +441,16 @@ int lexer()
     }
     if (ret == OK)
     {
-      tokens.push_back(token);
-#ifdef DEBUG_LEXER_MSG
-      if (token.str_ == "\n")
-        cout << "token: eol" << endl;
-      else
-        cout << "token: " << token.str_ << endl;
-#endif
+      if (token.ast_type() != COMMENT)
+      {
+        tokens.push_back(token);
+  #ifdef DEBUG_LEXER_MSG
+        if (token.str_ == "\n")
+          cout << "token: eol" << endl;
+        else
+          cout << "token: " << token.str_ << endl;
+  #endif
+      }
     }
     else
     {
