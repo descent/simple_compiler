@@ -63,23 +63,36 @@ string tree_string(const string &str)
     string s2("(");
     string s3(")");
     char s4='\n';
+
+    auto pos = print_str.find(s1);
     //cout << endl << "XXX:" << print_str << "YYY" << endl;
-    if (print_str.find(s1) != string::npos)
+    while ((pos=print_str.find(s1, pos)) != string::npos)
     {
-      print_str.replace(print_str.find(s1), s1.length(), R"(\%)");
+      print_str.replace(pos, s1.length(), R"(\%)");
+      pos+=2;
       //cout << endl << "BBB:" << print_str << endl;
     }
 
-    if (print_str.find(s2) != string::npos)
+    pos = print_str.find(s2);
+    while ((pos=print_str.find(s2, pos)) != string::npos)
     {
       //cout << endl << "CCC:" << print_str << endl;
-      print_str.replace(print_str.find(s2), s2.length(), R"(\()");
+      print_str.replace(pos, s2.length(), R"(\()");
+      pos+=2;
     }
-    if (print_str.find(s3) != string::npos)
-      print_str.replace(print_str.find(s3), s3.length(), R"(\))");
-    if (print_str.find(s4) != string::npos)
+
+    pos = print_str.find(s3);
+    while ((pos=print_str.find(s3, pos)) != string::npos)
     {
-      print_str.replace(print_str.find(s4), 1, R"(\\n)");
+      print_str.replace(pos, s3.length(), R"(\))");
+      pos+=2;
+    }
+
+    pos = print_str.find(s4);
+    while ((pos=print_str.find(s4, pos)) != string::npos)
+    {
+      print_str.replace(pos, 1, R"(\\n)");
+      pos+=2;
       //cout << endl << "AAA:" << print_str << endl;
     }
   return print_str;
