@@ -590,6 +590,7 @@ ASTNode* ASTNode::eval(Environment *env)
              print_ast();
            }
 #endif
+           c1->set_ast_type(ASSIGN);
            return c1;
 
            //free_children();
