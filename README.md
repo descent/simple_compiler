@@ -7,6 +7,7 @@ current feature:
 * function call
 * if/else
 * while
+* // comment
 * support printf
 
 [eval expression] (http://test-template0.blogspot.tw/2016/07/smple-c-interpreter-1.html) 
