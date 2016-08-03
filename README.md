@@ -8,6 +8,5 @@ current feature:
 * if/else
 * while
 
-[demo] 
-(http://test-template0.blogspot.tw/2016/07/smple-c-interpreter-1.html)
-(http://test-template0.blogspot.tw/2016/07/eval-12345.html)
+[eval expression] (http://test-template0.blogspot.tw/2016/07/smple-c-interpreter-1.html)
+[display AST] (http://test-template0.blogspot.tw/2016/07/eval-12345.html)
