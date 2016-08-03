@@ -42,6 +42,21 @@ struct ObjType
       pointer_number_ = num;
       pointer_ = true;
     }
+    bool is_int() const
+    {
+      if (int_)
+        return true;
+      else
+        return false;
+    }
+
+    bool is_string() const
+    {
+      if (pointer_ == true && char_ == true)
+        return true;
+      else
+        return false;
+    }
 
     bool pointer_;
     bool char_;
@@ -138,6 +153,10 @@ class ASTNode
     // for tool tree to print AST
     void print_tree();
     void print();
+    const ObjType & obj_type() const
+    {
+      return obj_type_;
+    }
     void set_obj_type(const ObjType &obj_type)
     {
       obj_type_ = obj_type;

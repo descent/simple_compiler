@@ -13,13 +13,44 @@ using namespace std;
 
 //extern map<string, ASTNode*> func_map;
 
+
+ASTNode *get_string_ast_node(const string &str="")
+{
+  Token t(str, STRING);
+  return new ASTNode(t);
+}
+
+ASTNode *get_number_ast_node(const string &str="0")
+{
+  Token t(str, NUMBER);
+  return new ASTNode(t);
+}
+
 ASTNode *get_true_node()
 {
   static ASTNode true_node(true_token);
   return &true_node;
 }
 
-std::map<std::string, ASTNode *> env;
+int add_to_env(Environment *env, ASTNode *i, bool is_global)
+{
+  if(i->obj_type().is_int())
+  {
+    cout << "int xx: " << i->str() << endl;
+    env->add(i->str(), get_number_ast_node());
+  }
+  else if (i->obj_type().is_string())
+       {
+         cout << "str xx: " << i->str() << endl;
+         env->add(i->str(), get_string_ast_node());
+       }
+       else
+       {
+         cout << "true xx: " << i->str() << endl;
+         env->add(i->str(), get_true_node());
+       }
+}
+
 
 
 void print_ast()
@@ -197,7 +228,9 @@ ASTNode* ASTNode::eval(Environment *env)
   if (ast_type() == GLOBAL_VAR)
   {
     for (auto &i : children())
-      env->add(i->str(), get_true_node());
+    {
+      add_to_env(env, i, true);
+    }
     
     return this;
   }
@@ -231,7 +264,7 @@ ASTNode* ASTNode::eval(Environment *env)
     for (auto &i : children())
     {
       //cout << "add: " << i->str() << " to env: " << env->name() << endl;
-      env->add(i->str(), get_true_node());
+      add_to_env(env, i, false);
     }
     return this;
   }
@@ -514,7 +547,7 @@ ASTNode* ASTNode::eval(Environment *env)
         //|| children_[1]->is_leaf() == false)
           //print_ast();
 #endif
-        #ifdef DEBUG_MSG
+        #if 1
         cout << "str: " << str() << endl;
         cout << "c1: " << c1->str() << endl;
         cout << "c2:" << c2->str() << endl;
