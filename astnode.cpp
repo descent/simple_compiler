@@ -203,7 +203,15 @@ ASTNode* ASTNode::eval(Environment *env)
   }
   if (ast_type() == FUNC_NAME)
   {
-    env->add(str(), this);
+    if (env->lookup(str()))
+    {
+      cout << "redefinition of function: " << str() << endl;
+      exit(FUNC_REDEFINITION);
+    }
+    else
+    {
+      env->add(str(), this);
+    }
     return this;
   }
   if (ast_type() == RETURN)
