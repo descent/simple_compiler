@@ -6,6 +6,8 @@ using namespace std;
 
 #define PREORDER
 
+// #define PRINT_AST_TYPT_STR
+
 
 #define PRINT_TREE_STRING
 
@@ -104,8 +106,13 @@ void ASTNode::print_tree()
   {
     string print_str = tree_string(token_.str_);
     cout << "(" << print_str;
-    if (ast_type() == NAME)
+    if (ast_type() == NAME || ast_type() == FUNC_NAME)
+    {
       cout << obj_type_.str();
+#ifdef PRINT_AST_TYPT_STR
+      cout << "| " << type_str();
+#endif
+    }
 
     cout << ")";
   }
@@ -120,9 +127,12 @@ void ASTNode::print_tree()
     string print_str = tree_string(token_.str_);
     //cout << "( " << token_.str_;
     cout << "( " << print_str;
-    if (ast_type() == NAME)
+    if (ast_type() == NAME || ast_type() == FUNC_NAME)
     {
       cout << obj_type_.str();
+#ifdef PRINT_AST_TYPT_STR
+      cout << "| " << type_str();
+#endif
     }
     //for (std::vector<ASTNode*>::size_type i=0 ; i < children_.size() ; ++i)
     for (auto i : children_)
