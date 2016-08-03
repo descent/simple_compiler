@@ -11,7 +11,7 @@ using namespace std;
 
 #define PRINT_TREE_STRING
 
-extern map<string, ASTNode*> func_map;
+//extern map<string, ASTNode*> func_map;
 
 ASTNode *get_true_node()
 {
@@ -201,6 +201,11 @@ ASTNode* ASTNode::eval(Environment *env)
     
     return this;
   }
+  if (ast_type() == FUNC_NAME)
+  {
+    env->add(str(), this);
+    return this;
+  }
   if (ast_type() == RETURN)
   {
     ASTNode *r;
@@ -225,43 +230,6 @@ ASTNode* ASTNode::eval(Environment *env)
 #endif
   if (ast_type() == FUNC_CALL) 
   {
-    if (children().size() > 0) // has arguments
-    {
-      // new env
-      //Environment *env = new Environment();
-    }
-
-    
-    ASTNode *f_node = func_map[str()];
-    ASTNode *f_para = 0;
-    ASTNode *f_body = 0;
-
-    if (f_node)
-    {
-
-    if (f_node->children().size() == 1)
-    {
-
-      f_body = f_node->children()[0];
-
-
-      //return f_body->eval();
-      //cout << "xxx " << endl;
-      //exit(0);
-    }
-    else if (f_node->children().size() == 2)
-         {
-           f_para = f_node->children()[0];
-           f_body = f_node->children()[1];
-         }
-         else
-         {
-           // some error
-           cout << "eval func error!!" << endl;
-           exit(5);
-         }
-    }
-
     if (str()=="printf")
     {
       string cmd{R"(printf ")"};
@@ -353,6 +321,48 @@ ASTNode* ASTNode::eval(Environment *env)
       #endif
       return get_true_node();
     }
+    if (children().size() > 0) // has arguments
+    {
+      // new env
+      //Environment *env = new Environment();
+    }
+
+    
+    ASTNode *f_node = env->lookup(str());
+    if (f_node == 0)
+    {
+      cout << "can not find function deifition: " << str() << endl;
+      exit(FUNC_NOT_DEFINE);
+    }
+    ASTNode *f_para = 0;
+    ASTNode *f_body = 0;
+
+    if (f_node)
+    {
+
+    if (f_node->children().size() == 1)
+    {
+
+      f_body = f_node->children()[0];
+
+
+      //return f_body->eval();
+      //cout << "xxx " << endl;
+      //exit(0);
+    }
+    else if (f_node->children().size() == 2)
+         {
+           f_para = f_node->children()[0];
+           f_body = f_node->children()[1];
+         }
+         else
+         {
+           // some error
+           cout << "eval func error!!" << endl;
+           exit(5);
+         }
+    }
+
 
       Environment *func_env = new Environment(env, str() + "_env");
       #if 0
