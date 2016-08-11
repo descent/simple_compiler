@@ -209,11 +209,11 @@ ASTNode* factor()
   ASTNode *op = 0;
 
   Token token = peek_token(); 
-  if (token.str_ == "-")
+  if (token.str() == "-")
   {
     Token t = pop_token();
-    op = new ASTNode(t);
     t.ast_type_ = NEG;
+    op = new ASTNode(t);
     ASTNode *p = primary();
     op->add_child(p);
   }
