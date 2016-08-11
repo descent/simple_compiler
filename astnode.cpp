@@ -36,17 +36,17 @@ int add_to_env(Environment *env, ASTNode *i, bool is_global)
 {
   if(i->obj_type().is_int())
   {
-    cout << "int xx: " << i->str() << endl;
+    //cout << "int xx: " << i->str() << endl;
     env->add(i->str(), get_number_ast_node());
   }
   else if (i->obj_type().is_string())
        {
-         cout << "str xx: " << i->str() << endl;
+         //cout << "str xx: " << i->str() << endl;
          env->add(i->str(), get_string_ast_node());
        }
        else
        {
-         cout << "true xx: " << i->str() << endl;
+         //cout << "true xx: " << i->str() << endl;
          env->add(i->str(), get_true_node());
        }
 }
@@ -225,6 +225,24 @@ void ASTNode::print()
 ASTNode* ASTNode::eval(Environment *env)
 {
 #if 1
+  if (ast_type() == NEG)
+  {
+    if (children_.size() == 1)
+    {
+      ASTNode *c1 = children_[0]->eval(env);
+      int n1 = -(stoi(c1->str()) );
+      Token t(std::to_string(n1), NUMBER);
+      eval_result_ = new ASTNode(t);
+      return eval_result_;
+    }
+    else
+    {
+      cout << "NEG node should has 1 child" << endl;
+      exit(NEG_ERR);
+      return this;
+    }
+  }
+
   if (ast_type() == GLOBAL_VAR)
   {
     for (auto &i : children())
@@ -547,7 +565,7 @@ ASTNode* ASTNode::eval(Environment *env)
         //|| children_[1]->is_leaf() == false)
           //print_ast();
 #endif
-        #if 1
+        #if 0
         cout << "str: " << str() << endl;
         cout << "c1: " << c1->str() << endl;
         cout << "c2:" << c2->str() << endl;
