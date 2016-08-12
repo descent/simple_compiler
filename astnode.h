@@ -120,7 +120,7 @@ class ASTNode
       return true;
     }
     ASTNode* eval(Environment *env);
-    ASTType set_ast_type(ASTType ast_type)
+    void set_ast_type(ASTType ast_type)
     {
       token_.ast_type_ = ast_type;
     }
