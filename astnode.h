@@ -49,6 +49,13 @@ struct ObjType
       else
         return false;
     }
+    bool is_pointer() const
+    {
+      if (pointer_ == true)
+        return true;
+      else
+        return false;
+    }
 
     bool is_string() const
     {
