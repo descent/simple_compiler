@@ -49,6 +49,7 @@ int add_to_env(Environment *env, ASTNode *i, bool is_global)
          //cout << "true xx: " << i->str() << endl;
          env->add(i->str(), get_true_node());
        }
+  return 0;
 }
 
 
@@ -225,6 +226,45 @@ void ASTNode::print()
 ASTNode* ASTNode::eval(Environment *env)
 {
 #if 1
+
+#if 0
+  if(obj_type().is_pointer())
+  {
+    ASTNode *f = env->lookup(str());
+    if (f)
+      return f;
+    else
+    {
+      cout << "can not found value!" << endl;
+      return this;
+    }
+  }
+#endif
+  if (ast_type() == DEREF) // *
+  {
+    ASTNode *c1 = children_[0]->eval(env);
+    // cout << c1->str() << endl;
+    ASTNode *f = env->lookup(c1->str());
+    if (f)
+      return f;
+    else
+    {
+      cout << "can not found value!" << endl;
+      return this;
+    }
+  }
+
+  if (ast_type() == ADDR_OF) // &
+  {
+    if (children_.size() == 1)
+      return children_[0];
+    else
+    {
+      cout << "ADDR_OF op should has 1 child." << endl;
+      return this;
+    }
+  }
+
   if (ast_type() == NEG)
   {
     if (children_.size() == 1)
@@ -305,7 +345,7 @@ ASTNode* ASTNode::eval(Environment *env)
         cmd += eval_node->str();
         cmd += "\" ";
       }
-      #ifdef DEBUG_MSG
+      #if 0
       cout << "cmd: " << cmd << endl;
       #endif
       system(cmd.c_str());
@@ -622,8 +662,8 @@ ASTNode* ASTNode::eval(Environment *env)
            }
 
 
-        #ifdef DEBUG_MSG
-           cout << "c0 str: " << c0->str() << " c1: " << c1->str() << endl;
+        #if 0
+           cout << "c0 str: " << c0->str() << ", c1: " << c1->str() << endl;
         #endif
            //env.insert({c0->str(), c1});
            #if 0
