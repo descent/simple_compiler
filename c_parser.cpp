@@ -186,7 +186,7 @@ ASTNode* primary()
        else if (token.ast_type() == STRING)
             {
               Token t = pop_token();
-              cout << "STRING: " << t.str() << endl;
+              // cout << "STRING: " << t.str() << endl;
               return new ASTNode(t);
             }
             else
