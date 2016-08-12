@@ -204,15 +204,25 @@ ASTNode* primary()
 }
 
 // factor    : "-" primary | primary
+// factor    : "&" primary | primary
+// factor    : "*" primary | primary
 ASTNode* factor()
 {
   ASTNode *op = 0;
 
   Token token = peek_token(); 
-  if (token.str() == "-")
+  if (token.str() == "-" || token.str() == "*" || token.str() == "&")
   {
     Token t = pop_token();
-    t.ast_type_ = NEG;
+    if (token.str() == "-")
+      t.ast_type_ = NEG;
+
+    if (token.str() == "*")
+      t.ast_type_ = DEREF;
+
+    if (token.str() == "&")
+      t.ast_type_ = ADDR_OF;
+
     op = new ASTNode(t);
     ASTNode *p = primary();
     op->add_child(p);
