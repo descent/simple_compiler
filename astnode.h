@@ -135,6 +135,7 @@ class ASTNode
         "INVALID", "ROOT", "PROG", "COMMENT", 
         "TRUE", "FALSE", 
         "ENUM", "INT", "CHAR", 
+        "ADDR_OF", "DEREF", // &, *
         "IF", "WHILE", "RETURN", "RETURN_VAL", 
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
         "NAME", "GLOBAL_VAR", "VAR", 
