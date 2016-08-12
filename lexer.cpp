@@ -301,6 +301,12 @@ int get_token(Token &token)
        {
          switch (c)
          {
+           case '&':
+           {
+             token.str_ = "&";
+             token.ast_type_ = ADDR_OF;
+             break;
+           }
            case '<':
            {
              token.str_ = "<";
