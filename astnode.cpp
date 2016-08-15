@@ -479,7 +479,7 @@ ASTNode* ASTNode::eval(Environment *env)
 
         if (var_size == val_size)
         {
-          for (decltype(var_size) i=0 ; i < f_para->children().size() ; ++i)
+          for (decltype(var_size) i=0 ; i < var_size ; ++i)
           {
             ASTNode *arg_node = children()[i];
             #if 0
