@@ -1,0 +1,44 @@
+ref: http://www.cs.man.ac.uk/~pjj/bnf/c_syntax.bnf
+
+decl			: decl_specs init_declarator_list ';'
+			| decl_specs			';'
+
+init_declarator_list	: init_declarator
+			| init_declarator_list ',' init_declarator
+			;
+
+init_declarator		: declarator
+			| declarator '=' initializer
+
+decl_specs		: storage_class_spec decl_specs
+			| storage_class_spec
+			| type_spec decl_specs
+			| type_spec
+			| type_qualifier decl_specs
+			| type_qualifier
+
+type_spec		: 'void' | 'char' | 'short' | 'int' | 'long' | 'float'
+			| 'double' | 'signed' | 'unsigned'
+			| struct_or_union_spec
+			| enum_spec
+			| typedef_name
+
+
+type_qualifier          : 'const' | 'volatile'
+
+declarator		: pointer direct_declarator
+			|	direct_declarator
+
+			;
+direct_declarator	: id
+			| '(' declarator ')'
+			| direct_declarator '[' const_exp ']'
+			| direct_declarator '['		']'
+			| direct_declarator '(' param_type_list ')'
+			| direct_declarator '(' id_list ')'
+			| direct_declarator '('		')'
+			;
+pointer			: '*' type_qualifier_list
+			| '*'
+			| '*' type_qualifier_list pointer
+			| '*'			pointer
