@@ -1,3 +1,6 @@
+複雜的宣告語法:
+http://www.geeksforgeeks.org/complicated-declarations-in-c/
+
 ref: http://www.cs.man.ac.uk/~pjj/bnf/c_syntax.bnf
 
 decl			: decl_specs init_declarator_list ';'
