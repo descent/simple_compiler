@@ -6,6 +6,8 @@ using namespace std;
 
 #define PREORDER
 
+//#define DEBUG_PRINTF_STRING
+
 // #define PRINT_AST_TYPT_STR
 
 
@@ -243,21 +245,53 @@ ASTNode* ASTNode::eval(Environment *env)
   if (ast_type() == DEREF) // *
   {
     ASTNode *c1 = children_[0]->eval(env);
-    // cout << c1->str() << endl;
+
+    uintptr_t addr_val = stoul(c1->str());
+    //cout << "DEREF: " << hex << addr_val << dec << endl;
+    string str = *((string*)addr_val);
+    //cout << "xx str: " << str << endl;
+
+    Token t(str, NUMBER);
+    return new ASTNode(t);
+
+#if 0
     ASTNode *f = env->lookup(c1->str());
     if (f)
+    {
       return f;
+    }
     else
     {
       cout << "can not found value!" << endl;
       return this;
     }
+#endif
   }
 
   if (ast_type() == ADDR_OF) // &
   {
     if (children_.size() == 1)
-      return children_[0];
+    {
+      ASTNode *f = env->lookup(children_[0]->str());
+    if (f)
+    {
+    }
+    else
+    {
+      cout << "can not found value!" << endl;
+      return this;
+    }
+
+      void *addr = &f->token_.str_;
+      uintptr_t addr_val = (uintptr_t)addr;
+      #if 0
+      cout << "yy addr: " << addr << endl;
+      cout << "yy addr_val: " << hex << addr_val << dec << endl;
+      #endif
+      Token t(std::to_string(addr_val), NUMBER);
+      return new ASTNode(t);
+      //return children_[0];
+    }
     else
     {
       cout << "ADDR_OF op should has 1 child." << endl;
@@ -331,9 +365,20 @@ ASTNode* ASTNode::eval(Environment *env)
   {
     if (str()=="printf")
     {
+      string fmt = children()[0]->str();
+      string s1{"%p"};
+
+      
+      auto pos = fmt.find(s1);
+      while ((pos = fmt.find(s1, pos)) != string::npos)
+      {
+        fmt.replace(pos, s1.length(), R"(%x)");
+      }
+
       string cmd{R"(printf ")"};
-      cmd += children()[0]->str();
+      cmd += fmt;
       cmd += "\" ";
+
 
       auto arg_num =  children().size();
 
@@ -345,9 +390,11 @@ ASTNode* ASTNode::eval(Environment *env)
         cmd += eval_node->str();
         cmd += "\" ";
       }
-      #if 0
-      cout << "cmd: " << cmd << endl;
+
+      #ifdef DEBUG_PRINTF_STRING
+      cout << "=== printf cmd: " << cmd << "---" << endl;
       #endif
+
       system(cmd.c_str());
 
       #if 0
