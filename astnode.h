@@ -119,6 +119,7 @@ class ASTNode
       children_.push_back(r);
       return true;
     }
+    void code_gen();
     ASTNode* eval(Environment *env);
     void set_ast_type(ASTType ast_type)
     {

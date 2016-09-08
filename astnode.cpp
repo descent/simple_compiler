@@ -4,6 +4,8 @@
 #include <map>
 using namespace std;
 
+map<string, int> alloc_stack;
+
 #define PREORDER
 
 //#define DEBUG_PRINTF_STRING
@@ -222,6 +224,35 @@ void ASTNode::print()
       }
     }
   #endif
+  }
+}
+
+void ASTNode::code_gen()
+{
+  cout << "cg: " << str() << endl;
+  //if (ast_type() == VAR) // var declare
+  if (str() == "var") // var declare
+  {
+    int offset = -4;
+
+    for (auto &i : children())
+    {
+      alloc_stack.insert({i->str(), offset});
+      offset -= 4;
+    }
+  }
+  else if (str() == "=")
+       {
+         auto it = alloc_stack.find(children()[0]->str());
+         if (it != alloc_stack.end()) // find it
+         {
+           cout << "movl $" << children()[1]->str() << ", " << it->second << "(%ebp)" << endl;
+         }
+         
+       }
+  for (auto &i : children())
+  {
+    i->code_gen();
   }
 }
 
