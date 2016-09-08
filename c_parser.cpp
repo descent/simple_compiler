@@ -1202,7 +1202,8 @@ int main(int argc, char *argv[])
 
   //vector<ASTNode *> list = list_of_vals(root->children());
   //eval(root, list);
-  root->eval(get_global_env());
+  //root->eval(get_global_env());
+  root->code_gen();
   delete root;
 
   return 0;
