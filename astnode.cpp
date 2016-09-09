@@ -227,29 +227,55 @@ void ASTNode::print()
   }
 }
 
+string func_name;
+
 void ASTNode::code_gen()
 {
-  cout << "cg: " << str() << endl;
-  //if (ast_type() == VAR) // var declare
-  if (str() == "var") // var declare
+  // cout << "cg: " << str() << " : " << type_str() << endl;
+  if (ast_type() == FUNC_NAME) 
   {
-    int offset = -4;
+    func_name = str();
+  }
+  if (ast_type() == FUNC_BODY) 
+  {
+    cout << ".text" << endl;
+    cout << ".globl " << func_name << endl;
+    cout << func_name << ": " << endl;
+    cout << "pushl %ebp" << endl;
+    cout << "movl %esp, %ebp" << endl;
 
     for (auto &i : children())
     {
-      alloc_stack.insert({i->str(), offset});
+
+  if (i->ast_type() == VAR) // var declare
+  {
+    int offset = -4;
+
+    auto var_num = i->children().size();
+    const u8 var_size = 4;
+    cout << "subl $" << var_num * var_size << " , %esp" << endl;
+
+
+    for (auto &j : i->children())
+    {
+      alloc_stack.insert({j->str(), offset});
       offset -= 4;
     }
   }
-  else if (str() == "=")
+  else if (i->str() == "=")
        {
-         auto it = alloc_stack.find(children()[0]->str());
+         auto it = alloc_stack.find(i->children()[0]->str());
          if (it != alloc_stack.end()) // find it
          {
-           cout << "movl $" << children()[1]->str() << ", " << it->second << "(%ebp)" << endl;
+           cout << "movl $" << i->children()[1]->str() << ", " << it->second << "(%ebp)" << endl;
          }
          
        }
+
+    }
+    cout << "leave" << endl;
+    cout << "ret" << endl;
+  }
   for (auto &i : children())
   {
     i->code_gen();
