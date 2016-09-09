@@ -14,3 +14,13 @@ current feature:
 
 
 [display AST] (http://test-template0.blogspot.tw/2016/07/eval-12345.html)
+
+
+x86 32bit machine code generator:
+  tmp.s is gas AT&T asm syntax format.
+  as -32 -o tmp.o tmp.s 
+  gcc -m32 tmp.o -o tmp
+  
+run tmp
+  ./tmp
+
