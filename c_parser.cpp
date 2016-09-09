@@ -3,6 +3,7 @@
 #include <cctype>
 
 #include <iostream>
+#include <fstream>
 #include <deque>
 #include <map>
 #include <string>
@@ -1204,6 +1205,13 @@ int main(int argc, char *argv[])
   //eval(root, list);
   //root->eval(get_global_env());
   root->code_gen();
+
+  ofstream asm_ofs("tmp.s");
+  extern string ro_data_section;
+  extern string text_section;
+  asm_ofs << ro_data_section << endl;
+  asm_ofs << text_section << endl;
+
   delete root;
 
   return 0;
