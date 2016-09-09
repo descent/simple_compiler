@@ -1,6 +1,10 @@
 複雜的宣告語法:
 http://www.geeksforgeeks.org/complicated-declarations-in-c/
 
+void (*f[10]) (int, int);
+char (*(*x())[]) ();
+char (*(*x[3])())[5];
+
 ref: http://www.cs.man.ac.uk/~pjj/bnf/c_syntax.bnf
 
 decl			: decl_specs init_declarator_list ';'
