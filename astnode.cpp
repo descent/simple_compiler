@@ -2,9 +2,17 @@
 
 #include <cstdlib>
 #include <map>
+#include <sstream>
+
 using namespace std;
 
 map<string, int> alloc_stack;
+
+string func_name;
+
+string text_section;
+string ro_data_section = "  .section .rodata\n"
+                         ".LC0:\n";
 
 #define PREORDER
 
@@ -93,6 +101,23 @@ std::string ObjType::str()
 }
 
 u32 ASTNode::no_=0;
+
+string replace_backslash(const string &str)
+{
+  string print_str{str};
+  char s4='\n';
+
+  auto pos = print_str.find(s4);
+
+  pos = print_str.find(s4);
+  while ((pos=print_str.find(s4, pos)) != string::npos)
+  {
+    print_str.replace(pos, 1, R"(\n)");
+    pos+=2;
+    //cout << endl << "AAA:" << print_str << endl;
+  }
+  return print_str;
+}
 
 string tree_string(const string &str)
 {
@@ -227,34 +252,42 @@ void ASTNode::print()
   }
 }
 
-string func_name;
 
 void ASTNode::code_gen()
 {
-  // cout << "cg: " << str() << " : " << type_str() << endl;
+  const u8 var_size = 4;
+
+  //cout << "cg: " << str() << " : " << type_str() << endl;
   if (ast_type() == FUNC_NAME) 
   {
     func_name = str();
   }
+
   if (ast_type() == FUNC_BODY) 
   {
+    text_section += ".text\n";
+    text_section += ".global " + func_name + "\n";
+    text_section += func_name + ":\n";
+    text_section += "pushl %ebp\n";
+    text_section += "movl %esp, %ebp\n";
+
     cout << ".text" << endl;
-    cout << ".globl " << func_name << endl;
+    cout << ".global " << func_name << endl;
     cout << func_name << ": " << endl;
     cout << "pushl %ebp" << endl;
     cout << "movl %esp, %ebp" << endl;
 
     for (auto &i : children())
     {
+     //cout << "func body: " << i->str() << " : " << i->type_str() << endl;
 
   if (i->ast_type() == VAR) // var declare
   {
     int offset = -4;
 
     auto var_num = i->children().size();
-    const u8 var_size = 4;
     cout << "subl $" << var_num * var_size << " , %esp" << endl;
-
+    text_section += "subl $" + to_string(var_num * var_size) + " , %esp\n";
 
     for (auto &j : i->children())
     {
@@ -262,19 +295,64 @@ void ASTNode::code_gen()
       offset -= 4;
     }
   }
+  else if (i->ast_type() == FUNC_CALL) 
+       {
+         auto rit = i->children().rbegin();
+         for ( ; rit != i->children().rend() ; ++rit)
+         {
+           //cout << (*rit)->str() << " : " << (*rit)->type_str() << endl;
+           if ((*rit)->ast_type() == NAME)
+           {
+             auto it = alloc_stack.find( (*rit)->str() );
+             if (it != alloc_stack.end()) // find it
+             {
+               cout << "pushl " << it->second << "(%ebp)" << endl;
+               text_section += "pushl " + to_string(it->second) + "(%ebp)\n";
+             }
+           }
+           else if ((*rit)->ast_type() == STRING)
+                {
+                  string new_str;
+                  //.string "%d\n"
+                  new_str = replace_backslash((*rit)->str());
+                  ro_data_section += R"(.string ")" + new_str + R"(")" + "\n";
+
+                  cout << "pushl $.LC0\n";
+                  text_section += "pushl $.LC0\n";
+
+                  //cout << "ro_data_section:\n" << ro_data_section << endl;
+                  //data_section >> str;
+                  //cout << "str: " << str << endl;
+
+
+                }
+         }
+
+         cout << "call " << i->str() << endl;
+         text_section += "call " + i->str() + "\n";
+         cout << "add $" << i->children().size() << ", %esp" << endl;
+         text_section += "add $" + to_string(i->children().size() * var_size) + ", %esp\n";
+
+
+       }
   else if (i->str() == "=")
        {
          auto it = alloc_stack.find(i->children()[0]->str());
+
+
          if (it != alloc_stack.end()) // find it
          {
            cout << "movl $" << i->children()[1]->str() << ", " << it->second << "(%ebp)" << endl;
+           text_section += "movl $" + i->children()[1]->str() + ", " + to_string(it->second) + "(%ebp)\n";
          }
          
        }
 
     }
     cout << "leave" << endl;
+    text_section += "leave\n";
     cout << "ret" << endl;
+    text_section += "ret\n";
   }
   for (auto &i : children())
   {
