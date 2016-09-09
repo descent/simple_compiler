@@ -252,12 +252,35 @@ void ASTNode::print()
   }
 }
 
+void ASTNode::code_gen()
+{
+  cout << "cg: " << str() << " : " << type_str() << endl;
+  if (ast_type() == FUNC_BODY) 
+  {
+    enter_func = true;
+  }
+  else if (ast_type() == FUNC_NAME) 
+       {
+         func_name = str();
+         cout << "  enter func: " << func_name << endl;
+       }
 
+  
+  for (auto &i : children())
+  {
+    i->code_gen();
+  }
+
+  if (str() == func_name)
+    cout << "  exit func: " << func_name << endl;
+}
+
+#if 0
 void ASTNode::code_gen()
 {
   const u8 var_size = 4;
 
-  //cout << "cg: " << str() << " : " << type_str() << endl;
+  cout << "cg: " << str() << " : " << type_str() << endl;
   if (ast_type() == FUNC_NAME) 
   {
     func_name = str();
@@ -335,18 +358,53 @@ void ASTNode::code_gen()
 
 
        }
-  else if (i->str() == "=")
+       else if (i->ast_type() == ASSIGN) 
        {
-         auto it = alloc_stack.find(i->children()[0]->str());
+         if (i->children().size() != 2)
+         {
+           cout << "'=' should has 2 children" << endl;
+           exit(9);
+         }
+
+         ASTNode *l = i->children()[0];
+         ASTNode *r = i->children()[1];
+
+         auto it = alloc_stack.find(l->str());
+
+         if (r->ast_type() == ADD)
+         {
+           
+         }
+         else 
+         {
 
 
          if (it != alloc_stack.end()) // find it
          {
-           cout << "movl $" << i->children()[1]->str() << ", " << it->second << "(%ebp)" << endl;
-           text_section += "movl $" + i->children()[1]->str() + ", " + to_string(it->second) + "(%ebp)\n";
+           cout << "movl $" << r->str() << ", " << it->second << "(%ebp)" << endl;
+           text_section += "movl $" + r->str() + ", " + to_string(it->second) + "(%ebp)\n";
+         }
+
          }
          
        }
+       else if (i->ast_type() == ADD) 
+            {
+              ASTNode *l = i->children()[0];
+              ASTNode *r = i->children()[1];
+              cout << "left node: " << l->str() << " : " << l->type_str() << endl;
+              cout << "right node: " << r->str() << " : " << r->type_str() << endl;
+
+#if 0
+              auto it = alloc_stack.find( (*rit)->str() );
+             if (it != alloc_stack.end()) // find it
+             {
+               cout << "pushl " << it->second << "(%ebp)" << endl;
+               text_section += "pushl " + to_string(it->second) + "(%ebp)\n";
+             }
+#endif
+
+            }
 
     }
     cout << "leave" << endl;
@@ -359,6 +417,7 @@ void ASTNode::code_gen()
     i->code_gen();
   }
 }
+#endif
 
 ASTNode* ASTNode::eval(Environment *env)
 {
