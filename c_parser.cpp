@@ -1204,11 +1204,13 @@ int main(int argc, char *argv[])
   //vector<ASTNode *> list = list_of_vals(root->children());
   //eval(root, list);
   //root->eval(get_global_env());
-  root->code_gen();
+  //root->code_gen();
+  root->gen_gas_syntax();
 
   ofstream asm_ofs("tmp.s");
   extern string ro_data_section;
   extern string text_section;
+
   asm_ofs << ro_data_section << endl;
   asm_ofs << text_section << endl;
 
