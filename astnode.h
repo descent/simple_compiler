@@ -83,12 +83,14 @@ class ASTNode
       id_ = no_;
       ++no_;
       eval_result_ = 0;
+      code_gen_state_ = NORMAL;
     }
     ASTNode(const Token &token):token_(token)
     {
       id_ = no_;
       ++no_;
       eval_result_ = 0;
+      code_gen_state_ = NORMAL;
     }
     ~ASTNode()
     {
@@ -119,7 +121,8 @@ class ASTNode
       children_.push_back(r);
       return true;
     }
-    void code_gen();
+    //void code_gen();
+    void gen_gas_syntax();
     ASTNode* eval(Environment *env);
     void set_ast_type(ASTType ast_type)
     {
@@ -204,6 +207,9 @@ class ASTNode
     ObjType obj_type_;
     u32 id_;
     static u32 no_;
+    CodeGenState code_gen_state_;
+    int offset_;
+    int var_num_;
 };
 
 ASTNode *get_root();

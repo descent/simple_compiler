@@ -252,27 +252,87 @@ void ASTNode::print()
   }
 }
 
-void ASTNode::code_gen()
+
+void ASTNode::gen_gas_syntax()
 {
+  const u8 var_size = 4;
+    
   cout << "cg: " << str() << " : " << type_str() << endl;
   if (ast_type() == FUNC_BODY) 
   {
-    enter_func = true;
+    text_section += ".text\n";
+    text_section += ".global " + func_name + "\n";
+    text_section += func_name + ":\n";
+    text_section += "pushl %ebp\n";
+    text_section += "movl %esp, %ebp\n";
   }
   else if (ast_type() == FUNC_NAME) 
        {
          func_name = str();
          cout << "  enter func: " << func_name << endl;
        }
+       else if (ast_type() == VAR)
+            {
+              offset_ = -4;
+              var_num_ = 1;
+              alloc_stack.clear();
 
+              text_section += "subl $" + to_string(children().size() * var_size) + " , %esp\n";
+
+              cout << "enter var" << endl;
+              code_gen_state_ = DECLARE_VAR;
+            #if 0
+
+              auto var_num = i->children().size();
+
+              for (auto &j : i->children())
+              {
+                alloc_stack.insert({j->str(), offset});
+                offset -= 4;
+              }
+            #endif
+            }
+            else if (code_gen_state_ == DECLARE_VAR && ast_type() == NAME)
+                 {
+                   //text_section += "pushl " + to_string(it->second) + "(%ebp)\n";
+                   alloc_stack.insert({str(), offset_});
+                   offset_ -= 4;
+                 }
+                 else if (ast_type() == ASSIGN)
+                      {
+                        cout << "enter assign" << endl;
+                        code_gen_state_ = STATEMENT;
+                      }
+                      else if (code_gen_state_ == STATEMENT && ast_type() == NAME)
+                           {
+                             auto it = alloc_stack.find(str());
+                             if (it != alloc_stack.end()) // find it
+                             {
+                               text_section += "pushl " + to_string(it->second) + "(%ebp)\n";
+                             }
+                             else
+                             {
+                               cout << "can not find : " << str() << endl;
+                             }
+                           }
   
   for (auto &i : children())
   {
-    i->code_gen();
+    i->gen_gas_syntax();
+  }
+  if (ast_type() == VAR)
+  {
+    //code_gen_state_ = NORMAL;
+    code_gen_state_ = STATEMENT;
+    cout << "exit var" << endl;
   }
 
   if (str() == func_name)
+  {
     cout << "  exit func: " << func_name << endl;
+    text_section += "leave\n";
+    text_section += "ret\n";
+  }
 }
 
 #if 0
