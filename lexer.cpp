@@ -452,9 +452,10 @@ int lexer()
         tokens.push_back(token);
   #ifdef DEBUG_LEXER_MSG
         if (token.str_ == "\n")
-          cout << "token: eol" << endl;
+          cout << "token: eol";
         else
-          cout << "token: " << token.str_ << endl;
+          cout << "token: " << token.str_;
+        cout << " / " << token.ast_type_str() << endl;
   #endif
       }
     }
