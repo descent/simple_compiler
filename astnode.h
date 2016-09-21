@@ -134,6 +134,8 @@ class ASTNode
     }
     const char* type_str() const
     {
+      return token_.ast_type_str();
+    #if 0
       const char *type_str[]=
       {
         "INVALID", "ROOT", "PROG", "COMMENT", 
@@ -156,7 +158,9 @@ class ASTNode
       {
         return "unknown";
       }
+    #endif
     }
+
     const std::vector<ASTNode*> &children() const
     {
       return children_;
