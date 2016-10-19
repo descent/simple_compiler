@@ -30,7 +30,7 @@ class Environment
     }
 
 
-    bool add(const string var, ASTNode *node)
+    bool add(const string &var, ASTNode *node)
     {
       auto count = frame_.count(var);
       // cout << "frame_.count(var): " << count << endl;
