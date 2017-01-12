@@ -252,12 +252,79 @@ void ASTNode::print()
   }
 }
 
+#if 0
+void ASTNode::gen_gas_op()
+{
+}
+#endif
+void ASTNode::gen_gas_op(const string &reg)
+{
+  auto child = children();
+
+  cout << "handle add " << str() << endl;
+  if (child[0]->is_leaf() && child[1]->is_leaf())
+  {
+    cout << "mov " << child[0]->str() << ", " << reg << endl;
+    cout << type_str() << " " << child[1]->str() << ", " << reg << endl;
+    cout << "push " << reg << endl;
+  }
+  else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
+       {
+         child[1]->gen_gas_op("%ebx");
+         cout << "pop " << " %ebx" << endl;
+         cout << "11 mov " << child[0]->str() << ", %eax" << endl;
+         cout << "merge right " << type_str() << " %ebx, %eax" << endl;
+       }
+       else if (child[0]->is_leaf() != true && child[1]->is_leaf())
+            {
+              child[0]->gen_gas_op("%eax");
+              cout << "pop " << " %eax" << endl;
+              cout << "22 mov " << child[1]->str() << ", %ebx" << endl;
+              cout << "merge left " << type_str() << " %eax, %ebx" << endl;
+         //cout << "yy not hanlde" << endl;
+            }
+            else // child[0], child[1] are not leaf
+            {
+              child[0]->gen_gas_op("%eax");
+              child[1]->gen_gas_op("%ebx");
+              cout << "pop " << " %ebx" << endl;
+              cout << "pop " << " %eax" << endl;
+            }
+
+#if 0
+  auto child = children();
+
+  if (child[0]->is_leaf())
+  {
+    cout << "mov " << str() << ", " << reg << endl;
+    //cout << type_str() << " " << child[1]->str() << ", " << reg << endl;
+    //cout << "push " << reg << endl;
+  }
+  else if (is_leaf() != true)
+       {
+         child[0]->gen_gas_op("%eax");
+         child[1]->gen_gas_op("%ebx");
+         cout << type_str() << " %ebx, %eax" << endl;
+         //cout << type_str() << " " << child[1]->str() << ", " << reg << endl;
+       }
+#endif
+}
 
 void ASTNode::gen_gas_syntax()
 {
   const u8 var_size = 4;
     
   cout << "cg: " << str() << " : " << type_str() << endl;
+#if 0
+  switch 
+  {
+    case ADD:
+    {
+      break;
+    }
+  }
+#endif
+
   if (ast_type() == FUNC_BODY) 
   {
     text_section += ".text\n";
@@ -315,9 +382,85 @@ void ASTNode::gen_gas_syntax()
                                cout << "can not find : " << str() << endl;
                              }
                            }
+                           else if (ast_type() == ADD)
+                                {
+                                  auto child = children();
+                                  if (child[0]->is_leaf())
+                                  {
+                                    cout << "aa mov " << child[0]->str() << ", %eax" << endl;
+                                  }
+                                  else
+                                  {
+                                    child[0]->gen_gas_op("%eax");
+                                  }
+
+                                  if (child[1]->is_leaf())
+                                  {
+                                    cout << "bb mov " << child[1]->str() << ", %ebx" << endl;
+                                  }
+                                  else
+                                  {
+                                    child[1]->gen_gas_op("%ebx");
+                                  }
+
+                                  if (child[0]->is_leaf() && child[1]->is_leaf())
+                                  {
+                                  }
+                                  else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
+                                       {
+                                         cout << "pop " << " %ebx" << endl;
+                                         cout << "merge right " << type_str() << " %ebx, %eax" << endl;
+                                       }
+                                       else if (child[0]->is_leaf() != true && child[1]->is_leaf())
+                                            {
+                                              cout << "pop " << " %eax" << endl;
+                                              cout << "merge left " << type_str() << " %eax, %ebx" << endl;
+                                            }
+                                            else // child[0], child[1] are not leaf
+                                            {
+                                              cout << "pop " << " %eax" << endl;
+                                              cout << "pop " << " %ebx" << endl;
+                                              cout << "merge right " << type_str() << " %ebx, %eax" << endl;
+                                            }
+
+
+
+
+                                  cout << "add complete" << endl;
+                                  exit(0);
+                                  //child[1]->gen_gas_op("%ebx");
+
+#if 0
+                                  cout << "xx " << type_str() << " " << "%ebx, %eax" << endl;
+                                  if (child[0]->is_leaf() && child[1]->is_leaf())
+                                  {
+                                    cout << "mov " << child[0]->str() << ", %eax" << endl;
+                                    cout << type_str() << " " << child[1]->str() << ", %eax" << endl;
+                                    cout << "push %eax" << endl;
+                                  }
+                                  else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
+                                       {
+                                         cout << "mov " << child[0]->str() << ", %eax" << endl;
+                                         child[1]->gen_gas_op("bx");
+                                       }
+                                       else if (child[0]->is_leaf() != true && child[1]->is_leaf())
+                                            {
+                                            }
+                                            else if (child[0]->is_leaf() != true && child[1]->is_leaf() != true)
+                                                 {
+                                                 }
+
+#endif
+                                }
+                                else
+                                {
+                                  cout << "do nothing" << endl;
+                                }
   
   for (auto &i : children())
   {
+
+    //if (i->ast_type() != ADD)
     i->gen_gas_syntax();
   }
   if (ast_type() == VAR)
