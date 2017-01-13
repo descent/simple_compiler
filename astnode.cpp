@@ -480,9 +480,10 @@ void ASTNode::gen_gas_syntax()
                                        else if (child[0]->is_leaf() != true && child[1]->is_leaf())
                                             {
                                               cout << "popl " << " %eax" << endl;
-                                              cout << "mm merge left " << type_str() << " %eax, %ebx" << endl;
+                                              cout << "mm merge left " << type_str() << " %ebx, %eax" << endl;
+
                                               op_ofs << "popl " << " %eax" << endl;
-                                              op_ofs << type_str() << " %eax, %ebx" << endl;
+                                              op_ofs << type_str() << " %ebx, %eax" << endl;
                                             }
                                             else // child[0], child[1] are not leaf
                                             {
