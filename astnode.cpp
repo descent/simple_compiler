@@ -3,6 +3,10 @@
 #include <cstdlib>
 #include <map>
 #include <sstream>
+#include <fstream>
+
+ofstream op_ofs("op.s");
+
 
 using namespace std;
 
@@ -267,27 +271,55 @@ void ASTNode::gen_gas_op(const string &reg)
     cout << "movl $" << child[0]->str() << ", " << reg << endl;
     cout << type_str() << " $" << child[1]->str() << ", " << reg << endl;
     cout << "pushl " << reg << endl;
+
+    op_ofs << "movl $" << child[0]->str() << ", " << reg << endl;
+    op_ofs << type_str() << " $" << child[1]->str() << ", " << reg << endl;
+    op_ofs << "pushl " << reg << endl;
   }
   else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
        {
          child[1]->gen_gas_op("%ebx");
-         cout << "popl " << " %ebx" << endl;
          cout << "11 movl $" << child[0]->str() << ", %eax" << endl;
-         cout << "merge right " << type_str() << " %ebx, %eax" << endl;
+         op_ofs << "movl $" << child[0]->str() << ", %eax" << endl;
+
+         cout << "popl " << " %ebx" << endl;
+         op_ofs << "popl " << " %ebx" << endl;
+
+         if (reg == "%ebx")
+         {
+           cout << "merge right " << type_str() << " %eax, %ebx" << endl;
+           op_ofs << type_str() << " %eax, %ebx" << endl;
+         }
+         else
+         {
+           cout << "merge right " << type_str() << " %ebx, %eax" << endl;
+           op_ofs << type_str() << " %ebx, %eax" << endl;
+         }
+
+         cout << "merge right pushl " << reg << endl;
+         op_ofs << "pushl " << reg << endl;
        }
        else if (child[0]->is_leaf() != true && child[1]->is_leaf())
             {
               //cout << "33 reg: " << reg << endl;
               child[0]->gen_gas_op("%eax");
               cout << "22 movl $" << child[1]->str() << ", %ebx" << endl;
+              op_ofs << "movl $" << child[1]->str() << ", %ebx" << endl;
 
               cout << "popl %eax" << endl;
+              op_ofs << "popl %eax" << endl;
               if (reg == "%ebx")
+              {
                 cout << "merge left " << type_str() << " %eax, %ebx" << endl;
+                op_ofs << type_str() << " %eax, %ebx" << endl;
+              }
               else
+              {
                 cout << "merge left " << type_str() << " %ebx, %eax" << endl;
+                op_ofs << type_str() << " %ebx, %eax" << endl;
+              }
               cout << "merge left pushl " << reg << endl;
-         //cout << "yy not hanlde" << endl;
+              op_ofs << "pushl " << reg << endl;
             }
             else // child[0], child[1] are not leaf
             {
@@ -295,15 +327,24 @@ void ASTNode::gen_gas_op(const string &reg)
               child[1]->gen_gas_op("%ebx");
               cout << "popl " << " %ebx" << endl;
               cout << "popl " << " %eax" << endl;
+              op_ofs << "popl " << " %ebx" << endl;
+              op_ofs << "popl " << " %eax" << endl;
 
               if (reg == "%ebx")
+              {
                 cout << "xx left/right " << type_str() << " %eax, %ebx" << endl;
+                op_ofs << type_str() << " %eax, %ebx" << endl;
+              }
               else
+              {
                 cout << "xx left/right " << type_str() << " %ebx, %eax" << endl;
+                op_ofs << type_str() << " %ebx, %eax" << endl;
+              }
 
 
 
               cout << "pushl " << reg << endl;
+              op_ofs << "pushl " << reg << endl;
             }
 
 #if 0
@@ -403,6 +444,7 @@ void ASTNode::gen_gas_syntax()
                                   if (child[0]->is_leaf())
                                   {
                                     cout << "aa movl $" << child[0]->str() << ", %eax" << endl;
+                                    op_ofs << "movl $" << child[0]->str() << ", %eax" << endl;
                                   }
                                   else
                                   {
@@ -412,6 +454,7 @@ void ASTNode::gen_gas_syntax()
                                   if (child[1]->is_leaf())
                                   {
                                     cout << "bb movl $" << child[1]->str() << ", %ebx" << endl;
+                                    op_ofs << "movl $" << child[1]->str() << ", %ebx" << endl;
                                   }
                                   else
                                   {
@@ -425,17 +468,24 @@ void ASTNode::gen_gas_syntax()
                                        {
                                          cout << "popl " << " %ebx" << endl;
                                          cout << "mm merge right " << type_str() << " %ebx, %eax" << endl;
+                                         op_ofs << "popl " << " %ebx" << endl;
+                                         op_ofs << type_str() << " %ebx, %eax" << endl;
                                        }
                                        else if (child[0]->is_leaf() != true && child[1]->is_leaf())
                                             {
                                               cout << "popl " << " %eax" << endl;
                                               cout << "mm merge left " << type_str() << " %eax, %ebx" << endl;
+                                              op_ofs << "popl " << " %eax" << endl;
+                                              op_ofs << type_str() << " %eax, %ebx" << endl;
                                             }
                                             else // child[0], child[1] are not leaf
                                             {
                                               cout << "popl " << " %ebx" << endl;
                                               cout << "popl " << " %eax" << endl;
                                               cout << "mm left/right " << type_str() << " %ebx, %eax" << endl;
+                                              op_ofs << "popl " << " %ebx" << endl;
+                                              op_ofs << "popl " << " %eax" << endl;
+                                              op_ofs << type_str() << " %ebx, %eax" << endl;
                                             }
 
 
