@@ -6,6 +6,7 @@
 #include <fstream>
 
 ofstream op_ofs("op.s");
+ofstream func_ofs("func.s");
 
 
 using namespace std;
@@ -393,6 +394,9 @@ void ASTNode::gen_gas_syntax()
        {
          func_name = str();
          cout << "  enter func: " << func_name << endl;
+         func_ofs << ".text" << endl;
+         func_ofs << ".globl " << func_name << endl;
+         func_ofs << ".type " << func_name <<  ", @function" << endl;
        }
        else if (ast_type() == VAR)
             {
