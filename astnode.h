@@ -100,6 +100,27 @@ class ASTNode
       free_children();
       // delete eval_result_; // need not delete eval_result_;
     }
+    bool is_op()
+    {
+      if (is_mul_div() == false && is_add_sub() == false)
+        return false;
+      else
+        return true;
+    }
+    bool is_mul_div()
+    {
+      if (MUL == ast_type() || DIV == ast_type())
+        return true;
+      else
+        return false;
+    }
+    bool is_add_sub()
+    {
+      if (ADD == ast_type() || MIN == ast_type())
+        return true;
+      else
+        return false;
+    }
     bool add_child(const std::vector<ASTNode*> &children)
     {
       for (auto i : children)
