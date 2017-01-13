@@ -463,6 +463,8 @@ void ASTNode::gen_gas_syntax()
 
                                   if (child[0]->is_leaf() && child[1]->is_leaf())
                                   {
+                                    cout << "mm " << type_str() << " %ebx, %eax" << endl;
+                                    op_ofs << type_str() << " %ebx, %eax" << endl;
                                   }
                                   else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
                                        {
