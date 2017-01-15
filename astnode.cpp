@@ -442,7 +442,7 @@ void ASTNode::gen_gas_syntax()
                                cout << "can not find : " << str() << endl;
                              }
                            }
-                           else if (ast_type() == ADD)
+                           else if (is_add_sub())
                                 {
                                   auto child = children();
                                   if (child[0]->is_leaf())
@@ -524,10 +524,14 @@ void ASTNode::gen_gas_syntax()
 
 #endif
                                 }
-                                else
-                                {
-                                  cout << "do nothing" << endl;
-                                }
+                                else if (is_mul_div())
+                                     {
+                                       return;
+                                     }
+                                     else
+                                     {
+                                       cout << "do nothing" << endl;
+                                     }
   
   for (auto &i : children())
   {
