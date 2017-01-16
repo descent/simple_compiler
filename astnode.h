@@ -145,6 +145,7 @@ class ASTNode
     //void code_gen();
     void gen_gas_syntax();
     void gen_gas_op(const string &reg);
+    void gen_gas_mul_div(const string &reg);
     //void gen_gas_op();
     ASTNode* eval(Environment *env);
     void set_ast_type(ASTType ast_type)
