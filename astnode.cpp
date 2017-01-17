@@ -259,9 +259,9 @@ void ASTNode::print()
 
 void ASTNode::gen_gas_mul_div(const string &reg)
 {
-  if (is_right_op() == false)
+  if (is_valid_op() == false)
   {
-    cout << "is_right_op() fail" << endl;
+    cout << "is_valid_op() fail" << endl;
     return;
   }
   auto l_child = left_child();

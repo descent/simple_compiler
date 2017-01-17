@@ -209,6 +209,23 @@ class ASTNode
     {
       token_.str_ = s;
     }
+
+    ASTNode *left_child() // don't do check, before call it, need call is_right_op() to check
+    {
+      return children_[0];
+    }
+    ASTNode *right_child() // don't do check
+    {
+      return children_[1];
+    }
+
+    bool is_valid_op() const // has 2 children is valid
+    {
+      if (2 == children().size())
+        return true;
+      else
+        return false;
+    }
     bool is_leaf() const
     {
       if (children().size() == 0)
