@@ -7,6 +7,8 @@
 
 ofstream op_ofs("op.s");
 ofstream func_ofs("func.s");
+ofstream data_ofs("data.s");
+ofstream func_call_ofs("func_call.s");
 
 
 using namespace std;
@@ -414,7 +416,7 @@ void ASTNode::gen_gas_syntax()
 {
   const u8 var_size = 4;
     
-  cout << "cg: " << str() << " : " << type_str() << endl;
+  cout << "cg: " << replace_backslash(str()) << " : " << type_str() << endl;
 #if 0
   switch 
   {
@@ -424,6 +426,37 @@ void ASTNode::gen_gas_syntax()
     }
   }
 #endif
+
+  if (ast_type() == STRING) 
+  {
+    cout << ".section .rodata" << endl;
+    cout << ".LC0:" << endl;
+    string new_str = replace_backslash(str());
+    cout << "    .string " << "\"" << new_str << "\"" << endl;
+    data_ofs << ".section .rodata" << endl;
+    data_ofs << ".LC0:" << endl;
+    data_ofs << "    .string " << "\"" << new_str << "\"" << endl;
+    //cout << "ast type str" << child[0]->type_str() << endl;
+  }
+  if (ast_type() == FUNC_CALL) 
+  {
+    if (str() == "main")
+    {
+      return;
+    }
+
+    auto child = children();
+
+    cout << "pushl %eax" << endl;
+    cout << "pushl $.LC0" << endl;
+    cout << "call " << str() << endl;
+    cout << "addl $16, %esp" << endl;
+
+    func_call_ofs << "pushl %eax" << endl;
+    func_call_ofs << "pushl $.LC0" << endl;
+    func_call_ofs << "call " << str() << endl;
+    func_call_ofs << "addl $16, %esp" << endl;
+  }
 
   if (ast_type() == FUNC_BODY) 
   {
@@ -440,6 +473,9 @@ void ASTNode::gen_gas_syntax()
          func_ofs << ".text" << endl;
          func_ofs << ".globl " << func_name << endl;
          func_ofs << ".type " << func_name <<  ", @function" << endl;
+         func_ofs << func_name <<  ":" << endl;
+         func_ofs << "pushl %ebp" << endl;
+         func_ofs << "movl %esp, %ebp" << endl;
        }
        else if (ast_type() == VAR)
             {
@@ -593,8 +629,17 @@ void ASTNode::gen_gas_syntax()
   if (str() == func_name)
   {
     cout << "  exit func: " << func_name << endl;
+    op_ofs.close();
+    func_ofs.close();
+    data_ofs.close();
+    func_call_ofs.close();
+
+    system("cat data.s func.s op.s func_call.s");
+    system("cat data.s func.s op.s func_call.s > r.s");
     text_section += "leave\n";
     text_section += "ret\n";
+    system("echo leave >> r.s");
+    system("echo ret >> r.s");
   }
 }
 
