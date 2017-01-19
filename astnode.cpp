@@ -307,27 +307,62 @@ void ASTNode::gen_gas_mul_div(const string &reg)
 
 void ASTNode::gen_gas_op(const string &reg)
 {
-  auto child = children();
+  if (is_valid_op() == false)
+  {
+    cout << "is_valid_op() fail" << endl;
+    return;
+  }
+  auto l_child = left_child();
+  auto r_child = right_child();
+  string reg_str = " %ebx, %eax";
 
   cout << "handle add " << str() << endl;
-  if (child[0]->is_leaf() && child[1]->is_leaf())
+  if (l_child->is_leaf() && r_child->is_leaf())
   {
+    cout << "movl $" << l_child->str() << ", %eax" << endl;
+    cout << type_str() << " $" << r_child->str() << ", %ebx" << endl;
+    cout << "pushl " << reg << endl;
+
+    op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
+    op_ofs << type_str() << " $" << r_child->str() << ", %ebx" << endl;
+    op_ofs << "pushl " << reg << endl;
+  #if 0
     cout << "movl $" << child[0]->str() << ", " << reg << endl;
     cout << type_str() << " $" << child[1]->str() << ", " << reg << endl;
-    cout << "pushl " << reg << endl;
 
     op_ofs << "movl $" << child[0]->str() << ", " << reg << endl;
     op_ofs << type_str() << " $" << child[1]->str() << ", " << reg << endl;
     op_ofs << "pushl " << reg << endl;
+  #endif
   }
-  else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
+  else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
-         child[1]->gen_gas_op("%ebx");
-         cout << "11 movl $" << child[0]->str() << ", %eax" << endl;
-         op_ofs << "movl $" << child[0]->str() << ", %eax" << endl;
+         if (ADD == r_child->ast_type() || MIN == r_child->ast_type())
+         {
+           r_child->gen_gas_op("%ebx");
+         }
+         if (MUL == r_child->ast_type())
+         {
+           r_child->gen_gas_mul_div(""); 
+         }
+         cout << "11 movl $" << l_child->str() << ", %eax" << endl;
+         op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
 
          cout << "popl " << " %ebx" << endl;
          op_ofs << "popl " << " %ebx" << endl;
+
+         if (reg == "%ebx")
+         {
+           reg_str = " %eax, %ebx";
+         }
+         cout << "merge right " << type_str() << reg_str << endl;
+         cout << "merge right pushl " << reg << endl;
+
+         op_ofs << type_str() << reg_str << endl;
+         op_ofs << "pushl " << reg << endl;
+
+
+#if 0
 
          if (reg == "%ebx")
          {
@@ -342,33 +377,49 @@ void ASTNode::gen_gas_op(const string &reg)
 
          cout << "merge right pushl " << reg << endl;
          op_ofs << "pushl " << reg << endl;
+#endif
        }
-       else if (child[0]->is_leaf() != true && child[1]->is_leaf())
+       else if (l_child->is_leaf() != true && r_child->is_leaf())
             {
               //cout << "33 reg: " << reg << endl;
-              child[0]->gen_gas_op("%eax");
-              cout << "22 movl $" << child[1]->str() << ", %ebx" << endl;
-              op_ofs << "movl $" << child[1]->str() << ", %ebx" << endl;
+              //l_child->gen_gas_op("%eax");
+
+         if (ADD == l_child->ast_type() || MIN == l_child->ast_type())
+         {
+           l_child->gen_gas_op("%eax");
+         }
+         if (MUL == l_child->ast_type())
+         {
+           l_child->gen_gas_mul_div(""); 
+         }
+
+              cout << "22 movl $" << r_child->str() << ", %ebx" << endl;
+              op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
 
               cout << "popl %eax" << endl;
               op_ofs << "popl %eax" << endl;
               if (reg == "%ebx")
               {
-                cout << "merge left " << type_str() << " %eax, %ebx" << endl;
-                op_ofs << type_str() << " %eax, %ebx" << endl;
+                reg_str = " %eax, %ebx";
+                //cout << "merge left " << type_str() << " %eax, %ebx" << endl;
+                //op_ofs << type_str() << " %eax, %ebx" << endl;
               }
               else
               {
-                cout << "merge left " << type_str() << " %ebx, %eax" << endl;
-                op_ofs << type_str() << " %ebx, %eax" << endl;
+                //cout << "merge left " << type_str() << " %ebx, %eax" << endl;
+                //op_ofs << type_str() << " %ebx, %eax" << endl;
               }
+              cout << "merge left " << type_str() << reg_str << endl;
               cout << "merge left pushl " << reg << endl;
+
+              op_ofs << type_str() << " %ebx, %eax" << endl;
               op_ofs << "pushl " << reg << endl;
             }
-            else // child[0], child[1] are not leaf
+            else // l_child, r_child are not leaf
             {
-              child[0]->gen_gas_op("%eax");
-              child[1]->gen_gas_op("%ebx");
+              l_child->gen_gas_op("%eax");
+              r_child->gen_gas_op("%ebx");
+
               cout << "popl " << " %ebx" << endl;
               cout << "popl " << " %eax" << endl;
               op_ofs << "popl " << " %ebx" << endl;
@@ -376,16 +427,11 @@ void ASTNode::gen_gas_op(const string &reg)
 
               if (reg == "%ebx")
               {
-                cout << "xx left/right " << type_str() << " %eax, %ebx" << endl;
+                reg_str = " %eax, %ebx";
                 op_ofs << type_str() << " %eax, %ebx" << endl;
               }
-              else
-              {
-                cout << "xx left/right " << type_str() << " %ebx, %eax" << endl;
-                op_ofs << type_str() << " %ebx, %eax" << endl;
-              }
-
-
+              cout << "xx left/right " << type_str() << reg_str << endl;
+              op_ofs << type_str() << reg_str << endl;
 
               cout << "pushl " << reg << endl;
               op_ofs << "pushl " << reg << endl;
@@ -487,21 +533,19 @@ void ASTNode::gen_gas_syntax()
                            }
                            else if (is_add_sub())
                                 {
+                                  gen_gas_op("%eax");
+                                #if 0
                                   auto child = children();
-                                  if (child[0]->is_leaf())
+                                  if (child[0]->is_leaf() == false)
                                   {
-                                    cout << "aa movl $" << child[0]->str() << ", %eax" << endl;
-                                    op_ofs << "movl $" << child[0]->str() << ", %eax" << endl;
+                                    child[0]->gen_gas_op("%eax");
                                   }
                                   else
                                   {
-                                    child[0]->gen_gas_op("%eax");
                                   }
 
                                   if (child[1]->is_leaf())
                                   {
-                                    cout << "bb movl $" << child[1]->str() << ", %ebx" << endl;
-                                    op_ofs << "movl $" << child[1]->str() << ", %ebx" << endl;
                                   }
                                   else
                                   {
@@ -510,6 +554,12 @@ void ASTNode::gen_gas_syntax()
 
                                   if (child[0]->is_leaf() && child[1]->is_leaf())
                                   {
+                                    cout << "aa movl $" << child[0]->str() << ", %eax" << endl;
+                                    op_ofs << "movl $" << child[0]->str() << ", %eax" << endl;
+
+                                    cout << "bb movl $" << child[1]->str() << ", %ebx" << endl;
+                                    op_ofs << "movl $" << child[1]->str() << ", %ebx" << endl;
+
                                     cout << "mm " << type_str() << " %ebx, %eax" << endl;
                                     op_ofs << type_str() << " %ebx, %eax" << endl;
                                   }
@@ -541,10 +591,10 @@ void ASTNode::gen_gas_syntax()
 
 
 
+                                  #endif
                                   cout << "add complete" << endl;
                                   return;
                                   //child[1]->gen_gas_op("%ebx");
-
 #if 0
                                   cout << "xx " << type_str() << " " << "%ebx, %eax" << endl;
                                   if (child[0]->is_leaf() && child[1]->is_leaf())
