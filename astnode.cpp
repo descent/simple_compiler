@@ -275,6 +275,11 @@ void ASTNode::gen_gas_mul_div(const string &reg)
     cout << "movl $" << r_child->str() << ", %ebx" << endl;
     cout << "mul %ebx" << endl;
     cout << "pushl %eax" << endl;
+
+    op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
+    op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
+    op_ofs << "mul %ebx" << endl;
+    op_ofs << "pushl %eax" << endl;
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
@@ -284,24 +289,44 @@ void ASTNode::gen_gas_mul_div(const string &reg)
          cout << "popl %ebx" << endl;
          cout << "mul %ebx" << endl;
          cout << "pushl %eax" << endl;
+
+         op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
+
+         op_ofs << "popl %ebx" << endl;
+         op_ofs << "mul %ebx" << endl;
+         op_ofs << "pushl %eax" << endl;
+
        }
        else if (l_child->is_leaf() != true && r_child->is_leaf())
             {
               l_child->gen_gas_mul_div("");
               cout << "movl $" << r_child->str() << ", %ebx" << endl;
+              op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
 
               cout << "popl %eax" << endl;
               cout << "mul %ebx" << endl;
               cout << "pushl %eax" << endl;
+
+              op_ofs << "popl %eax" << endl;
+              op_ofs << "mul %ebx" << endl;
+              op_ofs << "pushl %eax" << endl;
             }
             else // all are not leaf
             {
               l_child->gen_gas_mul_div("");
               r_child->gen_gas_mul_div("");
+
               cout << "popl %ebx" << endl;
               cout << "popl %eax" << endl;
               cout << "mul %ebx" << endl;
               cout << "pushl %eax" << endl;
+
+
+              op_ofs << "popl %ebx" << endl;
+              op_ofs << "popl %eax" << endl;
+              op_ofs << "mul %ebx" << endl;
+              op_ofs << "pushl %eax" << endl;
+
             }
 
 
