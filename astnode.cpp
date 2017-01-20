@@ -346,12 +346,12 @@ void ASTNode::gen_gas_add_sub(const string &reg)
   cout << "handle add " << str() << endl;
   if (l_child->is_leaf() && r_child->is_leaf())
   {
-    cout << "movl $" << l_child->str() << ", %eax" << endl;
-    cout << type_str() << " $" << r_child->str() << ", %ebx" << endl;
+    cout << "movl $" << l_child->str() << ", " << reg << endl;
+    cout << type_str() << " $" << r_child->str() << ", " << reg << endl;
     cout << "pushl " << reg << endl;
 
-    op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
-    op_ofs << type_str() << " $" << r_child->str() << ", %ebx" << endl;
+    op_ofs << "movl $" << l_child->str() << ", " << reg << endl;
+    op_ofs << type_str() << " $" << r_child->str() << ", " << reg << endl;
     op_ofs << "pushl " << reg << endl;
   #if 0
     cout << "movl $" << child[0]->str() << ", " << reg << endl;
