@@ -595,88 +595,8 @@ void ASTNode::gen_gas_syntax()
                            else if (is_add_sub())
                                 {
                                   gen_gas_add_sub("%eax");
-                                #if 0
-                                  auto child = children();
-                                  if (child[0]->is_leaf() == false)
-                                  {
-                                    child[0]->gen_gas_add_sub("%eax");
-                                  }
-                                  else
-                                  {
-                                  }
-
-                                  if (child[1]->is_leaf())
-                                  {
-                                  }
-                                  else
-                                  {
-                                    child[1]->gen_gas_add_sub("%ebx");
-                                  }
-
-                                  if (child[0]->is_leaf() && child[1]->is_leaf())
-                                  {
-                                    cout << "aa movl $" << child[0]->str() << ", %eax" << endl;
-                                    op_ofs << "movl $" << child[0]->str() << ", %eax" << endl;
-
-                                    cout << "bb movl $" << child[1]->str() << ", %ebx" << endl;
-                                    op_ofs << "movl $" << child[1]->str() << ", %ebx" << endl;
-
-                                    cout << "mm " << type_str() << " %ebx, %eax" << endl;
-                                    op_ofs << type_str() << " %ebx, %eax" << endl;
-                                  }
-                                  else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
-                                       {
-                                         cout << "popl " << " %ebx" << endl;
-                                         cout << "mm merge right " << type_str() << " %ebx, %eax" << endl;
-                                         op_ofs << "popl " << " %ebx" << endl;
-                                         op_ofs << type_str() << " %ebx, %eax" << endl;
-                                       }
-                                       else if (child[0]->is_leaf() != true && child[1]->is_leaf())
-                                            {
-                                              cout << "popl " << " %eax" << endl;
-                                              cout << "mm merge left " << type_str() << " %ebx, %eax" << endl;
-
-                                              op_ofs << "popl " << " %eax" << endl;
-                                              op_ofs << type_str() << " %ebx, %eax" << endl;
-                                            }
-                                            else // child[0], child[1] are not leaf
-                                            {
-                                              cout << "popl " << " %ebx" << endl;
-                                              cout << "popl " << " %eax" << endl;
-                                              cout << "mm left/right " << type_str() << " %ebx, %eax" << endl;
-                                              op_ofs << "popl " << " %ebx" << endl;
-                                              op_ofs << "popl " << " %eax" << endl;
-                                              op_ofs << type_str() << " %ebx, %eax" << endl;
-                                            }
-
-
-
-
-                                  #endif
                                   cout << "add complete" << endl;
                                   return;
-                                  //child[1]->gen_gas_add_sub("%ebx");
-#if 0
-                                  cout << "xx " << type_str() << " " << "%ebx, %eax" << endl;
-                                  if (child[0]->is_leaf() && child[1]->is_leaf())
-                                  {
-                                    cout << "mov " << child[0]->str() << ", %eax" << endl;
-                                    cout << type_str() << " " << child[1]->str() << ", %eax" << endl;
-                                    cout << "push %eax" << endl;
-                                  }
-                                  else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
-                                       {
-                                         cout << "mov " << child[0]->str() << ", %eax" << endl;
-                                         child[1]->gen_gas_add_sub("bx");
-                                       }
-                                       else if (child[0]->is_leaf() != true && child[1]->is_leaf())
-                                            {
-                                            }
-                                            else if (child[0]->is_leaf() != true && child[1]->is_leaf() != true)
-                                                 {
-                                                 }
-
-#endif
                                 }
                                 else if (is_mul_div())
                                      {
