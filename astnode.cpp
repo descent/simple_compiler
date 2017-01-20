@@ -630,11 +630,11 @@ void ASTNode::gen_gas_syntax()
     func_call_ofs.close();
 
     system("cat data.s func.s op.s func_call.s");
-    system("cat data.s func.s op.s func_call.s > r.s");
+    system("cat data.s func.s op.s func_call.s > r.S");
     text_section += "leave\n";
     text_section += "ret\n";
-    system("echo leave >> r.s");
-    system("echo ret >> r.s");
+    system("echo leave >> r.S");
+    system("echo ret >> r.S");
   }
 }
 
