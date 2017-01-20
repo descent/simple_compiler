@@ -332,7 +332,7 @@ void ASTNode::gen_gas_mul_div(const string &reg)
 
 }
 
-void ASTNode::gen_gas_op(const string &reg)
+void ASTNode::gen_gas_add_sub(const string &reg)
 {
   if (is_valid_op() == false)
   {
@@ -366,7 +366,7 @@ void ASTNode::gen_gas_op(const string &reg)
        {
          if (ADD == r_child->ast_type() || MIN == r_child->ast_type())
          {
-           r_child->gen_gas_op("%ebx");
+           r_child->gen_gas_add_sub("%ebx");
          }
          if (MUL == r_child->ast_type())
          {
@@ -409,11 +409,11 @@ void ASTNode::gen_gas_op(const string &reg)
        else if (l_child->is_leaf() != true && r_child->is_leaf())
             {
               //cout << "33 reg: " << reg << endl;
-              //l_child->gen_gas_op("%eax");
+              //l_child->gen_gas_add_sub("%eax");
 
          if (ADD == l_child->ast_type() || MIN == l_child->ast_type())
          {
-           l_child->gen_gas_op("%eax");
+           l_child->gen_gas_add_sub("%eax");
          }
          if (MUL == l_child->ast_type())
          {
@@ -444,8 +444,8 @@ void ASTNode::gen_gas_op(const string &reg)
             }
             else // l_child, r_child are not leaf
             {
-              l_child->gen_gas_op("%eax");
-              r_child->gen_gas_op("%ebx");
+              l_child->gen_gas_add_sub("%eax");
+              r_child->gen_gas_add_sub("%ebx");
 
               cout << "popl " << " %ebx" << endl;
               cout << "popl " << " %eax" << endl;
@@ -475,8 +475,8 @@ void ASTNode::gen_gas_op(const string &reg)
   }
   else if (is_leaf() != true)
        {
-         child[0]->gen_gas_op("%eax");
-         child[1]->gen_gas_op("%ebx");
+         child[0]->gen_gas_add_sub("%eax");
+         child[1]->gen_gas_add_sub("%ebx");
          cout << type_str() << " %ebx, %eax" << endl;
          //cout << type_str() << " " << child[1]->str() << ", " << reg << endl;
        }
@@ -594,12 +594,12 @@ void ASTNode::gen_gas_syntax()
                            }
                            else if (is_add_sub())
                                 {
-                                  gen_gas_op("%eax");
+                                  gen_gas_add_sub("%eax");
                                 #if 0
                                   auto child = children();
                                   if (child[0]->is_leaf() == false)
                                   {
-                                    child[0]->gen_gas_op("%eax");
+                                    child[0]->gen_gas_add_sub("%eax");
                                   }
                                   else
                                   {
@@ -610,7 +610,7 @@ void ASTNode::gen_gas_syntax()
                                   }
                                   else
                                   {
-                                    child[1]->gen_gas_op("%ebx");
+                                    child[1]->gen_gas_add_sub("%ebx");
                                   }
 
                                   if (child[0]->is_leaf() && child[1]->is_leaf())
@@ -655,7 +655,7 @@ void ASTNode::gen_gas_syntax()
                                   #endif
                                   cout << "add complete" << endl;
                                   return;
-                                  //child[1]->gen_gas_op("%ebx");
+                                  //child[1]->gen_gas_add_sub("%ebx");
 #if 0
                                   cout << "xx " << type_str() << " " << "%ebx, %eax" << endl;
                                   if (child[0]->is_leaf() && child[1]->is_leaf())
@@ -667,7 +667,7 @@ void ASTNode::gen_gas_syntax()
                                   else if (child[0]->is_leaf() && child[1]->is_leaf() != true)
                                        {
                                          cout << "mov " << child[0]->str() << ", %eax" << endl;
-                                         child[1]->gen_gas_op("bx");
+                                         child[1]->gen_gas_add_sub("bx");
                                        }
                                        else if (child[0]->is_leaf() != true && child[1]->is_leaf())
                                             {
