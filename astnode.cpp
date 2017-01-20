@@ -549,6 +549,7 @@ void ASTNode::gen_gas_syntax()
          func_ofs << func_name <<  ":" << endl;
          func_ofs << "pushl %ebp" << endl;
          func_ofs << "movl %esp, %ebp" << endl;
+         func_ofs << "subl $128, %esp" << endl; // hard code reserve 128 byte stack
        }
        else if (ast_type() == VAR)
             {
