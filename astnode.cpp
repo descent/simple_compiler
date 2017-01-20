@@ -485,6 +485,14 @@ void ASTNode::gen_gas_add_sub(const string &reg)
 #endif
 }
 
+string gen_uniq_string_label()
+{
+  static string uniq_string_label=".LC";
+  static u32 index=0;
+  ++index;
+  return uniq_string_label+std::to_string(index);
+}
+
 void ASTNode::gen_gas_syntax()
 {
   const u8 var_size = 4;
@@ -502,12 +510,13 @@ void ASTNode::gen_gas_syntax()
 
   if (ast_type() == STRING) 
   {
+    string_label_ = gen_uniq_string_label();
     cout << ".section .rodata" << endl;
     cout << ".LC0:" << endl;
     string new_str = replace_backslash(str());
     cout << "    .string " << "\"" << new_str << "\"" << endl;
     data_ofs << ".section .rodata" << endl;
-    data_ofs << ".LC0:" << endl;
+    data_ofs << string_label_ << ": "<< endl;
     data_ofs << "    .string " << "\"" << new_str << "\"" << endl;
     //cout << "ast type str" << child[0]->type_str() << endl;
   }
@@ -518,17 +527,33 @@ void ASTNode::gen_gas_syntax()
       return;
     }
 
+#if 1
     auto child = children();
+  for (auto &i : children())
+  {
 
+    //if (i->ast_type() != ADD)
+    i->gen_gas_syntax();
+  }
+#endif
     cout << "pushl %eax" << endl;
-    cout << "pushl $.LC0" << endl;
-    cout << "call " << str() << endl;
+    //cout << "pushl $.LC0" << endl;
+    cout << "pushl $" << child[0]->string_label_ << endl;
+    cout << "xx call " << str() << endl;
     cout << "addl $16, %esp" << endl;
 
+#if 0
     func_call_ofs << "pushl %eax" << endl;
-    func_call_ofs << "pushl $.LC0" << endl;
+    //func_call_ofs << "pushl $.LC0" << endl;
+    func_call_ofs << "pushl $" << child[0]->string_label_ << endl;
     func_call_ofs << "call " << str() << endl;
     func_call_ofs << "addl $16, %esp" << endl;
+#endif
+    op_ofs << "pushl %eax" << endl;
+    op_ofs << "pushl $" << child[0]->string_label_ << endl;
+    op_ofs << "call " << str() << endl;
+    op_ofs << "addl $16, %esp" << endl;
+    return;
   }
 
   if (ast_type() == FUNC_BODY) 
