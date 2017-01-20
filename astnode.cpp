@@ -419,14 +419,14 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               //cout << "33 reg: " << reg << endl;
               //l_child->gen_gas_add_sub("%eax");
 
-         if (ADD == l_child->ast_type() || MIN == l_child->ast_type())
-         {
-           l_child->gen_gas_add_sub("%eax");
-         }
-         if (MUL == l_child->ast_type())
-         {
-           l_child->gen_gas_mul_div(""); 
-         }
+              if (ADD == l_child->ast_type() || MIN == l_child->ast_type())
+              {
+                l_child->gen_gas_add_sub("%eax");
+              }
+              if (MUL == l_child->ast_type())
+              {
+                l_child->gen_gas_mul_div(""); 
+              }
 
               cout << "22 movl $" << r_child->str() << ", %ebx" << endl;
               op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
