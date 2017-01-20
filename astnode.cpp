@@ -595,12 +595,14 @@ void ASTNode::gen_gas_syntax()
                            else if (is_add_sub())
                                 {
                                   gen_gas_add_sub("%eax");
+                                  op_ofs << "popl %eax" << endl;
                                   cout << "add complete" << endl;
                                   return;
                                 }
                                 else if (is_mul_div())
                                      {
                                        gen_gas_mul_div(""); 
+                                       op_ofs << "popl %eax" << endl;
                                        return;
                                      }
                                      else
