@@ -439,15 +439,10 @@ void ASTNode::gen_gas_add_sub(const string &reg)
                 //cout << "merge left " << type_str() << " %eax, %ebx" << endl;
                 //op_ofs << type_str() << " %eax, %ebx" << endl;
               }
-              else
-              {
-                //cout << "merge left " << type_str() << " %ebx, %eax" << endl;
-                //op_ofs << type_str() << " %ebx, %eax" << endl;
-              }
               cout << "merge left " << type_str() << reg_str << endl;
               cout << "merge left pushl " << reg << endl;
 
-              op_ofs << type_str() << " %ebx, %eax" << endl;
+              op_ofs << type_str() << reg_str << endl;
               op_ofs << "pushl " << reg << endl;
             }
             else // l_child, r_child are not leaf
@@ -463,7 +458,6 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               if (reg == "%ebx")
               {
                 reg_str = " %eax, %ebx";
-                op_ofs << type_str() << " %eax, %ebx" << endl;
               }
               cout << "xx left/right " << type_str() << reg_str << endl;
               op_ofs << type_str() << reg_str << endl;
