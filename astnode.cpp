@@ -283,7 +283,11 @@ void ASTNode::gen_gas_mul_div(const string &reg)
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
-         r_child->gen_gas_mul_div("");
+         if (ADD == r_child->ast_type() || MIN == r_child->ast_type())
+           r_child->gen_gas_add_sub("%eax");
+         if (MUL == r_child->ast_type())
+           r_child->gen_gas_mul_div("");
+
          cout << "movl $" << l_child->str() << ", %eax" << endl;
 
          cout << "popl %ebx" << endl;
@@ -299,7 +303,11 @@ void ASTNode::gen_gas_mul_div(const string &reg)
        }
        else if (l_child->is_leaf() != true && r_child->is_leaf())
             {
-              l_child->gen_gas_mul_div("");
+              if (ADD == l_child->ast_type() || MIN == l_child->ast_type())
+                l_child->gen_gas_add_sub("%eax");
+              if (MUL == l_child->ast_type())
+                l_child->gen_gas_mul_div("");
+
               cout << "movl $" << r_child->str() << ", %ebx" << endl;
               op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
 
