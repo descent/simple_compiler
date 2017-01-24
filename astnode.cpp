@@ -551,7 +551,7 @@ void ASTNode::gen_gas_syntax()
     //cout << "pushl $.LC0" << endl;
     cout << "pushl $" << child[0]->string_label_ << endl;
     cout << "xx call " << str() << endl;
-    cout << "addl $16, %esp" << endl;
+    cout << "addl $8, %esp" << endl;
 
 #if 0
     func_call_ofs << "pushl %eax" << endl;
@@ -563,7 +563,7 @@ void ASTNode::gen_gas_syntax()
     op_ofs << "pushl %eax" << endl;
     op_ofs << "pushl $" << child[0]->string_label_ << endl;
     op_ofs << "call " << str() << endl;
-    op_ofs << "addl $16, %esp" << endl;
+    op_ofs << "addl $8, %esp" << endl;
     return;
   }
 
