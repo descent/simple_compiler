@@ -100,6 +100,7 @@ void print_ast()
   cout << "---------------------------" << endl;
 }
 
+
 std::string ObjType::str()
 {
   std::string s;
@@ -291,6 +292,8 @@ void ASTNode::gen_gas_mul_div(const string &reg)
     op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
     op_ofs << "mul %ebx" << endl;
     op_ofs << "pushl %eax" << endl;
+
+    cur_need_stack_size_ += 4;
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
@@ -302,14 +305,21 @@ void ASTNode::gen_gas_mul_div(const string &reg)
          cout << "movl $" << l_child->str() << ", %eax" << endl;
 
          cout << "popl %ebx" << endl;
+
+
          cout << "mul %ebx" << endl;
          cout << "pushl %eax" << endl;
 
          op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
 
          op_ofs << "popl %ebx" << endl;
+         update_stack_usage();
+         cur_need_stack_size_ -= 4;
+
          op_ofs << "mul %ebx" << endl;
          op_ofs << "pushl %eax" << endl;
+
+         cur_need_stack_size_ += 4;
 
        }
        else if (l_child->is_leaf() != true && r_child->is_leaf())
@@ -327,8 +337,13 @@ void ASTNode::gen_gas_mul_div(const string &reg)
               cout << "pushl %eax" << endl;
 
               op_ofs << "popl %eax" << endl;
+
+              update_stack_usage();
+              cur_need_stack_size_ -= 4;
+
               op_ofs << "mul %ebx" << endl;
               op_ofs << "pushl %eax" << endl;
+              cur_need_stack_size_ += 4;
             }
             else // all are not leaf
             {
@@ -342,14 +357,22 @@ void ASTNode::gen_gas_mul_div(const string &reg)
 
 
               op_ofs << "popl %ebx" << endl;
+              update_stack_usage();
+              cur_need_stack_size_ -= 4;
+
               op_ofs << "popl %eax" << endl;
+              update_stack_usage();
+              cur_need_stack_size_ -= 4;
+
               op_ofs << "mul %ebx" << endl;
               op_ofs << "pushl %eax" << endl;
+              cur_need_stack_size_ += 4;
 
             }
 
 
 }
+
 
 void ASTNode::gen_gas_add_sub(const string &reg)
 {
@@ -372,6 +395,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
     op_ofs << "movl $" << l_child->str() << ", " << reg << endl;
     op_ofs << type_str() << " $" << r_child->str() << ", " << reg << endl;
     op_ofs << "pushl " << reg << endl;
+    cur_need_stack_size_ += 4;
   #if 0
     cout << "movl $" << child[0]->str() << ", " << reg << endl;
     cout << type_str() << " $" << child[1]->str() << ", " << reg << endl;
@@ -396,6 +420,8 @@ void ASTNode::gen_gas_add_sub(const string &reg)
 
          cout << "popl " << " %ebx" << endl;
          op_ofs << "popl " << " %ebx" << endl;
+         update_stack_usage();
+         cur_need_stack_size_ -= 4;
 
          if (reg == "%ebx")
          {
@@ -406,6 +432,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
 
          op_ofs << type_str() << reg_str << endl;
          op_ofs << "pushl " << reg << endl;
+         cur_need_stack_size_ += 4;
 
 
 #if 0
@@ -444,6 +471,10 @@ void ASTNode::gen_gas_add_sub(const string &reg)
 
               cout << "popl %eax" << endl;
               op_ofs << "popl %eax" << endl;
+
+              update_stack_usage();
+              cur_need_stack_size_ -= 4;
+
               if (reg == "%ebx")
               {
                 reg_str = " %eax, %ebx";
@@ -455,6 +486,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
 
               op_ofs << type_str() << reg_str << endl;
               op_ofs << "pushl " << reg << endl;
+              cur_need_stack_size_ += 4;
             }
             else // l_child, r_child are not leaf
             {
@@ -464,7 +496,12 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               cout << "popl " << " %ebx" << endl;
               cout << "popl " << " %eax" << endl;
               op_ofs << "popl " << " %ebx" << endl;
+              update_stack_usage();
+              cur_need_stack_size_ -= 4;
+
               op_ofs << "popl " << " %eax" << endl;
+              update_stack_usage();
+              cur_need_stack_size_ -= 4;
 
               if (reg == "%ebx")
               {
@@ -475,6 +512,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
 
               cout << "pushl " << reg << endl;
               op_ofs << "pushl " << reg << endl;
+              cur_need_stack_size_ += 4;
             }
 
 #if 0
@@ -635,6 +673,12 @@ void ASTNode::gen_gas_syntax()
                                 {
                                   gen_gas_add_sub("%eax");
                                   op_ofs << "popl %eax" << endl;
+
+                                  update_stack_usage();
+                                  cur_need_stack_size_ -= 4;
+
+                                  cout << "max_need_stack_size_: " << max_need_stack_size_ << endl;
+                                  cout << "cur_need_stack_size_: " << cur_need_stack_size_ << endl;
                                   cout << "add complete" << endl;
                                   return;
                                 }
@@ -642,6 +686,10 @@ void ASTNode::gen_gas_syntax()
                                      {
                                        gen_gas_mul_div(""); 
                                        op_ofs << "popl %eax" << endl;
+
+                                       update_stack_usage();
+                                       cur_need_stack_size_ -= 4;
+
                                        return;
                                      }
                                      else
