@@ -245,6 +245,7 @@ class ASTNode
     {
       return no_;
     }
+    string string_label_;
   private:
     vector<ASTNode*> children_;
     ASTNode* eval_result_;
