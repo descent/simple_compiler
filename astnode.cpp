@@ -10,6 +10,17 @@ ofstream func_ofs("func.s");
 ofstream data_ofs("data.s");
 ofstream func_call_ofs("func_call.s");
 
+namespace
+{
+    int cur_need_stack_size_;
+    int max_need_stack_size_;
+}
+
+void update_stack_usage()
+{
+  if (cur_need_stack_size_ > max_need_stack_size_)
+    max_need_stack_size_ = cur_need_stack_size_;
+}
 
 using namespace std;
 
@@ -811,6 +822,16 @@ void ASTNode::code_gen()
   }
 }
 #endif
+
+
+void ASTNode::init()
+{
+  id_ = no_;
+  ++no_;
+  eval_result_ = 0;
+  max_need_stack_size_ = cur_need_stack_size_ = 0;
+  code_gen_state_ = NORMAL;
+}
 
 ASTNode* ASTNode::eval(Environment *env)
 {

@@ -80,17 +80,11 @@ class ASTNode
     //ASTNode(const ASTNode* l, const ASTNode* op, const ASTNode* r);
     ASTNode()
     {
-      id_ = no_;
-      ++no_;
-      eval_result_ = 0;
-      code_gen_state_ = NORMAL;
+      init();
     }
     ASTNode(const Token &token):token_(token)
     {
-      id_ = no_;
-      ++no_;
-      eval_result_ = 0;
-      code_gen_state_ = NORMAL;
+      init();
     }
     ~ASTNode()
     {
@@ -247,6 +241,7 @@ class ASTNode
     }
     string string_label_;
   private:
+    void init();
     vector<ASTNode*> children_;
     ASTNode* eval_result_;
     Token token_;
