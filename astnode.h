@@ -56,6 +56,13 @@ struct ObjType
       else
         return false;
     }
+    bool is_char() const
+    {
+      if (char_ == true)
+        return true;
+      else
+        return false;
+    }
 
     bool is_string() const
     {
