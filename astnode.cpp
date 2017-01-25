@@ -689,8 +689,32 @@ void ASTNode::gen_gas_syntax()
                  }
                  else if (ast_type() == ASSIGN)
                       {
+                        auto l_child = left_child();
+                        auto r_child = right_child();
                         cout << "enter assign" << endl;
+
+                        if (l_child->ast_type() != NAME)
+                        {
+                          // error
+                          cout << "l_child should be NAME" << endl;
+                          exit(0);
+                        }
+
+
+                        // if op
+                        //   cout << "popl %eax" << endl;
+                        cout << "mov $" << r_child->str() << " ,%eax" << endl;
+                        op_ofs << "mov $" << r_child->str() << " ,%eax" << endl;
+                        auto node = local_symbol_table.lookup(l_child->str());
+
+                                //movl    $1, -4(%ebp)
+                        cout << "movl %eax, " << node->local_var_addr_ << endl;
+                        op_ofs << "movl %eax, " << node->local_var_addr_ << endl;
+
+
                         code_gen_state_ = STATEMENT;
+                        cout << "exit assign" << endl;
+                        return;
                       }
                       else if (code_gen_state_ == STATEMENT && ast_type() == NAME)
                            {
