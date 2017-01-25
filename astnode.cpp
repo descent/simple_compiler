@@ -12,9 +12,13 @@ ofstream func_call_ofs("func_call.s");
 
 namespace
 {
-    int cur_need_stack_size;
-    int max_need_stack_size;
+  u32 cur_need_stack_size;
+  u32 max_need_stack_size;
+  u32 cur_occupy_size = 0;
 }
+
+SymbolTable global_symbol_table{"global"};
+SymbolTable local_symbol_table{"local"};
 
 void update_stack_usage()
 {
@@ -772,8 +776,10 @@ void ASTNode::gen_gas_syntax()
   if (str() == func_name)
   {
     cout << "  exit func: " << func_name << endl;
+    cur_occupy_size = 0;
 
     func_ofs << "subl $" << max_need_stack_size << ", %esp" << endl; // reserve max_need_stack_size_ byte stack for temp object
+    func_ofs << "subl $" << local_symbol_table.occupy_size() << ", %esp" << endl; // reserve local variable
 
     op_ofs.close();
     func_ofs.close();
