@@ -640,10 +640,26 @@ void ASTNode::gen_gas_syntax()
          func_ofs << "pushl %ebp" << endl;
          func_ofs << "movl %esp, %ebp" << endl;
 
+
          //func_ofs << "subl $128, %esp" << endl; // hard code reserve 128 byte stack
        }
        else if (ast_type() == VAR)
             {
+              for (auto &i : children())
+              {
+                local_symbol_table.add(i->str(), i);
+
+                if (cur_occupy_size == 0)
+                  i->local_var_addr_ = "(%ebp)";
+                else
+                  i->local_var_addr_ = "-" + to_string(cur_occupy_size) + "(%ebp)";
+
+                //cout << "i->local_var_addr_: " << i->local_var_addr_ << endl;
+                //cout << "i->occupy_size(): " << i->occupy_size() << endl;
+                cur_occupy_size += i->occupy_size();
+                //cout << "cur_ccupy_size: " << cur_occupy_size << endl;
+              }
+
               offset_ = -4;
               var_num_ = 1;
               alloc_stack.clear();
@@ -662,6 +678,7 @@ void ASTNode::gen_gas_syntax()
                 offset -= 4;
               }
             #endif
+              return;
             }
             else if (code_gen_state_ == DECLARE_VAR && ast_type() == NAME)
                  {
