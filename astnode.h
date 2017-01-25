@@ -6,6 +6,7 @@
 
 using namespace std;
 
+#include "symbol_table.h"
 #include "mytype.h"
 #include "token.h"
 #include "env.h"
@@ -255,6 +256,7 @@ class ASTNode
       return 0; // the node is not variable
     }
     string string_label_;
+    string local_var_addr_; // ex: -4(%epb)
   private:
     void init();
     vector<ASTNode*> children_;
