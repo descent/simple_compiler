@@ -680,8 +680,9 @@ void ASTNode::gen_gas_syntax()
             #endif
               return;
             }
-            else if (code_gen_state_ == DECLARE_VAR && ast_type() == NAME)
+            else if (ast_type() == NAME)
                  {
+                   local_symbol_table.lookup(str());
                    //text_section += "pushl " + to_string(it->second) + "(%ebp)\n";
                    alloc_stack.insert({str(), offset_});
                    offset_ -= 4;
