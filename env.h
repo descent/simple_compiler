@@ -58,6 +58,8 @@ class Environment
       return true;
     }
 
+  protected:
+    Frame frame_;
   private:
     ASTNode* lookup_by_env(const Environment *env, const string &var)
     {
@@ -75,7 +77,6 @@ class Environment
       }
     }
 
-    Frame frame_;
     string name_; // env name for debug
     static u32 count_;
     u32 id_;
