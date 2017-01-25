@@ -246,6 +246,14 @@ class ASTNode
     {
       return no_;
     }
+    u16 occupy_size()
+    {
+      if (obj_type_.is_int()) return 4;
+      if (obj_type_.is_pointer()) return 4;
+      if (obj_type_.is_char()) return 1;
+
+      return 0; // the node is not variable
+    }
     string string_label_;
   private:
     void init();
