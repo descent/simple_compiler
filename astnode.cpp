@@ -578,16 +578,32 @@ void ASTNode::gen_gas_syntax()
 
 #if 1
     auto child = children();
-  for (auto &i : children())
-  {
+    auto it = child.rbegin();
+    for (; it != child.rend() ; ++it)
+    {
 
-    //if (i->ast_type() != ADD)
-    i->gen_gas_syntax();
-  }
+      if (NAME == (*it)->ast_type())
+      {
+        auto node = local_symbol_table.lookup((*it)->str());
+        cout << "pushl " << node->local_var_addr_ << endl;
+        op_ofs << "pushl " << node->local_var_addr_ << endl;
+      }
+      else
+      {
+        (*it)->gen_gas_syntax();
+        if (STRING == (*it)->ast_type())
+        {
+          cout << "pushl $" << (*it)->string_label_ << endl;
+          op_ofs << "pushl $" << (*it)->string_label_ << endl;
+        }
+        else
+        {
+          cout << "pushl %eax" << endl;
+          op_ofs << "pushl %eax" << endl;
+        }
+      }
+    }
 #endif
-    cout << "pushl %eax" << endl;
-    //cout << "pushl $.LC0" << endl;
-    cout << "pushl $" << child[0]->string_label_ << endl;
     cout << "xx call " << str() << endl;
     cout << "addl $8, %esp" << endl;
 
@@ -598,8 +614,6 @@ void ASTNode::gen_gas_syntax()
     func_call_ofs << "call " << str() << endl;
     func_call_ofs << "addl $16, %esp" << endl;
 #endif
-    op_ofs << "pushl %eax" << endl;
-    op_ofs << "pushl $" << child[0]->string_label_ << endl;
     op_ofs << "call " << str() << endl;
     op_ofs << "addl $8, %esp" << endl;
     return;
@@ -612,6 +626,8 @@ void ASTNode::gen_gas_syntax()
     text_section += func_name + ":\n";
     text_section += "pushl %ebp\n";
     text_section += "movl %esp, %ebp\n";
+
+
   }
   else if (ast_type() == FUNC_NAME) 
        {
