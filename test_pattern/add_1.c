@@ -7,11 +7,19 @@ int main()
   //j=5678;
   //printf("i = %d\n", i+j);
   //printf("j = %d\n", j);
+  i=2;
+  j=1;
+  //printf("i+j = %d\n", i+j);
+
+  printf("i = %d\n", i);
+  printf("j = %d\n", j);
+  //printf("i+5 = %d\n", i+5);
+  printf("5+i = %d\n", 5+i);
 
   //(1+2)+((3+4)+(5+6));
-  printf("1+2 = %d\n", 1+2);
-  printf("(1+2)+(3+4) = %d\n", (1+2)+(3+4));
-  printf("1+2*3 = %d\n", 1+2*3);
+  //printf("1+2 = %d\n", 1+2);
+  //printf("(1+2)+(3+4) = %d\n", (1+2)+(3+4));
+  //printf("1+2*3 = %d\n", 1+2*3);
   //printf("xx 5*(6+7) = %d\n", 5*(6+7));
   //printf("yy %d\n", 1+2);
   //(2*3*4) * (5*(7*(8*9)));
