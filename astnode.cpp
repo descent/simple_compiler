@@ -388,6 +388,8 @@ void ASTNode::gen_gas_add_sub(const string &reg)
   auto l_child = left_child();
   auto r_child = right_child();
   string reg_str = " %ebx, %eax";
+  string l_operand_string;
+  string r_operand_string;
 
   cout << "handle add " << str() << endl;
   if (l_child->is_leaf() && r_child->is_leaf())
@@ -396,8 +398,32 @@ void ASTNode::gen_gas_add_sub(const string &reg)
     cout << type_str() << " $" << r_child->str() << ", " << reg << endl;
     cout << "pushl " << reg << endl;
 
-    op_ofs << "movl $" << l_child->str() << ", " << reg << endl;
-    op_ofs << type_str() << " $" << r_child->str() << ", " << reg << endl;
+    if (NAME == l_child->ast_type())
+    {
+      auto node = local_symbol_table.lookup(l_child->str());
+      l_operand_string = node->local_var_addr_;
+    }
+    else
+    {
+      l_operand_string = "$" + l_child->str();
+    }
+
+    if (NAME == r_child->ast_type())
+    {
+      auto node = local_symbol_table.lookup(r_child->str());
+
+      //cout << "NAME right" << endl;
+      //r_child->gen_gas_syntax();
+      r_operand_string = node->local_var_addr_;
+    }
+    else // int number
+    {
+      r_operand_string = "$" + r_child->str();
+    }
+
+    op_ofs << "movl " << l_operand_string << ", " << reg << endl;
+    op_ofs << type_str() << " " << r_operand_string << ", " << reg << endl;
+
     op_ofs << "pushl " << reg << endl;
     cur_need_stack_size += 4;
   #if 0
@@ -419,8 +445,19 @@ void ASTNode::gen_gas_add_sub(const string &reg)
          {
            r_child->gen_gas_mul_div(""); 
          }
-         cout << "11 movl $" << l_child->str() << ", %eax" << endl;
-         op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
+
+         if (NAME == l_child->ast_type())
+         {
+           auto node = local_symbol_table.lookup(l_child->str());
+           l_operand_string = node->local_var_addr_;
+         }
+         else
+         {
+           l_operand_string = "$" + l_child->str();
+         }
+
+         cout << "11 movl" << l_operand_string << ", %eax" << endl;
+         op_ofs << "movl" << l_operand_string << ", %eax" << endl;
 
          cout << "popl " << " %ebx" << endl;
          op_ofs << "popl " << " %ebx" << endl;
@@ -470,8 +507,23 @@ void ASTNode::gen_gas_add_sub(const string &reg)
                 l_child->gen_gas_mul_div(""); 
               }
 
-              cout << "22 movl $" << r_child->str() << ", %ebx" << endl;
-              op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
+
+    if (NAME == r_child->ast_type())
+    {
+      auto node = local_symbol_table.lookup(r_child->str());
+
+      //cout << "NAME right" << endl;
+      //r_child->gen_gas_syntax();
+      r_operand_string = node->local_var_addr_;
+    }
+    else // int number
+    {
+      r_operand_string = "$" + r_child->str();
+    }
+
+
+              cout << "22 movl" << r_operand_string << ", %ebx" << endl;
+              op_ofs << "movl" << r_operand_string << ", %ebx" << endl;
 
               cout << "popl %eax" << endl;
               op_ofs << "popl %eax" << endl;
@@ -686,7 +738,8 @@ void ASTNode::gen_gas_syntax()
             }
             else if (ast_type() == NAME)
                  {
-                   local_symbol_table.lookup(str());
+                   auto node = local_symbol_table.lookup(str());
+
                    //text_section += "pushl " + to_string(it->second) + "(%ebp)\n";
                    alloc_stack.insert({str(), offset_});
                    offset_ -= 4;
@@ -778,8 +831,8 @@ void ASTNode::gen_gas_syntax()
     cout << "  exit func: " << func_name << endl;
     cur_occupy_size = 0;
 
-    func_ofs << "subl $" << max_need_stack_size << ", %esp" << endl; // reserve max_need_stack_size_ byte stack for temp object
-    func_ofs << "subl $" << local_symbol_table.occupy_size() << ", %esp" << endl; // reserve local variable
+    func_ofs << "subl $" << max_need_stack_size << ", %esp # reserve temp object size" << endl; // reserve max_need_stack_size_ byte stack for temp object
+    func_ofs << "subl $" << local_symbol_table.occupy_size() << ", %esp # reserve local variable" << endl; // reserve local variable
 
     op_ofs.close();
     func_ofs.close();
