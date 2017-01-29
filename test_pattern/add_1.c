@@ -7,7 +7,7 @@ int main()
   //j=5678;
   //printf("i = %d\n", i+j);
   //printf("j = %d\n", j);
-  i=2;
+  i=2+9;
   j=1;
   //printf("i+j = %d\n", i+j);
 
