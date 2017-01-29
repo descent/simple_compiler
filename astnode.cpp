@@ -759,16 +759,21 @@ void ASTNode::gen_gas_syntax()
 
 
                         // if op
-                        //   cout << "popl %eax" << endl;
-                        cout << "mov $" << r_child->str() << " ,%eax" << endl;
-                        op_ofs << "mov $" << r_child->str() << " ,%eax" << endl;
-                        auto node = local_symbol_table.lookup(l_child->str());
+                        if (r_child->is_add_sub() || r_child->is_mul_div())
+                        {
+                          r_child->gen_gas_add_sub("%eax");
+                          op_ofs << "popl %eax" << endl;
+                        }
+                        else // int
+                        {
+                          cout << "mov $" << r_child->str() << " ,%eax" << endl;
+                          op_ofs << "mov $" << r_child->str() << " ,%eax" << endl;
+                        }
 
-                                //movl    $1, -4(%ebp)
+                        //movl    $1, -4(%ebp)
+                        auto node = local_symbol_table.lookup(l_child->str());
                         cout << "movl %eax, " << node->local_var_addr_ << endl;
                         op_ofs << "movl %eax, " << node->local_var_addr_ << endl;
-
-
                         code_gen_state_ = STATEMENT;
                         cout << "exit assign" << endl;
                         return;
