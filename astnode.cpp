@@ -284,16 +284,41 @@ void ASTNode::gen_gas_mul_div(const string &reg)
   }
   auto l_child = left_child();
   auto r_child = right_child();
+  string l_operand_string;
+  string r_operand_string;
 
   if (l_child->is_leaf() && r_child->is_leaf())
   {
-    cout << "movl $" << l_child->str() << ", %eax" << endl;
-    cout << "movl $" << r_child->str() << ", %ebx" << endl;
+    if (NAME == l_child->ast_type())
+    {
+      // i*j
+      auto node = local_symbol_table.lookup(l_child->str());
+      l_operand_string = node->local_var_addr_;
+    }
+    else
+    {
+      // 1*2
+      l_operand_string = "$" + l_child->str();
+    }
+
+    if (NAME == r_child->ast_type())
+    { // i*j
+      auto node = local_symbol_table.lookup(r_child->str());
+
+      r_operand_string = node->local_var_addr_;
+    }
+    else 
+    { // 1*2
+      r_operand_string = "$" + r_child->str();
+    }
+
+    cout << "movl " << l_operand_string << ", %eax" << endl;
+    cout << "movl " << r_operand_string << ", %ebx" << endl;
     cout << "mul %ebx" << endl;
     cout << "pushl %eax" << endl;
 
-    op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
-    op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
+    op_ofs << "movl " << l_operand_string << ", %eax" << endl;
+    op_ofs << "movl " << r_operand_string << ", %ebx" << endl;
     op_ofs << "mul %ebx" << endl;
     op_ofs << "pushl %eax" << endl;
 
@@ -306,16 +331,25 @@ void ASTNode::gen_gas_mul_div(const string &reg)
          if (MUL == r_child->ast_type())
            r_child->gen_gas_mul_div("");
 
-         cout << "movl $" << l_child->str() << ", %eax" << endl;
 
+         if (NAME == l_child->ast_type())
+         {
+           // 5*j
+           auto node = local_symbol_table.lookup(l_child->str());
+           l_operand_string = node->local_var_addr_;
+         }
+         else
+         {
+           // 1*2
+           l_operand_string = "$" + l_child->str();
+         }
+
+         cout << "movl " << l_operand_string << ", %eax" << endl;
          cout << "popl %ebx" << endl;
-
-
          cout << "mul %ebx" << endl;
          cout << "pushl %eax" << endl;
 
-         op_ofs << "movl $" << l_child->str() << ", %eax" << endl;
-
+         op_ofs << "movl " << l_operand_string << ", %eax" << endl;
          op_ofs << "popl %ebx" << endl;
          update_stack_usage();
          cur_need_stack_size -= 4;
@@ -333,8 +367,19 @@ void ASTNode::gen_gas_mul_div(const string &reg)
               if (MUL == l_child->ast_type())
                 l_child->gen_gas_mul_div("");
 
-              cout << "movl $" << r_child->str() << ", %ebx" << endl;
-              op_ofs << "movl $" << r_child->str() << ", %ebx" << endl;
+              if (NAME == r_child->ast_type())
+              { // i*6
+                auto node = local_symbol_table.lookup(r_child->str());
+
+                r_operand_string = node->local_var_addr_;
+              }
+              else 
+              { // 1*2
+                r_operand_string = "$" + r_child->str();
+              }
+
+              cout << "movl " << r_operand_string << ", %ebx" << endl;
+              op_ofs << "movl " << r_operand_string << ", %ebx" << endl;
 
               cout << "popl %eax" << endl;
               cout << "mul %ebx" << endl;
@@ -456,8 +501,8 @@ void ASTNode::gen_gas_add_sub(const string &reg)
            l_operand_string = "$" + l_child->str();
          }
 
-         cout << "11 movl" << l_operand_string << ", %eax" << endl;
-         op_ofs << "movl" << l_operand_string << ", %eax" << endl;
+         cout << "11 movl " << l_operand_string << ", %eax" << endl;
+         op_ofs << "movl " << l_operand_string << ", %eax" << endl;
 
          cout << "popl " << " %ebx" << endl;
          op_ofs << "popl " << " %ebx" << endl;
@@ -522,8 +567,8 @@ void ASTNode::gen_gas_add_sub(const string &reg)
     }
 
 
-              cout << "22 movl" << r_operand_string << ", %ebx" << endl;
-              op_ofs << "movl" << r_operand_string << ", %ebx" << endl;
+              cout << "22 movl " << r_operand_string << ", %ebx" << endl;
+              op_ofs << "movl " << r_operand_string << ", %ebx" << endl;
 
               cout << "popl %eax" << endl;
               op_ofs << "popl %eax" << endl;
