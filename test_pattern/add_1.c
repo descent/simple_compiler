@@ -2,6 +2,16 @@ int main()
 {
   int i;
   int j;
+  printf("1<2 : %d\n", 1<2);
+  printf("1>2 : %d\n", 1>2);
+
+  i=5;
+  j=9;
+  printf("i = %d\n", i);
+  printf("5+i = %d\n", 5+i);
+  printf("j = %d\n", j);
+  printf("i < j : %d\n", i < j);
+  printf("i > j : %d\n", i > j);
 
   //i=23;
   //j=5678;
@@ -11,10 +21,7 @@ int main()
   j=1;
   //printf("i+j = %d\n", i+j);
 
-  printf("i = %d\n", i);
-  printf("j = %d\n", j);
   //printf("i+5 = %d\n", i+5);
-  printf("5+i = %d\n", 5+i);
 
   //(1+2)+((3+4)+(5+6));
   //printf("1+2 = %d\n", 1+2);
