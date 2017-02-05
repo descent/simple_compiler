@@ -109,6 +109,19 @@ class ASTNode
       else
         return true;
     }
+
+    bool is_relational_op() const
+    {
+      if (LESS == ast_type() || GREAT == ast_type() || EQUAL == ast_type())
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
     bool is_mul_div()
     {
       if (MUL == ast_type() || DIV == ast_type())
@@ -148,6 +161,7 @@ class ASTNode
     void gen_gas_syntax();
     void gen_gas_add_sub(const string &reg);
     void gen_gas_mul_div(const string &reg);
+    void gen_gas_relation(const string &reg);
     //void gen_gas_op();
     ASTNode* eval(Environment *env);
     void set_ast_type(ASTType ast_type)

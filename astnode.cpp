@@ -275,6 +275,83 @@ void ASTNode::print()
   }
 }
 
+void ASTNode::gen_gas_relation(const string &reg)
+{
+  if (is_valid_op() == false)
+  {
+    cout << "is_valid_op() fail" << endl;
+    return;
+  }
+
+  auto l_child = left_child();
+  auto r_child = right_child();
+  string l_operand_string;
+  string r_operand_string;
+  string relative_inst = "unknow relative inst";
+
+  if (l_child->is_leaf() && r_child->is_leaf())
+  {
+    if (NAME == l_child->ast_type())
+    {
+      // i > j
+      auto node = local_symbol_table.lookup(l_child->str());
+      l_operand_string = node->local_var_addr_;
+    }
+    else
+    {
+      // 1 > 2
+      l_operand_string = "$" + l_child->str();
+    }
+
+    if (NAME == r_child->ast_type())
+    { // i > j
+      auto node = local_symbol_table.lookup(r_child->str());
+
+      r_operand_string = node->local_var_addr_;
+    }
+    else 
+    { // 1 > 2
+      r_operand_string = "$" + r_child->str();
+    }
+
+    // 1 > 2
+    // mov $1, %eax
+    // cmpl $2, %eax
+    //op_ofs << "movl " << l_operand_string << ", %eax" << endl;
+    op_ofs << "movl " << l_operand_string << ", %eax" << endl;
+    op_ofs << "cmpl " << r_operand_string << ", %eax" << endl;
+
+    switch (ast_type())
+    {
+      case LESS:
+      {
+        relative_inst = "setl";
+        break;
+      }
+      case GREAT:
+      {
+        relative_inst = "setg";
+        break;
+      }
+      case EQUAL:
+      {
+        relative_inst = "sete";
+        break;
+      }
+      default:
+      {
+        break;
+      }
+    }
+    op_ofs << relative_inst << " %al" << endl;
+    op_ofs << "movzbl %al, %eax" << endl;
+    op_ofs << "pushl %eax" << endl;
+
+    cur_need_stack_size += 4;
+  }
+
+}
+
 void ASTNode::gen_gas_mul_div(const string &reg)
 {
   if (is_valid_op() == false)
