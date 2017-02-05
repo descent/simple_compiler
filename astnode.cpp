@@ -900,17 +900,11 @@ void ASTNode::gen_gas_syntax()
                         cout << "exit assign" << endl;
                         return;
                       }
-                      else if (code_gen_state_ == STATEMENT && ast_type() == NAME)
+                      else if (is_relational_op())
                            {
-                             auto it = alloc_stack.find(str());
-                             if (it != alloc_stack.end()) // find it
-                             {
-                               text_section += "pushl " + to_string(it->second) + "(%ebp)\n";
-                             }
-                             else
-                             {
-                               cout << "can not find : " << str() << endl;
-                             }
+                             gen_gas_relation("");
+                             op_ofs << "popl %eax" << endl;
+                             return;
                            }
                            else if (is_add_sub())
                                 {
