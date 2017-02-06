@@ -903,7 +903,11 @@ void ASTNode::gen_gas_syntax()
                       else if (is_relational_op())
                            {
                              gen_gas_relation("");
+                             update_stack_usage();
+
                              op_ofs << "popl %eax" << endl;
+                             cur_need_stack_size -= 4;
+
                              return;
                            }
                            else if (is_add_sub())
