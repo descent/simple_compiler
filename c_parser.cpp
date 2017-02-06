@@ -1154,8 +1154,8 @@ int main(int argc, char *argv[])
 {
   operators.insert({"=", new Precedence{1, false}});
   operators.insert({"==", new Precedence{2, true}});
-  operators.insert({">", new Precedence{2, false}});
-  operators.insert({"<", new Precedence{2, false}});
+  operators.insert({">", new Precedence{2, true}});
+  operators.insert({"<", new Precedence{2, true}});
   operators.insert({"+", new Precedence{3, true}});
   operators.insert({"-", new Precedence{3, true}});
   operators.insert({"*", new Precedence{4, true}});
