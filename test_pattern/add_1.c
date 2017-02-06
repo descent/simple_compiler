@@ -2,26 +2,45 @@ int main()
 {
   int i;
   int j;
-  printf("1<2 : %d\n", 1<2);
-  printf("1>2 : %d\n", 1>2);
+  1<2<3;
+  1+2+3;
+//  printf("1<2 : %d\n", 1<2);
+//  printf("1>2 : %d\n", 1>2);
 
-  i=5;
-  j=9;
-  printf("i = %d\n", i);
-  printf("5+i = %d\n", 5+i);
-  printf("j = %d\n", j);
-  printf("i < j : %d\n", i < j);
-  printf("i > j : %d\n", i > j);
-
-  //i=23;
-  //j=5678;
+//  i=5;
+//  j=9;
+//  printf("i = %d\n", i);
+//  printf("5+i = %d\n", 5+i);
+//  printf("j = %d\n", j);
+//  printf("i < j : %d\n", i < j);
+//  printf("i > j : %d\n", i > j);
+//
+//  i=23;
+//  i>2;
+//  j=5678;
   //printf("i = %d\n", i+j);
   //printf("j = %d\n", j);
-  i=2+9;
-  j=1;
-  //printf("i+j = %d\n", i+j);
+  //i=6;
+  //j=2;
+
+//  i = 1>2*2;
+//  1>2+3;
+
+
 
   //printf("i+5 = %d\n", i+5);
+//  printf("i = %d\n", i);
+//  printf("j = %d\n", j);
+//  printf("i+j = %d\n", i+j);
+  //printf("i+5 = %d\n", i+5);
+  //printf("5+(1+2) = %d\n", 5+(1+2));
+  //printf("5+i = %d\n", 5+i);
+  //printf("i*j = %d\n", i*j);
+
+  //printf("5*i = %d\n", 5*i);
+  //printf("5*i+j = %d\n", 5*i+j);
+  //printf("5*(i+j) = %d\n", 5*(i+j));
+  //printf("j*7 = %d\n", j*7);
 
   //(1+2)+((3+4)+(5+6));
   //printf("1+2 = %d\n", 1+2);

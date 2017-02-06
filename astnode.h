@@ -72,6 +72,14 @@ struct ObjType
       else
         return false;
     }
+    bool set_func_para(bool fp) // fp: function parameter
+    {
+      func_para_ = fp;
+    }
+    bool is_func_para() // function parameter
+    {
+      return func_para_;
+    }
 
     bool pointer_;
     bool char_;
@@ -80,6 +88,7 @@ struct ObjType
     bool array_;
     bool global_;
     u32 pointer_number_;
+    bool func_para_; // function parameter
 };
 
 class ASTNode
@@ -174,6 +183,10 @@ class ASTNode
     }
     const char* type_str() const
     {
+      if (token_.ast_type_str() == "MIN")
+      {
+        return "SUB";
+      }
       return token_.ast_type_str();
     #if 0
       const char *type_str[]=
