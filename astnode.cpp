@@ -403,7 +403,7 @@ void ASTNode::gen_gas_mul_div(const string &reg)
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
-         if (ADD == r_child->ast_type() || MIN == r_child->ast_type())
+         if (is_add_sub())
            r_child->gen_gas_add_sub("%eax");
          if (MUL == r_child->ast_type())
            r_child->gen_gas_mul_div("");
@@ -439,7 +439,7 @@ void ASTNode::gen_gas_mul_div(const string &reg)
        }
        else if (l_child->is_leaf() != true && r_child->is_leaf())
             {
-              if (ADD == l_child->ast_type() || MIN == l_child->ast_type())
+              if (is_add_sub())
                 l_child->gen_gas_add_sub("%eax");
               if (MUL == l_child->ast_type())
                 l_child->gen_gas_mul_div("");
@@ -559,7 +559,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
-         if (ADD == r_child->ast_type() || MIN == r_child->ast_type())
+         if (is_add_sub())
          {
            r_child->gen_gas_add_sub("%ebx");
          }
@@ -620,7 +620,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               //cout << "33 reg: " << reg << endl;
               //l_child->gen_gas_add_sub("%eax");
 
-              if (ADD == l_child->ast_type() || MIN == l_child->ast_type())
+              if (is_add_sub())
               {
                 l_child->gen_gas_add_sub("%eax");
               }

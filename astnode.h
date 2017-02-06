@@ -140,7 +140,7 @@ class ASTNode
     }
     bool is_add_sub()
     {
-      if (ADD == ast_type() || MIN == ast_type())
+      if (ADD == ast_type() || SUB == ast_type())
         return true;
       else
         return false;
@@ -183,10 +183,6 @@ class ASTNode
     }
     const char* type_str() const
     {
-      if (token_.ast_type_str() == "MIN")
-      {
-        return "SUB";
-      }
       return token_.ast_type_str();
     #if 0
       const char *type_str[]=
@@ -199,7 +195,7 @@ class ASTNode
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL", 
         "NAME", "GLOBAL_VAR", "VAR", 
         "FUNC_CALL", "FUNC_BODY", "FUNC_NAME", "FUNC_PARA", 
-        "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS", 
+        "ADD", "SUB", "MUL", "DIV", "GREAT", "LESS", 
         "NUMBER", "STRING", "EOL"
       };
 
