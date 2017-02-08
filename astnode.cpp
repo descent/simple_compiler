@@ -559,7 +559,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
-         if (is_add_sub())
+         if (r_child->is_add_sub())
          {
            r_child->gen_gas_add_sub("%ebx");
          }
@@ -620,7 +620,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               //cout << "33 reg: " << reg << endl;
               //l_child->gen_gas_add_sub("%eax");
 
-              if (is_add_sub())
+              if (l_child->is_add_sub())
               {
                 l_child->gen_gas_add_sub("%eax");
               }
