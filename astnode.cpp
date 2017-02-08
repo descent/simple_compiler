@@ -443,7 +443,7 @@ void ASTNode::gen_gas_relation(const string &reg)
     // mov $1, %eax
     // cmpl $2, %eax
     //op_ofs << "movl " << l_operand_string << ", %eax" << endl;
-    op_ofs << "movl " << l_operand_string << ", %eax # varialbe: " << l_child->str() << endl;
+    op_ofs << "movl " << l_operand_string << ", %eax # variable: " << l_child->str() << endl;
     op_ofs << "cmpl " << r_operand_string << ", %eax # variable: " << r_child->str() << endl;
 
     switch (ast_type())
