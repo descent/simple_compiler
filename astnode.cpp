@@ -275,7 +275,14 @@ void ASTNode::print()
   }
 }
 
-void ASTNode::gen_gas_relation(const string &reg)
+
+
+
+int gen_relation()
+{
+}
+
+void ASTNode::gen_gas_op(GenGasFunc gen_gas_func)
 {
   if (is_valid_op() == false)
   {
@@ -349,6 +356,279 @@ void ASTNode::gen_gas_relation(const string &reg)
 
     cur_need_stack_size += 4;
   }
+  else if (l_child->is_leaf() && r_child->is_leaf() != true)
+       {
+       }
+       else if (l_child->is_leaf() != true && r_child->is_leaf())
+            {
+            }
+            else
+            {
+            }
+
+
+}
+
+string get_relational_inst(auto ast_type)
+{
+  string relative_inst;
+
+    switch (ast_type)
+    {
+      case LESS:
+      {
+        relative_inst = "setl";
+        break;
+      }
+      case GREAT:
+      {
+        relative_inst = "setg";
+        break;
+      }
+      case EQUAL:
+      {
+        relative_inst = "sete";
+        break;
+      }
+      default:
+      {
+        break;
+      }
+    }
+  return relative_inst;
+}
+
+void ASTNode::gen_gas_relation(const string &reg)
+{
+  if (is_valid_op() == false)
+  {
+    cout << "is_valid_op() fail" << endl;
+    return;
+  }
+
+  auto l_child = left_child();
+  auto r_child = right_child();
+  string l_operand_string;
+  string r_operand_string;
+  string relative_inst = "unknow relative inst";
+
+  if (l_child->is_leaf() && r_child->is_leaf())
+  {
+    op_ofs << "# gen code: " << l_child->str() << " " << str() << " " << r_child->str() << endl;
+
+    if (NAME == l_child->ast_type())
+    {
+      // i > j
+      auto node = local_symbol_table.lookup(l_child->str());
+      l_operand_string = node->local_var_addr_;
+    }
+    else
+    {
+      // 1 > 2
+      l_operand_string = "$" + l_child->str();
+    }
+
+    if (NAME == r_child->ast_type())
+    { // i > j
+      auto node = local_symbol_table.lookup(r_child->str());
+
+      r_operand_string = node->local_var_addr_;
+    }
+    else 
+    { // 1 > 2
+      r_operand_string = "$" + r_child->str();
+    }
+
+    // 1 > 2
+    // mov $1, %eax
+    // cmpl $2, %eax
+    //op_ofs << "movl " << l_operand_string << ", %eax" << endl;
+    op_ofs << "movl " << l_operand_string << ", %eax # varialbe: " << l_child->str() << endl;
+    op_ofs << "cmpl " << r_operand_string << ", %eax # variable: " << r_child->str() << endl;
+
+    switch (ast_type())
+    {
+      case LESS:
+      {
+        relative_inst = "setl";
+        break;
+      }
+      case GREAT:
+      {
+        relative_inst = "setg";
+        break;
+      }
+      case EQUAL:
+      {
+        relative_inst = "sete";
+        break;
+      }
+      default:
+      {
+        break;
+      }
+    }
+    op_ofs << relative_inst << " %al" << endl;
+    op_ofs << "movzbl %al, %eax" << endl;
+    op_ofs << "pushl %eax" << endl;
+
+    cur_need_stack_size += 4;
+  }
+  else if (l_child->is_leaf() && r_child->is_leaf() != true)
+       { // 1 < (2 < 3)
+         if (r_child->is_add_sub())
+         {
+           r_child->gen_gas_add_sub("%eax");
+         }
+         else if (r_child->is_mul_div())
+              {
+                r_child->gen_gas_mul_div(""); 
+              }
+              else if (r_child->is_relational_op())
+                   {
+                     r_child->gen_gas_relation("");
+                   }
+                   else
+                   {
+                     cout << "unsupport op" << endl;
+                   }
+
+         op_ofs << "# gen code (left child is leaf): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
+         if (NAME == l_child->ast_type())
+         {
+           auto node = local_symbol_table.lookup(l_child->str());
+           l_operand_string = node->local_var_addr_;
+         }
+         else
+         {
+           l_operand_string = "$" + l_child->str();
+         }
+
+         op_ofs << "popl %ebx" << endl;
+         update_stack_usage();
+         cur_need_stack_size -= 4;
+
+         op_ofs << "movl " << l_operand_string << ", %eax" << endl;
+         op_ofs << "cmpl %ebx, %eax" << endl;
+     
+         relative_inst = get_relational_inst(ast_type());
+     
+         op_ofs << relative_inst << " %al" << endl;
+         op_ofs << "movzbl %al, %eax" << endl;
+         op_ofs << "pushl %eax" << endl;
+     
+         cur_need_stack_size += 4;
+
+       }
+       else if (l_child->is_leaf() != true && r_child->is_leaf())
+            { // 1 < 2 < 3
+              if (l_child->is_add_sub())
+              {
+                l_child->gen_gas_add_sub("%eax");
+              }
+              else if (l_child->is_mul_div())
+                   {
+                     l_child->gen_gas_mul_div(""); 
+                   }
+                   else if (l_child->is_relational_op())
+                        {
+                          l_child->gen_gas_relation("");
+                        }
+                        else
+                        {
+                          cout << "unsupport op" << endl;
+                        }
+
+              op_ofs << "# gen code (right child is leaf): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
+
+
+              if (NAME == r_child->ast_type())
+              {
+                auto node = local_symbol_table.lookup(r_child->str());
+                r_operand_string = node->local_var_addr_;
+              }
+              else
+              {
+                r_operand_string = "$" + r_child->str();
+              }
+     
+              op_ofs << "popl %eax" << endl;
+              update_stack_usage();
+              cur_need_stack_size -= 4;
+
+              op_ofs << "movl " << r_operand_string << ", %ebx" << endl;
+              op_ofs << "cmpl %ebx, %eax" << endl;
+     
+              relative_inst = get_relational_inst(ast_type());
+     
+              op_ofs << relative_inst << " %al" << endl;
+              op_ofs << "movzbl %al, %eax" << endl;
+              op_ofs << "pushl %eax" << endl;
+     
+              cur_need_stack_size += 4;
+
+
+
+            }
+            else
+            { // (2 < 3) < (6 < 8)
+              if (l_child->is_add_sub())
+              {
+                l_child->gen_gas_add_sub("%eax");
+              }
+              else if (l_child->is_mul_div())
+                   {
+                     l_child->gen_gas_mul_div(""); 
+                   }
+                   else if (l_child->is_relational_op())
+                        {
+                          l_child->gen_gas_relation("");
+                        }
+                        else
+                        {
+                          cout << "left: unsupport op" << endl;
+                        }
+
+              if (r_child->is_add_sub())
+              {
+                r_child->gen_gas_add_sub("%eax");
+              }
+              else if (r_child->is_mul_div())
+                   {
+                     r_child->gen_gas_mul_div(""); 
+                   }
+                   else if (r_child->is_relational_op())
+                        {
+                          r_child->gen_gas_relation("");
+                        }
+                        else
+                        {
+                          cout << "right: unsupport op" << endl;
+                        }
+
+
+              op_ofs << "# gen code (2 children are not leaf): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
+
+
+              op_ofs << "popl %ebx" << endl; // right child result
+              update_stack_usage();
+              cur_need_stack_size -= 4;
+
+              op_ofs << "popl %eax" << endl; // left child result
+              //update_stack_usage();
+              cur_need_stack_size -= 4;
+
+              op_ofs << "cmpl %ebx, %eax" << endl;
+              relative_inst = get_relational_inst(ast_type());
+              op_ofs << relative_inst << " %al" << endl;
+              op_ofs << "movzbl %al, %eax" << endl;
+              op_ofs << "pushl %eax" << endl;
+              cur_need_stack_size += 4;
+
+
+
+            }
+
 
 }
 
@@ -1125,6 +1405,13 @@ void ASTNode::init()
   eval_result_ = 0;
   max_need_stack_size = cur_need_stack_size = 0;
   code_gen_state_ = NORMAL;
+
+  gen_gas_op_[ADD] = &ASTNode::gen_gas_add_sub; // member function pointer
+  gen_gas_op_[SUB] = &ASTNode::gen_gas_add_sub; // member function pointer
+  gen_gas_op_[MUL] = &ASTNode::gen_gas_mul_div; // member function pointer
+  gen_gas_op_[LESS] = &ASTNode::gen_gas_relation; // member function pointer
+  gen_gas_op_[GREAT] = &ASTNode::gen_gas_relation; // member function pointer
+  gen_gas_op_[EQUAL] = &ASTNode::gen_gas_relation; // member function pointer
 }
 
 ASTNode* ASTNode::eval(Environment *env)

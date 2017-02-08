@@ -11,6 +11,8 @@ using namespace std;
 #include "token.h"
 #include "env.h"
 
+typedef int (*GenGasFunc)();
+
 //using std::vector;
 
 /**
@@ -90,6 +92,8 @@ struct ObjType
     u32 pointer_number_;
     bool func_para_; // function parameter
 };
+
+typedef void (ASTNode::*GenGasOp)(const string &reg);
 
 class ASTNode
 {
@@ -171,7 +175,7 @@ class ASTNode
     void gen_gas_add_sub(const string &reg);
     void gen_gas_mul_div(const string &reg);
     void gen_gas_relation(const string &reg);
-    //void gen_gas_op();
+    void gen_gas_op(GenGasFunc gen_gas_func);
     ASTNode* eval(Environment *env);
     void set_ast_type(ASTType ast_type)
     {
@@ -291,6 +295,7 @@ class ASTNode
     CodeGenState code_gen_state_;
     int offset_;
     int var_num_;
+    map <ASTType, GenGasOp> gen_gas_op_;
 };
 
 ASTNode *get_root();
