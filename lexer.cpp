@@ -328,7 +328,7 @@ int get_token(Token &token)
            case '-':
            {
              token.str_ = "-";
-             token.ast_type_ = MIN;
+             token.ast_type_ = SUB;
              break;
            }
            case '*':

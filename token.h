@@ -38,7 +38,7 @@ class Token
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL",
         "NAME", "GLOBAL_VAR", "VAR",
         "FUNC_CALL", "FUNC_BODY", "FUNC_NAME", "FUNC_PARA",
-        "ADD", "MIN", "MUL", "DIV", "GREAT", "LESS",
+        "ADD", "SUB", "MUL", "DIV", "GREAT", "LESS",
         "NUMBER", "STRING", "EOL"
       };
 
