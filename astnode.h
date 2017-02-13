@@ -117,10 +117,10 @@ class ASTNode
     }
     bool is_op()
     {
-      if (is_mul_div() == false && is_add_sub() == false)
-        return false;
-      else
+      if (is_mul_div() == true || is_add_sub() == true || is_relational_op() == true)
         return true;
+      else
+        return false;
     }
 
     bool is_relational_op() const
