@@ -3,11 +3,18 @@ int main()
   int i;
   int j;
   i=8;
-  j=3;
+  j=2;
 
-  i=j;
+  //printf("i = %d\n", i);
+  //printf("j = %d\n", j);
+  i = j+3>5;
+  printf("i = %d\n", i);
+  //i=j;
+  //printf("i=j, i = %d\n", i);
 
-  //i<j;
+
+  //printf("i < j: %d\n", i < j);
+  //printf("i > j: %d\n", i > j);
 
 
   //printf("(2 < 3) < (6 < 8) : %d\n", (2 < 3) < (6 < 8));
@@ -22,9 +29,7 @@ int main()
 
 //  i=5;
 //  j=9;
-//  printf("i = %d\n", i);
 //  printf("5+i = %d\n", 5+i);
-//  printf("j = %d\n", j);
 //  printf("i < j : %d\n", i < j);
 //  printf("i > j : %d\n", i > j);
 //
