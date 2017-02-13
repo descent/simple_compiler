@@ -1150,7 +1150,6 @@ void ASTNode::gen_gas_syntax()
                       {
                         auto l_child = left_child();
                         auto r_child = right_child();
-                        cout << "enter assign" << endl;
 
                         if (l_child->ast_type() != NAME)
                         {
@@ -1161,21 +1160,54 @@ void ASTNode::gen_gas_syntax()
 
 
                         // if op
-                        if (r_child->is_add_sub() || r_child->is_mul_div())
+                        if (r_child->is_op())
                         {
-                          r_child->gen_gas_add_sub("%eax");
+                          if (r_child->is_add_sub() || r_child->is_mul_div())
+                          {
+                            r_child->gen_gas_add_sub("%eax");
+                          }
+                          if (r_child->is_mul_div())
+                          {
+                            r_child->gen_gas_mul_div("");
+                          }
+                          if (r_child->is_relational_op())
+                          {
+                            r_child->gen_gas_relation("");
+                          }
                           op_ofs << "popl %eax" << endl;
+                          op_ofs << "# gen code (OP): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
                         }
-                        else // int
-                        {
-                          cout << "mov $" << r_child->str() << " ,%eax" << endl;
-                          op_ofs << "mov $" << r_child->str() << " ,%eax" << endl;
-                        }
+                        else if (NAME == r_child->ast_type())
+                             {
+                               op_ofs << "# gen code (NAME) : " << l_child->str() << " " << str() << " " << r_child->str() << endl;
+                               auto node = local_symbol_table.lookup(r_child->str());
+                               op_ofs << "movl " << node->local_var_addr_ << ", %eax # var: " << r_child->str() << endl;
 
+                             }
+                             else // int
+                             {
+                               op_ofs << "# gen code (int): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
+                               cout << "mov $" << r_child->str() << " ,%eax" << endl;
+                               op_ofs << "mov $" << r_child->str() << " ,%eax" << endl;
+                             }
+     
                         //movl    $1, -4(%ebp)
                         auto node = local_symbol_table.lookup(l_child->str());
                         cout << "movl %eax, " << node->local_var_addr_ << endl;
-                        op_ofs << "movl %eax, " << node->local_var_addr_ << endl;
+
+
+                        op_ofs << "movl %eax, " << node->local_var_addr_ << " # var: " << l_child->str() << endl;
+                        #if 0
+                        if (NAME != r_child->ast_type())
+                        {
+                        }
+                        else
+                        {
+                          op_ofs << "movl %ebx, " << node->local_var_addr_ << " # var: " << l_child->str() << endl;
+                          op_ofs << "movl %eax, %ebx" << endl;
+                        }
+                        #endif
+
                         code_gen_state_ = STATEMENT;
                         cout << "exit assign" << endl;
                         return;
