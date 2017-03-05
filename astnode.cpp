@@ -17,6 +17,10 @@ namespace
   u32 cur_occupy_size = 0;
 }
 
+GenLabel gen_if_then_label{"then_"};
+GenLabel gen_if_else_label{"else_"};
+GenLabel gen_if_end_label{"end_if_"};
+
 SymbolTable global_symbol_table{"global"};
 SymbolTable local_symbol_table{"local"};
 

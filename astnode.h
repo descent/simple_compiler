@@ -13,6 +13,23 @@ using namespace std;
 
 typedef int (*GenGasFunc)();
 
+class GenLabel
+{
+  public:
+    GenLabel(const string &prefix, u32 idx=0): prefix_(prefix)
+    {
+      index_ = idx;
+    }
+    string operator() ()
+    {
+      ++index_;
+      return prefix_+std::to_string(index_);
+    }
+  private:
+    string prefix_;
+    u32 index_;
+};
+
 //using std::vector;
 
 /**
