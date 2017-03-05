@@ -1031,6 +1031,78 @@ void ASTNode::gen_gas_syntax()
     data_ofs << "    .string " << "\"" << new_str << "\"" << endl;
     //cout << "ast type str" << child[0]->type_str() << endl;
   }
+  if (ast_type() == IF)
+  {
+    ASTNode* if_exp = 0;
+    ASTNode* if_then = 0;
+    ASTNode* if_else = 0;
+    string if_then_label;
+    string if_else_label;
+    string if_end_label;
+    string branch_inst="jle";
+
+    if  (2 <= children().size() && children().size() <= 3)
+    {
+
+      if_exp = children()[0];
+      if (if_exp->str() == ">")
+      {
+      }
+      else if (if_exp->str() == "<")
+           {
+             // branch instruction ref: http://unixwiz.net/techtips/x86-jumps.html
+             branch_inst="jge";
+           }
+           else if (if_exp->str() == "==")
+                {
+                }
+                else
+                {
+                  cout << "don't support relative: " << if_exp->str() << endl;
+                }
+
+      if_then_label = gen_if_then_label();
+      if_then = children()[1];
+      //cout << "if then label: " << gen_if_then_label << endl;
+
+      if_exp->gen_gas_syntax();
+
+
+
+      if  (2 < children().size()) // has else block
+      {
+        if_else = children()[2];
+
+        if_else_label = gen_if_else_label();
+        if_end_label = gen_if_end_label();
+
+
+        //cout << "if else label: " << gen_if_else_label << endl;
+
+        op_ofs << branch_inst << " " << if_else_label << endl;
+        op_ofs << if_then_label << ": # if_then label" << endl;
+      }
+
+      if_then->gen_gas_syntax();
+      op_ofs << "jmp " << if_end_label << endl;
+
+
+      if  (2 < children().size()) // has else block
+      {
+        op_ofs << if_else_label << ": # if_else label" << endl;
+        if_else->gen_gas_syntax();
+      }
+
+    }
+    else
+    {
+      printf("error if statement\n");
+    }
+    //cout << "if end label: " << gen_if_end_label << endl;
+    op_ofs << if_end_label << ": # if_end label" << endl;
+
+    return;
+  }
   if (ast_type() == FUNC_CALL) 
   {
     if (str() == "main")
