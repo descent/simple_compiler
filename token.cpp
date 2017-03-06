@@ -16,5 +16,5 @@ Token func_call_token("func call", FUNC_CALL);
 Token prog_token("prog", PROG);
 Token true_token("t", TRUE);
 Token false_token("f", FALSE);
-Token while_token("while_block", WHILE);
+Token while_token("while_block", WHILE_BLOCK);
 Token return_token("return", RETURN);
