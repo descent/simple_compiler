@@ -17,9 +17,14 @@ namespace
   u32 cur_occupy_size = 0;
 }
 
+// gen_xx is function object,
+// usage: gen_if_then_label()
 GenLabel gen_if_then_label{"then_"};
 GenLabel gen_if_else_label{"else_"};
 GenLabel gen_if_end_label{"end_if_"};
+
+GenLabel gen_while_begin_label{"while_begin_"};
+GenLabel gen_while_end_label{"while_end_"};
 
 SymbolTable global_symbol_table{"global"};
 SymbolTable local_symbol_table{"local"};
@@ -44,7 +49,7 @@ string ro_data_section = "  .section .rodata\n"
 
 //#define DEBUG_PRINTF_STRING
 
-// #define PRINT_AST_TYPT_STR
+#define PRINT_AST_TYPT_STR
 
 
 #define PRINT_TREE_STRING
@@ -194,7 +199,7 @@ void ASTNode::print_tree()
   {
     string print_str = tree_string(token_.str_);
     cout << "(" << print_str;
-    if (ast_type() == NAME || ast_type() == FUNC_NAME)
+    //if (ast_type() == NAME || ast_type() == FUNC_NAME)
     {
       cout << obj_type_.str();
 #ifdef PRINT_AST_TYPT_STR
@@ -215,7 +220,7 @@ void ASTNode::print_tree()
     string print_str = tree_string(token_.str_);
     //cout << "( " << token_.str_;
     cout << "( " << print_str;
-    if (ast_type() == NAME || ast_type() == FUNC_NAME)
+    //if (ast_type() == NAME || ast_type() == FUNC_NAME)
     {
       cout << obj_type_.str();
 #ifdef PRINT_AST_TYPT_STR
@@ -1031,6 +1036,55 @@ void ASTNode::gen_gas_syntax()
     data_ofs << "    .string " << "\"" << new_str << "\"" << endl;
     //cout << "ast type str" << child[0]->type_str() << endl;
   }
+  if (ast_type() == WHILE)
+  {
+    string branch_inst="jle";
+
+    ASTNode* while_exp = 0;
+    ASTNode* while_block = 0;
+
+    string while_begin_label = gen_while_begin_label();
+    string while_end_label = gen_while_end_label();
+    if (2 != children().size())
+    {
+      cout << "while statement error" << endl;
+      return;
+    }
+    while_exp = children()[0];
+    while_block = children()[1];
+
+    op_ofs << while_begin_label << ":" << endl;
+
+    op_ofs << "# while expression" << endl;
+    while_exp->gen_gas_syntax();
+
+      if (while_exp->str() == ">")
+      {
+      }
+      else if (while_exp->str() == "<")
+           {
+             // branch instruction ref: http://unixwiz.net/techtips/x86-jumps.html
+             branch_inst="jge";
+           }
+           else if (while_exp->str() == "==")
+                {
+                }
+                else
+                {
+                  cout << "don't support relative: " << while_exp->str() << endl;
+                }
+
+    op_ofs << branch_inst << " " << while_end_label << endl;
+
+
+    op_ofs << "# while block" << endl;
+    while_block->gen_gas_syntax();
+
+    op_ofs << "jmp " << while_begin_label << endl;
+    op_ofs << while_end_label << ":" << endl;
+
+    return;
+  }
   if (ast_type() == IF)
   {
     ASTNode* if_exp = 0;
@@ -1041,7 +1095,7 @@ void ASTNode::gen_gas_syntax()
     string if_end_label;
     string branch_inst="jle";
 
-    if  (2 <= children().size() && children().size() <= 3)
+    if (2 <= children().size() && children().size() <= 3)
     {
 
       if_exp = children()[0];
