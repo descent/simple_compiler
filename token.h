@@ -34,7 +34,7 @@ class Token
         "TRUE", "FALSE",
         "ENUM", "INT", "CHAR",
         "ADDR_OF", "DEREF", // &, *
-        "IF", "WHILE", "RETURN", "RETURN_VAL",
+        "IF", "WHILE", "WHILE_BLOCK", "RETURN", "RETURN_VAL",
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL",
         "NAME", "GLOBAL_VAR", "VAR",
         "FUNC_CALL", "FUNC_BODY", "FUNC_NAME", "FUNC_PARA",
