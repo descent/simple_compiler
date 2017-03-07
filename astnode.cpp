@@ -1099,36 +1099,69 @@ void ASTNode::gen_gas_syntax()
     {
 
       if_exp = children()[0];
-      if (if_exp->str() == ">")
-      {
-      }
-      else if (if_exp->str() == "<")
-           {
-             // branch instruction ref: http://unixwiz.net/techtips/x86-jumps.html
-             branch_inst="jge";
-           }
-           else if (if_exp->str() == "==")
-                {
-                }
-                else
-                {
-                  cout << "don't support relative: " << if_exp->str() << endl;
-                }
-
       if_then_label = gen_if_then_label();
+      if_end_label = gen_if_end_label();
+
       if_then = children()[1];
       //cout << "if then label: " << gen_if_then_label << endl;
 
       if_exp->gen_gas_syntax();
 
+      if (if_exp->is_op())
+      {
+        if (if_exp->is_relational_op())
+        {
+             switch (if_exp->ast_type())
+             {
+               case LESS:
+               {
+                 // branch instruction ref: http://unixwiz.net/techtips/x86-jumps.html
+                 branch_inst="jge";
+                 break;
+               }
+               case GREAT:
+               {
+                 break;
+               }
+               case EQUAL:
+               {
+                 break;
+               }
+               default:
+               {
+                 cout << "don't support relative: " << if_exp->str() << endl;
+                 break;
+               }
+             }
+        }
+        else
+        {
+          op_ofs << "cmpl $0, %eax"  << endl;
+          branch_inst="je";
+        }
+      }
+      else // variable or int, ex: if (5), if(i)
+      {
+        if (NAME == if_exp->ast_type() )
+        {
+          // look up symbol table
+          auto node = local_symbol_table.lookup(if_exp->str());
+          op_ofs << "movl " << node->local_var_addr_ << ", %eax" << endl;
+        }
+        else
+        {
+          op_ofs << "movl $" << if_exp->str() << ", %eax" << endl;
+        }
 
+        op_ofs << "cmpl $0, %eax"  << endl;
+        branch_inst="je";
+      }
 
       if  (2 < children().size()) // has else block
       {
         if_else = children()[2];
 
         if_else_label = gen_if_else_label();
-        if_end_label = gen_if_end_label();
 
 
         //cout << "if else label: " << gen_if_else_label << endl;
@@ -1136,10 +1169,14 @@ void ASTNode::gen_gas_syntax()
         op_ofs << branch_inst << " " << if_else_label << endl;
         op_ofs << if_then_label << ": # if_then label" << endl;
       }
+      else // has no else block
+      {
+        op_ofs << branch_inst << " " << if_end_label << endl;
+      }
 
       if_then->gen_gas_syntax();
-      op_ofs << "jmp " << if_end_label << endl;
-
+      if  (2 < children().size()) // has else block
+        op_ofs << "jmp " << if_end_label << endl;
 
       if  (2 < children().size()) // has else block
       {
