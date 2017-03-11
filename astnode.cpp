@@ -19,7 +19,7 @@ namespace
 
 // gen_xx is function object,
 // usage: gen_if_then_label()
-GenLabel gen_if_then_label{"then_"};
+//GenLabel gen_if_then_label{"then_"};
 GenLabel gen_if_else_label{"else_"};
 GenLabel gen_if_end_label{"end_if_"};
 
@@ -1090,72 +1090,78 @@ void ASTNode::gen_gas_syntax()
     ASTNode* if_exp = 0;
     ASTNode* if_then = 0;
     ASTNode* if_else = 0;
-    string if_then_label;
+    //string if_then_label;
     string if_else_label;
     string if_end_label;
     string branch_inst="jle";
 
     if (2 <= children().size() && children().size() <= 3)
     {
-
-      if_exp = children()[0];
-      if_then_label = gen_if_then_label();
+      //if_then_label = gen_if_then_label();
       if_end_label = gen_if_end_label();
 
+      if_exp = children()[0];
       if_then = children()[1];
       //cout << "if then label: " << gen_if_then_label << endl;
 
+      op_ofs << "# gen if start" << endl;
       if_exp->gen_gas_syntax();
 
-      if (if_exp->is_op())
+      if (if_exp->is_relational_op())
       {
-        if (if_exp->is_relational_op())
+        switch (if_exp->ast_type())
         {
-             switch (if_exp->ast_type())
-             {
-               case LESS:
-               {
-                 // branch instruction ref: http://unixwiz.net/techtips/x86-jumps.html
-                 branch_inst="jge";
-                 break;
-               }
-               case GREAT:
-               {
-                 break;
-               }
-               case EQUAL:
-               {
-                 break;
-               }
-               default:
-               {
-                 cout << "don't support relative: " << if_exp->str() << endl;
-                 break;
-               }
-             }
-        }
-        else
-        {
-          op_ofs << "cmpl $0, %eax"  << endl;
-          branch_inst="je";
+          case LESS:
+          {
+            // branch instruction ref: http://unixwiz.net/techtips/x86-jumps.html
+            branch_inst="jge";
+            break;
+          }
+          case GREAT:
+          {
+            break;
+          }
+          case EQUAL:
+          {
+            break;
+          }
+          default:
+          {
+            cout << "don't support relative: " << if_exp->str() << endl;
+            break;
+          }
         }
       }
-      else // variable or int, ex: if (5), if(i)
+      else 
       {
-        if (NAME == if_exp->ast_type() )
-        {
-          // look up symbol table
-          auto node = local_symbol_table.lookup(if_exp->str());
-          op_ofs << "movl " << node->local_var_addr_ << ", %eax" << endl;
+        if (if_exp->is_op())
+        { // if go here, the op is not relational op
+          //op_ofs << "cmpl $0, %eax"  << endl;
+          //branch_inst="je";
         }
-        else
+        else 
         {
-          op_ofs << "movl $" << if_exp->str() << ", %eax" << endl;
-        }
-
-        op_ofs << "cmpl $0, %eax"  << endl;
-        branch_inst="je";
+          string val;
+          // variable or int, ex: if (5), if(i)
+          if (NAME == if_exp->ast_type() ) // variable
+          {
+            // look up symbol table
+            auto node = local_symbol_table.lookup(if_exp->str());
+            // should check lookup fail case
+            val = node->local_var_addr_;
+            //op_ofs << "movl " << node->local_var_addr_ << ", %eax" << endl;
+          }
+          else // int
+          {
+            val = "$" + if_exp->str();
+            //op_ofs << "movl $" << if_exp->str() << ", %eax" << endl;
+          }
+          op_ofs << "movl " << val << ", %eax" << endl;
+       }
+       op_ofs << "cmpl $0, %eax"  << endl;
+       branch_inst="je";
       }
+      
 
       if  (2 < children().size()) // has else block
       {
@@ -1167,23 +1173,23 @@ void ASTNode::gen_gas_syntax()
         //cout << "if else label: " << gen_if_else_label << endl;
 
         op_ofs << branch_inst << " " << if_else_label << endl;
-        op_ofs << if_then_label << ": # if_then label" << endl;
+        //op_ofs << if_then_label << ": # if_then label" << endl;
       }
       else // has no else block
       {
         op_ofs << branch_inst << " " << if_end_label << endl;
       }
 
+      op_ofs << "# if_then code" << endl;
       if_then->gen_gas_syntax();
       if  (2 < children().size()) // has else block
         op_ofs << "jmp " << if_end_label << endl;
 
       if  (2 < children().size()) // has else block
       {
-        op_ofs << if_else_label << ": # if_else label" << endl;
+        op_ofs << if_else_label << ": # if_else code" << endl;
         if_else->gen_gas_syntax();
       }
-
     }
     else
     {
@@ -1191,6 +1197,7 @@ void ASTNode::gen_gas_syntax()
     }
     //cout << "if end label: " << gen_if_end_label << endl;
     op_ofs << if_end_label << ": # if_end label" << endl;
+    op_ofs << "# gen if end" << endl;
 
     return;
   }
