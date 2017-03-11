@@ -1055,27 +1055,66 @@ void ASTNode::gen_gas_syntax()
 
     op_ofs << while_begin_label << ":" << endl;
 
+    op_ofs << "# gen while start" << endl;
     op_ofs << "# while expression" << endl;
     while_exp->gen_gas_syntax();
 
-      if (while_exp->str() == ">")
+      if (while_exp->is_relational_op())
       {
+        switch (while_exp->ast_type())
+        {
+          case LESS:
+          {
+            // branch instruction ref: http://unixwiz.net/techtips/x86-jumps.html
+            branch_inst="jge";
+            break;
+          }
+          case GREAT:
+          {
+            break;
+          }
+          case EQUAL:
+          {
+            break;
+          }
+          default:
+          {
+            cout << "don't support relative: " << while_exp->str() << endl;
+            break;
+          }
+        }
       }
-      else if (while_exp->str() == "<")
-           {
-             // branch instruction ref: http://unixwiz.net/techtips/x86-jumps.html
-             branch_inst="jge";
-           }
-           else if (while_exp->str() == "==")
-                {
-                }
-                else
-                {
-                  cout << "don't support relative: " << while_exp->str() << endl;
-                }
+      else 
+      {
+        if (while_exp->is_op())
+        { // if go here, the op is not relational op
+          //op_ofs << "cmpl $0, %eax"  << endl;
+          //branch_inst="je";
+        }
+        else 
+        {
+          string val;
+          // variable or int, ex: if (5), if(i)
+          if (NAME == while_exp->ast_type() ) // variable
+          {
+            // look up symbol table
+            auto node = local_symbol_table.lookup(while_exp->str());
+            // should check lookup fail case
+            val = node->local_var_addr_;
+            //op_ofs << "movl " << node->local_var_addr_ << ", %eax" << endl;
+          }
+          else // int
+          {
+            val = "$" + while_exp->str();
+            //op_ofs << "movl $" << if_exp->str() << ", %eax" << endl;
+          }
+          op_ofs << "movl " << val << ", %eax" << endl;
+       }
+       op_ofs << "cmpl $0, %eax"  << endl;
+       branch_inst="je";
+      }
 
     op_ofs << branch_inst << " " << while_end_label << endl;
-
 
     op_ofs << "# while block" << endl;
     while_block->gen_gas_syntax();
@@ -1083,6 +1122,7 @@ void ASTNode::gen_gas_syntax()
     op_ofs << "jmp " << while_begin_label << endl;
     op_ofs << while_end_label << ":" << endl;
 
+    op_ofs << "# gen while end" << endl;
     return;
   }
   if (ast_type() == IF)
