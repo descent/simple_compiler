@@ -7,15 +7,20 @@ int main()
 
   i=6;
 
-  if (i<6)
+  //if (i+1 < 5)
+  //if (i-9)
+  if (2*3)
+  //if (i)
+  //if (5)
+  //if (0)
   {
     j=11;
-    printf("i<6, i: %d\n", i);
+    printf("if then i<6, i: %d\n", i);
   }
   else
   {
     j=22;
-    printf("i>=6, i: %d\n", i);
+    printf("else i>=6, i: %d\n", i);
   }
 }
 
