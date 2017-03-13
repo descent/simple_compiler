@@ -22,5 +22,12 @@ int main()
     j=22;
     printf("else i>=6, i: %d\n", i);
   }
+
+
+  // test no else statement
+  if (2)
+  {
+    printf("if then 2, i: %d\n", i);
+  }
 }
 

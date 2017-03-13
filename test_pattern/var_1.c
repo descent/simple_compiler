@@ -1,21 +1,8 @@
 
-int fun1(int a)
+int myfun(int ***p3, int a, char *p1)
 {
   int i,j;
 
-  i=15;
-  j=111;
+  1+2;
 }
 
-int main()
-{
-  int i,j;
-
-  i=5;
-  j= i + 2;
-
-
-  printf("i: %d, j: %d\n", i, j);
-
-  return 0;
-}
