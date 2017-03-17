@@ -49,7 +49,7 @@ string ro_data_section = "  .section .rodata\n"
 
 //#define DEBUG_PRINTF_STRING
 
-#define PRINT_AST_TYPT_STR
+//#define PRINT_AST_TYPT_STR
 
 
 #define PRINT_TREE_STRING
@@ -1009,6 +1009,8 @@ string gen_uniq_string_label()
   return uniq_string_label+std::to_string(index);
 }
 
+// https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/LowLevelABI/130-IA-32_Function_Calling_Conventions/IA32.html thanks fb 宋宜叡
+// function call, ref linux 一站式學習 p179, 很複雜
 void ASTNode::gen_gas_syntax()
 {
   const u8 var_size = 4;
