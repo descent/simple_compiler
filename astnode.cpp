@@ -1276,11 +1276,19 @@ void ASTNode::gen_gas_syntax()
           cout << "pushl $" << (*it)->string_label_ << endl;
           op_ofs << "pushl $" << (*it)->string_label_ << endl;
         }
-        else
-        {
-          cout << "pushl %eax" << endl;
-          op_ofs << "pushl %eax" << endl;
-        }
+        else if ((*it)->is_op()) 
+             {
+               cout << "pushl %eax" << endl;
+               op_ofs << "pushl %eax" << endl;
+             }
+             else if (FUNC_CALL == (*it)->ast_type())
+                  {
+                  }
+                  else // int
+                  {
+                    cout << "pushl $" << (*it)->str() << endl;
+                    op_ofs << "pushl $" << (*it)->str() << endl;
+                  }
       }
     }
 #endif
