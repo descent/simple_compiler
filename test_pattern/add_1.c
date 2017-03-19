@@ -2,13 +2,19 @@ int main()
 {
   int i;
   int j;
+  int k;
+  char c;
+
   i=8;
-  j=2;
+  j=3;
+  k=5;
+  //c='x'; // current version will get segment fault
 
   //printf("i = %d\n", i);
   //printf("j = %d\n", j);
   i = j+3>5;
-  printf("i = %d\n", i);
+  //printf("i = %d, c = %c\n", i, c);
+  printf("i = %d, j = %d, k = %d\n", i, j, k);
   //i=j;
   //printf("i=j, i = %d\n", i);
 
