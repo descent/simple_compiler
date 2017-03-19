@@ -1199,6 +1199,9 @@ int main(int argc, char *argv[])
   root->print();
   cout << endl;
 #endif
+
+  remove("./r.S");
+
   //cout << "num: " << root->num() << endl;
 
   //vector<ASTNode *> list = list_of_vals(root->children());
@@ -1207,13 +1210,14 @@ int main(int argc, char *argv[])
   //root->code_gen();
   root->gen_gas_syntax();
 
+#if 0
   ofstream asm_ofs("tmp.s");
   extern string ro_data_section;
   extern string text_section;
 
   asm_ofs << ro_data_section << endl;
   asm_ofs << text_section << endl;
-
+#endif
   delete root;
 
   return 0;
