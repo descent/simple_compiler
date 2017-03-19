@@ -1259,9 +1259,10 @@ void ASTNode::gen_gas_syntax()
 #if 1
     auto child = children();
     auto it = child.rbegin();
+    u32 push_size=0;
+
     for (; it != child.rend() ; ++it)
     {
-
       if (NAME == (*it)->ast_type())
       {
         auto node = local_symbol_table.lookup((*it)->str());
@@ -1290,10 +1291,9 @@ void ASTNode::gen_gas_syntax()
                     op_ofs << "pushl $" << (*it)->str() << endl;
                   }
       }
+      push_size += 4;
     }
 #endif
-    cout << "xx call " << str() << endl;
-    cout << "addl $8, %esp" << endl;
 
 #if 0
     func_call_ofs << "pushl %eax" << endl;
@@ -1302,8 +1302,10 @@ void ASTNode::gen_gas_syntax()
     func_call_ofs << "call " << str() << endl;
     func_call_ofs << "addl $16, %esp" << endl;
 #endif
+    cout << "xx call " << str() << endl;
+    cout << "addl $" << push_size << ", %esp" << endl;
     op_ofs << "call " << str() << endl;
-    op_ofs << "addl $8, %esp" << endl;
+    op_ofs << "addl $" << push_size << ", %esp" << endl;
     return;
   }
   if (ast_type() == FUNC_BODY) 
