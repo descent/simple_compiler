@@ -4,11 +4,17 @@
 #include <map>
 #include <sstream>
 #include <fstream>
-
+#if 0
 ofstream op_ofs("op.s");
 ofstream func_ofs("func.s");
 ofstream data_ofs("data.s");
 ofstream func_call_ofs("func_call.s");
+#endif
+
+ofstream op_ofs;
+ofstream func_ofs;
+ofstream data_ofs;
+ofstream func_call_ofs;
 
 namespace
 {
@@ -1292,7 +1298,6 @@ void ASTNode::gen_gas_syntax()
     op_ofs << "addl $8, %esp" << endl;
     return;
   }
-
   if (ast_type() == FUNC_BODY) 
   {
     text_section += ".text\n";
@@ -1305,6 +1310,11 @@ void ASTNode::gen_gas_syntax()
   }
   else if (ast_type() == FUNC_NAME) 
        {
+         op_ofs.open("op.s");
+         func_ofs.open("func.s");
+         data_ofs.open("data.s");
+         func_call_ofs.open("func_call.s");
+
          func_name = str();
          cout << "  enter func: " << func_name << endl;
          func_ofs << ".text" << endl;
@@ -1493,7 +1503,7 @@ void ASTNode::gen_gas_syntax()
     func_call_ofs.close();
 
     system("cat data.s func.s op.s func_call.s");
-    system("cat data.s func.s op.s func_call.s > r.S");
+    system("cat data.s func.s op.s func_call.s >> r.S");
     text_section += "leave\n";
     text_section += "ret\n";
     system("echo leave >> r.S");
