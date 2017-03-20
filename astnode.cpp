@@ -1420,13 +1420,21 @@ void ASTNode::gen_gas_syntax()
                                op_ofs << "movl " << node->local_var_addr_ << ", %eax # var: " << r_child->str() << endl;
 
                              }
-                             else // int
-                             {
-                               op_ofs << "# gen code (int): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
-                               cout << "mov $" << r_child->str() << " ,%eax" << endl;
-                               op_ofs << "mov $" << r_child->str() << " ,%eax" << endl;
-                             }
-     
+                             else if (S8 == r_child->ast_type())
+                                  {
+                                    int num = r_child->str()[0]; // ex: char c='v'; get the v char
+ 
+                                    op_ofs << "# gen code (S8 (char)): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
+                                    cout << "movl $" << num << " ,%eax" << endl;
+                                    op_ofs << "movl $" << num << " ,%eax" << endl;
+                                  }
+                                  else // int
+                                  {
+                                    op_ofs << "# gen code (int): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
+                                    cout << "movl $" << r_child->str() << " ,%eax" << endl;
+                                    op_ofs << "movl $" << r_child->str() << " ,%eax" << endl;
+                                  }
+          
                         //movl    $1, -4(%ebp)
                         auto node = local_symbol_table.lookup(l_child->str());
                         cout << "movl %eax, " << node->local_var_addr_ << endl;
