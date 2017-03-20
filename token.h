@@ -32,7 +32,7 @@ class Token
       {
         "INVALID", "ROOT", "PROG", "COMMENT",
         "TRUE", "FALSE",
-        "ENUM", "INT", "CHAR",
+        "ENUM", "INT", "CHAR", "S8",
         "ADDR_OF", "DEREF", // &, *
         "IF", "WHILE", "WHILE_BLOCK", "RETURN", "RETURN_VAL",
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL",
