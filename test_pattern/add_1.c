@@ -8,13 +8,14 @@ int main()
   i=8;
   j=3;
   k=5;
+  c='~';
   //c='x'; // current version will get segment fault
 
   //printf("i = %d\n", i);
   //printf("j = %d\n", j);
   i = j+3>5;
   //printf("i = %d, c = %c\n", i, c);
-  printf("i = %d, j = %d, k = %d\n", i, j, k);
+  printf("i = %d, j = %d, k = %d, c=%c\n", i, j, k, c);
   //i=j;
   //printf("i=j, i = %d\n", i);
 
