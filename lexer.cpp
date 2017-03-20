@@ -32,6 +32,14 @@ static inline int isascii_ex(int c)
     return isascii(c);
 }
 
+static inline int isgraph_include_space(int c) 
+{
+  if (c == ' ')
+    return 1;
+  
+  return isgraph(c);
+}
+
 // printable ascii, but not (, )
 static inline int isgraph_ex(int c) 
 {
@@ -45,6 +53,12 @@ static inline int isgraph_ex(int c)
 }
 
 int la=-1; // look ahead
+
+int ungetchar_la(int c)
+{
+    if (c != EOF)
+      la = c;
+}
 
 int getchar_la()
 {
@@ -297,7 +311,31 @@ int get_token(Token &token)
 
               return ret;
             }
-            else
+            #if 1
+            else if (c == '\'') // 'c' char
+                 {
+                   c = getchar_la();
+                   if (isgraph_include_space(c))
+                   {
+                     token.str_.push_back(c); 
+                     token.ast_type_ = S8;
+                   }
+                   else
+                   {
+                     ungetchar_la(c);
+                     return ERR;
+                   }
+                   c = getchar_la();
+                   if ('\'' != c)
+                   {
+                     ungetchar_la(c);
+                     return ERR;
+                   }
+                   else
+                     return OK;
+                 }
+                 #endif
+                 else
        {
          switch (c)
          {
