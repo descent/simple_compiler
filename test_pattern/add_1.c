@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 int main()
 {
   int i;
@@ -9,6 +11,7 @@ int main()
   j=3;
   k=5;
   c='~';
+  printf("sizeof(c): %u\n", sizeof('~'));
   //c='x'; // current version will get segment fault
 
   //printf("i = %d\n", i);
