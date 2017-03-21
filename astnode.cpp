@@ -1329,6 +1329,7 @@ void ASTNode::gen_gas_syntax()
   }
   else if (ast_type() == FUNC_NAME) 
        {
+         // insert prototype to global symbol table
          op_ofs.open("op.s");
          func_ofs.open("func.s");
          data_ofs.open("data.s");
@@ -1342,6 +1343,30 @@ void ASTNode::gen_gas_syntax()
          func_ofs << func_name <<  ":" << endl;
          func_ofs << "pushl %ebp" << endl;
          func_ofs << "movl %esp, %ebp" << endl;
+
+         // add parameter to local_symbol
+         //local_symbol_table.add(i->str(), i);
+         if (children().size() == 2) // has parameter node
+         {
+           auto para_node_child = left_child()->children();
+
+           auto it = para_node_child.rbegin();
+           int arg_offset = 8;
+           for (; it != para_node_child.rend() ; ++it)
+           {
+             (*it)->local_var_addr_ = to_string(arg_offset) + "(%ebp)";
+             local_symbol_table.add((*it)->str(), *it);
+             arg_offset += 4;
+             //cout << "(*it)->str(): " << (*it)->str() << " (*it)->local_var_addr_: " << (*it)->local_var_addr_ << endl;
+           }
+         }
+         else if (children().size() == 1) // no parameter
+              { 
+              }
+              else
+              {
+                // error
+              }
 
 
          //func_ofs << "subl $128, %esp" << endl; // hard code reserve 128 byte stack
@@ -1426,6 +1451,7 @@ void ASTNode::gen_gas_syntax()
                              {
                                op_ofs << "# gen code (NAME) : " << l_child->str() << " " << str() << " " << r_child->str() << endl;
                                auto node = local_symbol_table.lookup(r_child->str());
+                               //cout << r_child->str() << " ## (*it)->local_var_addr_: " << node->local_var_addr_ << endl;
                                op_ofs << "movl " << node->local_var_addr_ << ", %eax # var: " << r_child->str() << endl;
 
                              }
@@ -1446,9 +1472,8 @@ void ASTNode::gen_gas_syntax()
           
                         //movl    $1, -4(%ebp)
                         auto node = local_symbol_table.lookup(l_child->str());
-                        cout << "movl %eax, " << node->local_var_addr_ << endl;
 
-
+                        cout << "movl %eax, " << node->local_var_addr_ << " # var: " << l_child->str() << endl;
                         op_ofs << "movl %eax, " << node->local_var_addr_ << " # var: " << l_child->str() << endl;
                         #if 0
                         if (NAME != r_child->ast_type())
