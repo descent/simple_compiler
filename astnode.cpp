@@ -1284,12 +1284,21 @@ void ASTNode::gen_gas_syntax()
              }
              else if (FUNC_CALL == (*it)->ast_type())
                   {
+                    cout << "FUNC_CALL don't support" << endl;
+                    exit(0);
                   }
-                  else // int
-                  {
-                    cout << "pushl $" << (*it)->str() << endl;
-                    op_ofs << "pushl $" << (*it)->str() << endl;
-                  }
+                  else if (S8 == (*it)->ast_type())
+                       {
+                         int num = (*it)->str()[0]; // ex: char c='v'; get the v char
+
+                         cout << "pushl $" << num << endl;
+                         op_ofs << "pushl $" << num << endl;
+                       }
+                       else // int
+                       {
+                         cout << "pushl $" << (*it)->str() << endl;
+                         op_ofs << "pushl $" << (*it)->str() << endl;
+                       }
       }
       push_size += 4;
     }
