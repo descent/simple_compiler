@@ -1378,9 +1378,9 @@ void ASTNode::gen_gas_syntax()
                 local_symbol_table.add(i->str(), i);
 
                 if (cur_occupy_size == 0)
-                  i->local_var_addr_ = "(%ebp)";
+                  i->local_var_addr_ = "-4(%ebp)";
                 else
-                  i->local_var_addr_ = "-" + to_string(cur_occupy_size) + "(%ebp)";
+                  i->local_var_addr_ = "-" + to_string(cur_occupy_size+4) + "(%ebp)";
 
                 //cout << "i->local_var_addr_: " << i->local_var_addr_ << endl;
                 //cout << "i->occupy_size(): " << i->occupy_size() << endl;
