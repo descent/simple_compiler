@@ -57,6 +57,10 @@ class Environment
       frame_[str] = node;
       return true;
     }
+    void clear()
+    {
+      frame_.clear();
+    }
 
   protected:
     Frame frame_;
