@@ -1560,6 +1560,7 @@ void ASTNode::gen_gas_syntax()
     text_section += "ret\n";
     system("echo leave >> r.S");
     system("echo ret >> r.S");
+    local_symbol_table.clear();
   }
 }
 
