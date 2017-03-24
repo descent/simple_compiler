@@ -1251,6 +1251,20 @@ void ASTNode::gen_gas_syntax()
   }
   if (ast_type() == FUNC_CALL) 
   {
+    auto node = global_symbol_table.lookup(str());
+
+    if (nullptr == node) // Yoda Notation
+    {
+      cout << str() << ": no found function prototype, need to do integer promtion" << endl;
+    }
+    else
+    {
+      cout << "function prototype:" << endl;
+      cout << "\\tree";
+      node->print_tree();
+      cout << endl;
+    }
+
     if (str() == "main")
     {
       return;
@@ -1330,6 +1344,8 @@ void ASTNode::gen_gas_syntax()
   else if (ast_type() == FUNC_NAME) 
        {
          // insert prototype to global symbol table
+         global_symbol_table.add(str(), this);
+
          op_ofs.open("op.s");
          func_ofs.open("func.s");
          data_ofs.open("data.s");
