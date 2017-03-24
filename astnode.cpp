@@ -388,28 +388,28 @@ string get_relational_inst(auto ast_type)
 {
   string relative_inst;
 
-    switch (ast_type)
+  switch (ast_type)
+  {
+    case LESS:
     {
-      case LESS:
-      {
-        relative_inst = "setl";
-        break;
-      }
-      case GREAT:
-      {
-        relative_inst = "setg";
-        break;
-      }
-      case EQUAL:
-      {
-        relative_inst = "sete";
-        break;
-      }
-      default:
-      {
-        break;
-      }
+      relative_inst = "setl";
+      break;
     }
+    case GREAT:
+    {
+      relative_inst = "setg";
+      break;
+    }
+    case EQUAL:
+    {
+      relative_inst = "sete";
+      break;
+    }
+    default:
+    {
+      break;
+    }
+  }
   return relative_inst;
 }
 
