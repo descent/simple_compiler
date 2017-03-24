@@ -1015,6 +1015,24 @@ string gen_uniq_string_label()
   return uniq_string_label+std::to_string(index);
 }
 
+u32 get_func_para_num(auto node)
+{
+  auto children_node_num = node->children().size();
+  if (1 == children_node_num)
+  {
+    return 0; // no parameter
+  }
+  else if (2 == children_node_num)
+       {
+         auto para_node= node->left_child();
+         return para_node->children().size();
+       }
+       else
+       {
+         // error
+       }
+}
+
 // https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/LowLevelABI/130-IA-32_Function_Calling_Conventions/IA32.html thanks fb 宋宜叡
 // function call, ref linux 一站式學習 p179, 很複雜
 void ASTNode::gen_gas_syntax()
@@ -1258,11 +1276,18 @@ void ASTNode::gen_gas_syntax()
       cout << str() << ": no found function prototype, need to do integer promtion" << endl;
     }
     else
-    {
+    { // checking parameter and argument matches or not.
       cout << "function prototype:" << endl;
       cout << "\\tree";
       node->print_tree();
       cout << endl;
+      auto para_num = get_func_para_num(node);
+      auto argu_num = children().size();
+      if (para_num != argu_num)
+      {
+        cout << str() << " # parameter number: " << para_num << ", argument number: " << argu_num << " , they don't match." << endl;
+        exit(0);
+      }
     }
 
     if (str() == "main")
