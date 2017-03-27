@@ -4,13 +4,6 @@
 #include <map>
 #include <sstream>
 #include <fstream>
-#if 0
-ofstream op_ofs("op.s");
-ofstream func_ofs("func.s");
-ofstream data_ofs("data.s");
-ofstream func_call_ofs("func_call.s");
-#endif
-
 
 namespace
 {
@@ -20,7 +13,7 @@ namespace
 
   ofstream op_ofs;
   ofstream func_ofs;
-  ofstream data_ofs;
+  ofstream ro_data_ofs;
   ofstream func_call_ofs;
 }
 
@@ -1058,9 +1051,9 @@ void ASTNode::gen_gas_syntax()
     cout << ".LC0:" << endl;
     string new_str = replace_backslash(str());
     cout << "    .string " << "\"" << new_str << "\"" << endl;
-    data_ofs << ".section .rodata" << endl;
-    data_ofs << string_label_ << ": "<< endl;
-    data_ofs << "    .string " << "\"" << new_str << "\"" << endl;
+    ro_data_ofs << ".section .rodata" << endl;
+    ro_data_ofs << string_label_ << ": "<< endl;
+    ro_data_ofs << "    .string " << "\"" << new_str << "\"" << endl;
     //cout << "ast type str" << child[0]->type_str() << endl;
   }
   if (ast_type() == WHILE)
@@ -1374,7 +1367,7 @@ void ASTNode::gen_gas_syntax()
 
          op_ofs.open("op.s");
          func_ofs.open("func.s");
-         data_ofs.open("data.s");
+         ro_data_ofs.open("ro_data.s");
          func_call_ofs.open("func_call.s");
 
          func_name = str();
@@ -1593,11 +1586,11 @@ void ASTNode::gen_gas_syntax()
 
     op_ofs.close();
     func_ofs.close();
-    data_ofs.close();
+    ro_data_ofs.close();
     func_call_ofs.close();
 
-    system("cat data.s func.s op.s func_call.s");
-    system("cat data.s func.s op.s func_call.s >> r.S");
+    //system("cat data.s func.s op.s func_call.s");
+    system("cat ro_data.s func.s op.s func_call.s >> r.S");
     text_section += "leave\n";
     text_section += "ret\n";
     system("echo leave >> r.S");
