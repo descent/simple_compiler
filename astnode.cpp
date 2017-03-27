@@ -11,16 +11,17 @@ ofstream data_ofs("data.s");
 ofstream func_call_ofs("func_call.s");
 #endif
 
-ofstream op_ofs;
-ofstream func_ofs;
-ofstream data_ofs;
-ofstream func_call_ofs;
 
 namespace
 {
   u32 cur_need_stack_size;
   u32 max_need_stack_size;
   u32 cur_occupy_size = 0;
+
+  ofstream op_ofs;
+  ofstream func_ofs;
+  ofstream data_ofs;
+  ofstream func_call_ofs;
 }
 
 // gen_xx is function object,
