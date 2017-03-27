@@ -1,4 +1,4 @@
-#include <stdio.h>
+//#include <stdio.h>
 
 int main()
 {
@@ -7,18 +7,21 @@ int main()
   int k;
   char c;
 
-  i=8;
-  j=3;
-  k=5;
-  c='~';
-  printf("sizeof(c): %u\n", sizeof('~'));
+  //1+(3>5); // generate wrong code
+  1+3>5;
+  //-5 + 2;
+  //i=8;
+  //j=3;
+  //k=5;
+  //c='~';
+  //printf("sizeof(c): %u\n", sizeof('~'));
   //c='x'; // current version will get segment fault
 
   //printf("i = %d\n", i);
   //printf("j = %d\n", j);
-  i = j+3>5;
+  //i = j+3>5;
   //printf("i = %d, c = %c\n", i, c);
-  printf("i = %d, j = %d, k = %d, c=%c\n", i, j, k, c);
+  //printf("i = %d, j = %d, k = %d, c=%c\n", i, j, k, c);
   //i=j;
   //printf("i=j, i = %d\n", i);
 
