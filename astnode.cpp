@@ -15,17 +15,10 @@ using namespace std;
 
 //extern map<string, ASTNode*> func_map;
 
-
-ASTNode *get_string_ast_node(const string &str="")
+// for environment or symbol table
+ASTNode *gen_ast_node(const ASTNode *var_name)
 {
-  Token t(str, STRING);
-  return new ASTNode(t);
-}
-
-ASTNode *get_number_ast_node(const string &str="0")
-{
-  Token t(str, NUMBER);
-  return new ASTNode(t);
+  return new ASTNode(var_name);
 }
 
 ASTNode *get_true_node()
@@ -36,25 +29,9 @@ ASTNode *get_true_node()
 
 int add_to_env(Environment *env, ASTNode *i, bool is_global)
 {
-  if(i->obj_type().is_int())
-  {
-    //cout << "int xx: " << i->str() << endl;
-    env->add(i->str(), get_number_ast_node());
-  }
-  else if (i->obj_type().is_string())
-       {
-         //cout << "str xx: " << i->str() << endl;
-         env->add(i->str(), get_string_ast_node());
-       }
-       else
-       {
-         //cout << "true xx: " << i->str() << endl;
-         env->add(i->str(), get_true_node());
-       }
+  env->add(i->str(), gen_ast_node(i));
   return 0;
 }
-
-
 
 void print_ast()
 {
