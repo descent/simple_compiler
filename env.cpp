@@ -1,4 +1,6 @@
 #include "env.h"
+#include "astnode.h"
+
 
 #if 0
 Cell *proc_sub(Cell *cell)
@@ -6,6 +8,22 @@ Cell *proc_add(Cell *cell)
 #endif
 
 u32 Environment::count_=0;
+
+bool Environment::edit(const string &var_name, ASTNode *node) 
+{
+  cout << "xx edit var name: " << var_name << " to node: " << node->str() << endl;
+  auto it = frame_.find(var_name);
+  if (it != frame_.end()) // find it
+  {
+    it->second->set_token(node->token());
+  }
+  else
+  {
+    frame_[var_name] = node;
+  }
+
+  return true;
+}
 
 Environment *get_global_env()
 {

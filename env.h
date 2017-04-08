@@ -52,11 +52,7 @@ class Environment
     }
     int free_frame_index_;
 
-    bool edit(const string &str, ASTNode *node) 
-    {
-      frame_[str] = node;
-      return true;
-    }
+    bool edit(const string &var_name, ASTNode *node);
 
   private:
     ASTNode* lookup_by_env(const Environment *env, const string &var)
