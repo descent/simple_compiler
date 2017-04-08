@@ -573,8 +573,18 @@ ASTNode* ASTNode::eval(Environment *env)
       ASTNode *n = env->lookup(str());
       if (n)
       {
-        //cout << "find" << endl;
-        return n;
+        if (n->obj_type().is_pointer())
+        {
+          auto *addr = &n;
+          uintptr_t addr_val = (uintptr_t)addr;
+          Token t(std::to_string(addr_val), NUMBER);
+          //cout << hex << "hex addr: " << addr << dec << " dec: " << addr_val << endl;
+          return new ASTNode(t);
+        }
+        else
+        {
+          return n;
+        }
       }
       else
       {
