@@ -244,6 +244,11 @@ ASTNode* ASTNode::eval(Environment *env)
 #endif
   if (ast_type() == DEREF) // *
   {
+    ASTNode *ref_node = env->lookup(children_[0]->str());
+    ASTNode *deref_node = env->lookup(ref_node->str());
+    return deref_node;
+
+#if 0
     ASTNode *c1 = children_[0]->eval(env);
 
     uintptr_t addr_val = stoul(c1->str());
@@ -254,7 +259,6 @@ ASTNode* ASTNode::eval(Environment *env)
     Token t(str, NUMBER);
     return new ASTNode(t);
 
-#if 0
     ASTNode *f = env->lookup(c1->str());
     if (f)
     {
@@ -272,16 +276,20 @@ ASTNode* ASTNode::eval(Environment *env)
   {
     if (children_.size() == 1)
     {
+      return children_[0];
+    #if 0
       ASTNode *f = env->lookup(children_[0]->str());
-    if (f)
-    {
-    }
-    else
-    {
-      cout << "can not found value!" << endl;
-      return this;
-    }
+      if (f)
+      {
+        //return f;
+      }
+      else
+      {
+        cout << "can not found value!" << endl;
+        return this;
+      }
 
+#if 1
       void *addr = &f->token_.str_;
       uintptr_t addr_val = (uintptr_t)addr;
       #if 0
@@ -290,7 +298,9 @@ ASTNode* ASTNode::eval(Environment *env)
       #endif
       Token t(std::to_string(addr_val), NUMBER);
       return new ASTNode(t);
+#endif
       //return children_[0];
+      #endif
     }
     else
     {
@@ -694,19 +704,40 @@ ASTNode* ASTNode::eval(Environment *env)
     }
     else if (str() == "=")
          {
+           ASTNode *c1 = children_[1]->eval(env);
+           ASTNode *c0 = children_[0];
+           if ("*" == c0->str())
+           {
+             ASTNode *ref_node = env->lookup(c0->children_[0]->str());
+             env->edit(ref_node->str(), c1);
+           }
+           else
+           {
+
+           if (c0->ast_type() != NAME && c0->str() != "*") // deref
+           {
+             cout << "= error: left side should be variable name or deref (*)" << endl;
+             return this;
+           }
+
+           #ifdef DEBUG_MSG
+           string s{c0->str()};
+
+           cout << "s: " << s << endl;
+           #endif
+           ASTNode *f = env->lookup(c0->str());
+
+           if (f->obj_type().is_pointer())
+           {
+             cout << "assign pointer" << endl;
+           }
+           else
+           {
         #ifdef DEBUG_MSG
            cout << "op is =" << endl;
         #endif
            // add var/val to env
-           ASTNode *c1 = children_[1]->eval(env);
 
-           ASTNode *c0 = children_[0];
-
-           if (c0->ast_type() != NAME)
-           {
-             cout << "= error: left side should be variable name" << endl;
-             return this;
-           }
 
 
         #if 0
@@ -721,12 +752,6 @@ ASTNode* ASTNode::eval(Environment *env)
              cout << "f str: " << f->str() << endl;
            }
            #endif
-           string s{c0->str()};
-
-           #ifdef DEBUG_MSG
-           cout << "s: " << s << endl;
-           #endif
-           ASTNode *f = env->lookup(c0->str());
            if (f)
            {
              env->edit(c0->str(), c1);
@@ -758,6 +783,8 @@ ASTNode* ASTNode::eval(Environment *env)
 #endif
            c1->set_ast_type(ASSIGN);
            return c1;
+           }
+           }
 
            //free_children();
            // delete this;
