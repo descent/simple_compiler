@@ -727,11 +727,13 @@ ASTNode* ASTNode::eval(Environment *env)
            #endif
            ASTNode *f = env->lookup(c0->str());
 
+#if 0
            if (f->obj_type().is_pointer())
            {
              cout << "assign pointer" << endl;
            }
            else
+#endif
            {
         #ifdef DEBUG_MSG
            cout << "op is =" << endl;
