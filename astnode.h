@@ -90,6 +90,11 @@ class ASTNode
       ++no_;
       eval_result_ = 0;
     }
+    ASTNode(const ASTNode *n)
+    {
+      token_ = n->token();
+      set_obj_type(n->obj_type());
+    }
     ~ASTNode()
     {
       static u32 i=0;
@@ -196,6 +201,7 @@ class ASTNode
     {
       return no_;
     }
+    Token token() const {return token_;}
   private:
     vector<ASTNode*> children_;
     ASTNode* eval_result_;
