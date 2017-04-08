@@ -359,7 +359,20 @@ ASTNode* ASTNode::eval(Environment *env)
       auto pos = fmt.find(s1);
       while ((pos = fmt.find(s1, pos)) != string::npos)
       {
-        fmt.replace(pos, s1.length(), R"(%x)");
+        if (0 == pos)
+        {
+          fmt.replace(pos, s1.length(), R"(%x)");
+        }
+        else
+        {
+          // handle %%p don;t replace to %%x
+          if ('%' != fmt[pos-1])
+          {
+            cout << "%" << endl;
+            fmt.replace(pos, s1.length(), R"(%x)");
+          }
+        }
+        ++pos;
       }
 
       string cmd{R"(printf ")"};
