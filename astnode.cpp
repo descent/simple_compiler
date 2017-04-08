@@ -959,7 +959,7 @@ ASTNode* ASTNode::eval(Environment *env)
                                               if (children().size() == 2)
                                               {
                                                 ASTNode *c0 = children_[0];
-                                                ASTNode *eval_while = 0;
+                                                ASTNode *eval_while = this; // return nullptr, avoid Segmentation fault
                                                 while(c0->eval(env)->ast_type() == TRUE)
                                                 {
                                                   eval_while = children_[1]->eval(env);
