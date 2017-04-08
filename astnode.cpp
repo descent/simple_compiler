@@ -807,8 +807,8 @@ ASTNode* ASTNode::eval(Environment *env)
                    }
                    else if ((str() == "if"))
                         {
-                          ASTNode *then_node = 0;
-                          ASTNode *else_node = 0;
+                          ASTNode *then_node = this; // return nullptr, avoid Segmentation fault
+                          ASTNode *else_node = this; // return nullptr, avoid Segmentation fault
                           auto children_size = children().size();
 
                           if (children_size >= 2)
@@ -835,6 +835,7 @@ ASTNode* ASTNode::eval(Environment *env)
                             cout << "if node error" << endl;
                             return this;
                           }
+                          return this; // return nullptr, avoid Segmentation fault
                         }
                         else if ((str() == ">") || (str() == "<") || (str() == "==") || (str() == "!="))
                              {
