@@ -11,7 +11,7 @@ u32 Environment::count_=0;
 
 bool Environment::edit(const string &var_name, ASTNode *node) 
 {
-  cout << "xx edit var name: " << var_name << " to node: " << node->str() << endl;
+  //cout << "xx edit var name: " << var_name << " to node: " << node->str() << endl;
   auto it = frame_.find(var_name);
   if (it != frame_.end()) // find it
   {
