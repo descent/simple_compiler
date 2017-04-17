@@ -485,6 +485,8 @@ void ASTNode::gen_gas_relation(const string &reg)
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        { // 1 < (2 < 3)
+         r_child->gen_gas_syntax();
+#if 0
          if (r_child->is_add_sub())
          {
            r_child->gen_gas_add_sub("%eax");
@@ -501,7 +503,7 @@ void ASTNode::gen_gas_relation(const string &reg)
                    {
                      cout << "unsupport op" << endl;
                    }
-
+#endif
          op_ofs << "# gen code (left child is leaf): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
          if (NAME == l_child->ast_type())
          {
@@ -531,6 +533,9 @@ void ASTNode::gen_gas_relation(const string &reg)
        }
        else if (l_child->is_leaf() != true && r_child->is_leaf())
             { // 1 < 2 < 3
+              l_child->gen_gas_syntax();
+
+#if 0
               if (l_child->is_add_sub())
               {
                 l_child->gen_gas_add_sub("%eax");
@@ -547,7 +552,7 @@ void ASTNode::gen_gas_relation(const string &reg)
                         {
                           cout << "unsupport op" << endl;
                         }
-
+#endif
               op_ofs << "# gen code (right child is leaf): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
 
 
@@ -581,6 +586,9 @@ void ASTNode::gen_gas_relation(const string &reg)
             }
             else
             { // (2 < 3) < (6 < 8)
+              l_child->gen_gas_syntax();
+              r_child->gen_gas_syntax();
+#if 0
               if (l_child->is_add_sub())
               {
                 l_child->gen_gas_add_sub("%eax");
@@ -597,7 +605,6 @@ void ASTNode::gen_gas_relation(const string &reg)
                         {
                           cout << "left: unsupport op" << endl;
                         }
-
               if (r_child->is_add_sub())
               {
                 r_child->gen_gas_add_sub("%eax");
@@ -614,6 +621,7 @@ void ASTNode::gen_gas_relation(const string &reg)
                         {
                           cout << "right: unsupport op" << endl;
                         }
+#endif
 
 
               op_ofs << "# gen code (2 children are not leaf): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
@@ -1556,11 +1564,12 @@ void ASTNode::gen_gas_syntax()
                       else if (is_relational_op())
                            {
                              gen_gas_relation("");
+#if 0
                              update_stack_usage();
 
                              op_ofs << "popl %eax" << endl;
                              cur_need_stack_size -= 4;
-
+#endif
                              return;
                            }
                            else if (is_add_sub())
