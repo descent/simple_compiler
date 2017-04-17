@@ -692,11 +692,14 @@ void ASTNode::gen_gas_mul_div(const string &reg)
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
+         r_child->gen_gas_syntax();
+
+#if 0
          if (is_add_sub())
            r_child->gen_gas_add_sub("%eax");
          if (MUL == r_child->ast_type())
            r_child->gen_gas_mul_div("");
-
+#endif
 
          if (NAME == l_child->ast_type())
          {
@@ -728,11 +731,13 @@ void ASTNode::gen_gas_mul_div(const string &reg)
        }
        else if (l_child->is_leaf() != true && r_child->is_leaf())
             {
+              l_child->gen_gas_syntax();
+#if 0
               if (is_add_sub())
                 l_child->gen_gas_add_sub("%eax");
               if (MUL == l_child->ast_type())
                 l_child->gen_gas_mul_div("");
-
+#endif
               if (NAME == r_child->ast_type())
               { // i*6
                 auto node = local_symbol_table.lookup(r_child->str());
@@ -762,9 +767,12 @@ void ASTNode::gen_gas_mul_div(const string &reg)
             }
             else // all are not leaf
             {
+              l_child->gen_gas_syntax();
+              r_child->gen_gas_syntax();
+#if 0
               l_child->gen_gas_mul_div("");
               r_child->gen_gas_mul_div("");
-
+#endif
               cout << "popl %ebx" << endl;
               cout << "popl %eax" << endl;
               cout << "mul %ebx" << endl;
@@ -802,7 +810,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
   string l_operand_string;
   string r_operand_string;
 
-  cout << "handle add " << str() << endl;
+  cout << "yy handle op " << str() << " type_str(): " << type_str() << endl;
   if (l_child->is_leaf() && r_child->is_leaf())
   {
     cout << "movl $" << l_child->str() << ", " << reg << endl;
@@ -848,6 +856,9 @@ void ASTNode::gen_gas_add_sub(const string &reg)
   }
   else if (l_child->is_leaf() && r_child->is_leaf() != true)
        {
+         r_child->gen_gas_syntax();
+
+#if 0
          if (r_child->is_add_sub())
          {
            r_child->gen_gas_add_sub("%ebx");
@@ -856,7 +867,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
          {
            r_child->gen_gas_mul_div(""); 
          }
-
+#endif
          if (NAME == l_child->ast_type())
          {
            auto node = local_symbol_table.lookup(l_child->str());
@@ -909,6 +920,8 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               //cout << "33 reg: " << reg << endl;
               //l_child->gen_gas_add_sub("%eax");
 
+              l_child->gen_gas_syntax();
+#if 0
               if (l_child->is_add_sub())
               {
                 l_child->gen_gas_add_sub("%eax");
@@ -917,6 +930,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               {
                 l_child->gen_gas_mul_div(""); 
               }
+#endif
 
 
     if (NAME == r_child->ast_type())
@@ -957,11 +971,15 @@ void ASTNode::gen_gas_add_sub(const string &reg)
             }
             else // l_child, r_child are not leaf
             {
-              l_child->gen_gas_add_sub("%eax");
-              r_child->gen_gas_add_sub("%ebx");
+              l_child->gen_gas_syntax();
+
+
+              r_child->gen_gas_syntax();
+
 
               cout << "popl " << " %ebx" << endl;
               cout << "popl " << " %eax" << endl;
+
               op_ofs << "popl " << " %ebx" << endl;
               update_stack_usage();
               cur_need_stack_size -= 4;
@@ -970,6 +988,15 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               update_stack_usage();
               cur_need_stack_size -= 4;
 
+              op_ofs << type_str() << " %ebx, %eax" << endl;
+              op_ofs << "pushl %eax" << endl;
+#if 0
+              l_child->gen_gas_add_sub("%eax");
+              r_child->gen_gas_add_sub("%ebx");
+#endif
+
+
+#if 0
               if (reg == "%ebx")
               {
                 reg_str = " %eax, %ebx";
@@ -980,6 +1007,7 @@ void ASTNode::gen_gas_add_sub(const string &reg)
               cout << "pushl " << reg << endl;
               op_ofs << "pushl " << reg << endl;
               cur_need_stack_size += 4;
+#endif
             }
 
 #if 0
@@ -1538,7 +1566,7 @@ void ASTNode::gen_gas_syntax()
                            else if (is_add_sub())
                                 {
                                   gen_gas_add_sub("%eax");
-                                  op_ofs << "popl %eax" << endl;
+                                  //op_ofs << "popl %eax" << endl;
 
                                   update_stack_usage();
                                   cur_need_stack_size -= 4;
@@ -1551,7 +1579,7 @@ void ASTNode::gen_gas_syntax()
                                 else if (is_mul_div())
                                      {
                                        gen_gas_mul_div(""); 
-                                       op_ofs << "popl %eax" << endl;
+                                       //op_ofs << "popl %eax" << endl;
 
                                        update_stack_usage();
                                        cur_need_stack_size -= 4;
@@ -1581,7 +1609,7 @@ void ASTNode::gen_gas_syntax()
     cout << "  exit func: " << func_name << endl;
     cur_occupy_size = 0;
 
-    func_ofs << "subl $" << max_need_stack_size << ", %esp # reserve temp object size" << endl; // reserve max_need_stack_size_ byte stack for temp object
+    //func_ofs << "subl $" << max_need_stack_size << ", %esp # reserve temp object size" << endl; // reserve max_need_stack_size_ byte stack for temp object
     func_ofs << "subl $" << local_symbol_table.occupy_size() << ", %esp # reserve local variable" << endl; // reserve local variable
 
     op_ofs.close();
