@@ -36,7 +36,7 @@ class Token
         "ADDR_OF", "DEREF", // &, *
         "IF", "WHILE", "WHILE_BLOCK", "RETURN", "RETURN_VAL",
         "THEN_BLOCK", "ELSE_BLOCK", "SEP", "NEG", "ASSIGN", "EQUAL",
-        "NAME", "GLOBAL_VAR", "VAR", "PARA"
+        "NAME", "GLOBAL_VAR", "VAR", "PARA",
         "FUNC_CALL", "FUNC_BODY", "FUNC_NAME", "FUNC_PARA",
         "ADD", "SUB", "MUL", "DIV", "GREAT", "LESS",
         "NUMBER", "STRING", "EOL"
