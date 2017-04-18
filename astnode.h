@@ -134,7 +134,7 @@ class ASTNode
     }
     bool is_op()
     {
-      if (is_mul_div() == true || is_add_sub() == true || is_relational_op() == true)
+      if (is_mul_div() == true || is_add_sub() == true || is_relational_op() == true || (ast_type() == NEG) )
         return true;
       else
         return false;
@@ -192,6 +192,7 @@ class ASTNode
     void gen_gas_add_sub(const string &reg);
     void gen_gas_mul_div(const string &reg);
     void gen_gas_relation(const string &reg);
+    void gen_gas_neg(const string &reg);
     void gen_gas_op(GenGasFunc gen_gas_func);
     ASTNode* eval(Environment *env);
     void set_ast_type(ASTType ast_type)

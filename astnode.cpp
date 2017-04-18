@@ -649,6 +649,39 @@ void ASTNode::gen_gas_relation(const string &reg)
 
 }
 
+void ASTNode::gen_gas_neg(const string &reg)
+{
+  if (1 != children().size())
+  {
+    cout << "should have 1 node" << endl;
+    return;
+  }
+
+  auto child = children()[0];
+  if (child->is_leaf())
+  {
+    if (NAME == child->ast_type())
+    {
+    }
+    else if (S8 == child->ast_type()) // 'a'
+         {
+         }
+         else // immediate value
+         {
+           op_ofs << "mov $" << child->str() << ", %eax" << endl;
+           op_ofs << "neg %eax" << endl;
+           op_ofs << "pushl %eax" << endl;
+         }
+  }
+  else
+  {
+    child->gen_gas_syntax();
+    op_ofs << "popl %eax" << endl;
+    op_ofs << "neg %eax" << endl;
+    op_ofs << "pushl %eax" << endl;
+  }
+}
+
 void ASTNode::gen_gas_mul_div(const string &reg)
 {
   if (is_valid_op() == false)
@@ -1600,10 +1633,15 @@ void ASTNode::gen_gas_syntax()
 
                                        return;
                                      }
-                                     else
-                                     {
-                                       cout << "do nothing" << endl;
-                                     }
+                                     else if (ast_type() == NEG)
+                                          {
+                                            gen_gas_neg(""); 
+                                            return;
+                                          }
+                                          else
+                                          {
+                                            cout << "unsupport op" << endl;
+                                          }
   
   for (auto &i : children())
   {
