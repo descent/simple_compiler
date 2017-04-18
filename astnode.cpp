@@ -1349,6 +1349,7 @@ void ASTNode::gen_gas_syntax()
         else if ((*it)->is_op()) 
              {
                cout << "pushl %eax" << endl;
+               op_ofs << "popl %eax" << endl; // op result will push to stack
                op_ofs << "pushl %eax" << endl;
              }
              else if (FUNC_CALL == (*it)->ast_type())
