@@ -1504,6 +1504,8 @@ void ASTNode::gen_gas_syntax()
                         // if op
                         if (r_child->is_op())
                         {
+                          r_child->gen_gas_syntax();
+                          #if 0
                           if (r_child->is_add_sub() || r_child->is_mul_div())
                           {
                             r_child->gen_gas_add_sub("%eax");
@@ -1516,6 +1518,8 @@ void ASTNode::gen_gas_syntax()
                           {
                             r_child->gen_gas_relation("");
                           }
+                          #endif
+
                           op_ofs << "popl %eax" << endl;
                           op_ofs << "# gen code (OP): " << l_child->str() << " " << str() << " " << r_child->str() << endl;
                         }
