@@ -1350,6 +1350,7 @@ void ASTNode::gen_gas_syntax()
            else // immediate value
            {
              op_ofs << "mov $" << child->str() << ", %eax" << endl;
+             op_ofs << "leave" << endl;
              op_ofs << "ret" << endl;
            }
     }
@@ -1357,6 +1358,7 @@ void ASTNode::gen_gas_syntax()
     {
       child->gen_gas_syntax();
       op_ofs << "popl %eax" << endl;
+      op_ofs << "leave" << endl;
       op_ofs << "ret" << endl;
     }
 
