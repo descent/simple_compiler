@@ -1330,6 +1330,38 @@ void ASTNode::gen_gas_syntax()
 
     return;
   }
+  if (RETURN == ast_type())
+  {
+    if (1 != children().size())
+    {
+      cout << "RETURN: should have 1 node" << endl;
+      return;
+    }
+
+    auto child = children()[0];
+    if (child->is_leaf())
+    {
+      if (NAME == child->ast_type())
+      {
+      }
+      else if (S8 == child->ast_type()) // 'a'
+           {
+           }
+           else // immediate value
+           {
+             op_ofs << "mov $" << child->str() << ", %eax" << endl;
+             op_ofs << "ret" << endl;
+           }
+    }
+    else
+    {
+      child->gen_gas_syntax();
+      op_ofs << "popl %eax" << endl;
+      op_ofs << "ret" << endl;
+    }
+
+
+  }
   if (ast_type() == FUNC_CALL) 
   {
     auto node = global_symbol_table.lookup(str());
