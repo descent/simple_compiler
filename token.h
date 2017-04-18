@@ -28,6 +28,13 @@ class Token
 
     const char* ast_type_str() const
     {
+
+      const char *type_str[] = 
+      {
+        FOREACH_FRUIT(GENERATE_STRING)
+      };
+
+      #if 0
       const char *type_str[]=
       {
         "INVALID", "ROOT", "PROG", "COMMENT",
@@ -41,6 +48,13 @@ class Token
         "ADD", "SUB", "MUL", "DIV", "GREAT", "LESS",
         "NUMBER", "STRING", "EOL"
       };
+      #endif
+
+
+#if 0
+      for (int i=0 ; i < sizeof(type_str)/sizeof(char *) ; ++i)
+        cout << i << ": " << type_str[i] << endl;
+#endif
 
       if (INVALID <= ast_type() && ast_type() < LAST)
       {
