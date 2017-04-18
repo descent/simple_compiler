@@ -1399,44 +1399,49 @@ void ASTNode::gen_gas_syntax()
 
     for (; it != child.rend() ; ++it)
     {
-      if (NAME == (*it)->ast_type())
+      if ((*it)->is_leaf())
       {
-        auto node = local_symbol_table.lookup((*it)->str());
-        cout << "pushl " << node->local_var_addr_ << endl;
-        op_ofs << "pushl " << node->local_var_addr_ << endl;
+        if (NAME == (*it)->ast_type())
+        {
+          auto node = local_symbol_table.lookup((*it)->str());
+          cout << "pushl " << node->local_var_addr_ << endl;
+          op_ofs << "pushl " << node->local_var_addr_ << endl;
+        }
+        else if (STRING == (*it)->ast_type())
+             {
+               (*it)->gen_gas_syntax();
+               cout << "pushl $" << (*it)->string_label_ << endl;
+               op_ofs << "pushl $" << (*it)->string_label_ << endl;
+             }
+             else if (S8 == (*it)->ast_type())
+                  {
+                    int num = (*it)->str()[0]; // ex: char c='v'; get the v char
+
+                    cout << "pushl $" << num << endl;
+                    op_ofs << "pushl $" << num << endl;
+                  }
+                  else // int
+                  {
+                    cout << "pushl $" << (*it)->str() << endl;
+                    op_ofs << "pushl $" << (*it)->str() << endl;
+                  }
+
       }
       else
       {
         (*it)->gen_gas_syntax();
-        if (STRING == (*it)->ast_type())
+
+        if ((*it)->is_op())
         {
-          cout << "pushl $" << (*it)->string_label_ << endl;
-          op_ofs << "pushl $" << (*it)->string_label_ << endl;
+          op_ofs << "popl %eax" << endl; // op result will push to stack
+          op_ofs << "pushl %eax" << endl;
         }
-        else if ((*it)->is_op()) 
+        else if (FUNC_CALL == (*it)->ast_type()) 
              {
-               cout << "pushl %eax" << endl;
-               op_ofs << "popl %eax" << endl; // op result will push to stack
                op_ofs << "pushl %eax" << endl;
              }
-             else if (FUNC_CALL == (*it)->ast_type())
-                  {
-                    cout << "FUNC_CALL don't support" << endl;
-                    exit(0);
-                  }
-                  else if (S8 == (*it)->ast_type())
-                       {
-                         int num = (*it)->str()[0]; // ex: char c='v'; get the v char
-
-                         cout << "pushl $" << num << endl;
-                         op_ofs << "pushl $" << num << endl;
-                       }
-                       else // int
-                       {
-                         cout << "pushl $" << (*it)->str() << endl;
-                         op_ofs << "pushl $" << (*it)->str() << endl;
-                       }
       }
+
       push_size += 4;
     }
 #endif
