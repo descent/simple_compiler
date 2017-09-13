@@ -1,6 +1,6 @@
 This is a simple c compiler.
 ===========
-A simple c implementation by c++.
+A simple c compiler implementation by c++.
 
 current feature:
 * char, int, pointer type
