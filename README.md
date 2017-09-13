@@ -1,4 +1,4 @@
-This is simple c compiler, but current only support interpreter.
+This is a simple c compiler.
 ===========
 A simple c implementation by c++.
 
@@ -21,6 +21,10 @@ x86 32bit machine code generator:
   as -32 -o tmp.o tmp.s 
   gcc -m32 tmp.o -o tmp
   
-run tmp
-  ./tmp
+usage:
+  ./c_parser < test_pattern/add_1.c
+  gcc -m32 r.S -o r
+
+run r:
+  ./r
 
